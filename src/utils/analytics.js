@@ -16,6 +16,12 @@ class AnalyticsTracker {
   }
 
   init() {
+    // Skip analytics in development mode
+    if (import.meta.env.DEV) {
+      console.log('Analytics disabled in development mode');
+      return;
+    }
+    
     if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
       this.isInitialized = true;
       this.setupAutoFlush();

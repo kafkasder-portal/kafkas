@@ -50,10 +50,22 @@ const handleApiError = (error) => {
 // Enhanced API client with better error handling
 class SecureApiClient {
   constructor(baseURL = API_BASE_URL) {
-    this.baseURL = baseURL
+    // Use mock API in development mode
+    if (import.meta.env.DEV) {
+      this.baseURL = 'mock://api'
+      this.useMock = true
+    } else {
+      this.baseURL = baseURL
+      this.useMock = false
+    }
   }
 
   async request(endpoint, options = {}) {
+    // Use mock API directly in development mode
+    if (this.useMock) {
+      return await mockApiClient.request(endpoint, options);
+    }
+
     const url = `${this.baseURL}${endpoint}`
     const headers = { ...addAuthHeaders(), ...options.headers }
     
