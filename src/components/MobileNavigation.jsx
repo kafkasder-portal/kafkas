@@ -18,7 +18,6 @@ const MobileHeader = ({ onMenuToggle }) => {
     e.preventDefault()
     if (searchTerm.trim()) {
       // Implement global search
-      console.log('Searching for:', searchTerm)
     }
   }
 

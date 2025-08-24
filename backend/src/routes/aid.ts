@@ -136,7 +136,7 @@ router.post('/', async (req, res) => {
       description: description || '',
       aid_date: aidDate || new Date().toISOString(),
       created_at: new Date().toISOString(),
-      created_by: 'system' // TODO: Get from auth
+      created_by: (req as any).user?.id || 'system'
     };
 
     const { error } = await supabase

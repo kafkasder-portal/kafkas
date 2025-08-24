@@ -102,10 +102,6 @@ const usePerformance = (componentName = 'Component') => {
     const warnings = getPerformanceWarnings()
     
     console.group(`🚀 Performance Report - ${componentName}`)
-    console.log('Render Time:', `${metrics.renderTime.toFixed(2)}ms`)
-    console.log('Memory Usage:', `${metrics.memoryUsage.toFixed(1)}%`)
-    console.log('FPS:', metrics.fps)
-    console.log('Load Time:', `${metrics.loadTime.toFixed(2)}ms`)
     
     if (warnings.length > 0) {
       console.warn('⚠️ Performance Warnings:', warnings)

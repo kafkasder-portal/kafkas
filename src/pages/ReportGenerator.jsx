@@ -108,7 +108,6 @@ const ReportGenerator = () => {
 
   const exportReport = (format) => {
     // Simulate export
-    console.log(`Exporting ${selectedReportType} report as ${format}`)
     // In real app, this would trigger download
   }
 

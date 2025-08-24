@@ -24,7 +24,6 @@ const AuthProvider = ({ children }) => {
       try {
         // Skip connection test in development mode
         if (import.meta.env.DEV) {
-          console.log('🔍 Supabase connection test skipped in development mode')
           setSupabaseConnected(false)
           return
         }

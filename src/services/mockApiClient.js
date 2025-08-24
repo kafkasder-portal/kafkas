@@ -117,7 +117,6 @@ class MockApiClient {
     const method = options.method || 'GET';
     const resourceName = endpoint.split('/')[1];
     
-    console.log(`[MOCK API] ${method} ${endpoint}`);
 
     switch (method) {
       case 'GET':

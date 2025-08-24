@@ -163,7 +163,7 @@ router.post('/', async (req, res) => {
       status,
       category: category || 'general',
       assigned_to: assignedTo || null,
-      created_by: 'system', // TODO: Get from auth
+      created_by: (req as any).user?.id || 'system',
       due_date: dueDate || null,
       start_date: null,
       completed_date: null,

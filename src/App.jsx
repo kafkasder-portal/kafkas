@@ -36,12 +36,8 @@ const Fund = lazy(() => import('./pages/Fund'))
 const PiggyBankTracking = lazy(() => import('./pages/PiggyBankTracking'))
 const System = lazy(() => import('./pages/System'))
 const UserManagement = lazy(() => import('./pages/UserManagement'))
-const ComponentsDemo = lazy(() => import('./pages/ComponentsDemo'))
-const TestPage = lazy(() => import('./pages/TestPage'))
 const ReportGenerator = lazy(() => import('./pages/ReportGenerator'))
-const ThemeCustomizer = lazy(() => import('./pages/ThemeCustomizer'))
 const FormBuilder = lazy(() => import('./pages/FormBuilder'))
-const SecurityTest = lazy(() => import('./pages/SecurityTest'))
 const PerformanceDashboard = lazy(() => import('./pages/PerformanceDashboard'))
 const AdvancedAnalytics = lazy(() => import('./pages/AdvancedAnalytics'))
 const RealTimeDashboard = lazy(() => import('./pages/RealTimeDashboard'))
@@ -81,16 +77,12 @@ const AppContent = memo(() => {
   const deviceInfo = useDeviceDetection()
   const { isAuthenticated } = useAuth()
 
-  // Temporary dev bypass - remove this in production
-  const isDev = import.meta.env.DEV
-  const bypassAuth = false // Disable bypass to show proper login flow
-
   return (
     <div className={`app device-${deviceInfo.type} ${deviceInfo.orientation}`}>
       <ConnectionStatus />
 
-      {/* Show login page if not authenticated (unless dev bypass) */}
-      {!isAuthenticated && !bypassAuth ? (
+      {/* Show login page if not authenticated */}
+      {!isAuthenticated ? (
         <Login />
       ) : (
         <>
@@ -272,34 +264,10 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path="/test"
-                    element={
-                      <ProtectedRoute>
-                        <TestPage />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
                     path="/system/user-management"
                     element={
                       <ProtectedRoute requiredRoles={['admin']}>
                         <UserManagement />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/demo"
-                    element={
-                      <ProtectedRoute>
-                        <ComponentsDemo />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/test"
-                    element={
-                      <ProtectedRoute>
-                        <TestPage />
                       </ProtectedRoute>
                     }
                   />
@@ -312,26 +280,10 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path="/theme"
-                    element={
-                      <ProtectedRoute>
-                        <ThemeCustomizer />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
                     path="/form-builder"
                     element={
                       <ProtectedRoute>
                         <FormBuilder />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/security-test"
-                    element={
-                      <ProtectedRoute requiredRoles={['admin']}>
-                        <SecurityTest />
                       </ProtectedRoute>
                     }
                   />

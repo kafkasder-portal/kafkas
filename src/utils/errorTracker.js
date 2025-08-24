@@ -52,14 +52,12 @@ class ErrorTracker {
     this.setupPeriodicReporting()
     
     this.isInitialized = true
-    console.log('🔍 Error tracking system initialized')
   }
 
   // Override console methods to capture errors and warnings
   overrideConsole() {
     const originalError = console.error
     const originalWarn = console.warn
-    const originalLog = console.log
 
     console.error = (...args) => {
       this.trackError('console.error', {
@@ -81,12 +79,10 @@ class ErrorTracker {
       originalWarn.apply(console, args)
     }
 
-    console.log = (...args) => {
       // Track important logs
       const message = args.join(' ')
       if (message.includes('error') || message.includes('Error') || 
           message.includes('failed') || message.includes('Failed')) {
-        this.trackWarning('console.log', {
           message: message,
           stack: new Error().stack,
           timestamp: new Date().toISOString(),
@@ -281,9 +277,6 @@ class ErrorTracker {
     // Log to console in development
     if (import.meta.env.DEV) {
       console.group(`🔴 Error Tracked: ${category}`)
-      console.log('Message:', data.message)
-      console.log('Stack:', data.stack)
-      console.log('Timestamp:', data.timestamp)
       console.groupEnd()
     }
 
@@ -355,7 +348,6 @@ class ErrorTracker {
   // Send immediate report for critical errors
   sendImmediateReport(error) {
     if (import.meta.env.DEV) {
-      console.log('🚨 Critical error report:', error)
     }
     
     // In production, send to error reporting service
@@ -389,8 +381,6 @@ class ErrorTracker {
 
     if (import.meta.env.DEV) {
       console.group('📊 Error Report')
-      console.log('Summary:', report.summary)
-      console.log('Recent Errors:', report.errors.length)
       console.groupEnd()
     } else {
       this.sendToErrorService(report.errors)

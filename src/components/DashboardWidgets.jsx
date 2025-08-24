@@ -148,7 +148,6 @@ const QuickActionsWidget = () => {
 
   const handleQuickAction = (action) => {
     // Navigate or trigger action
-    console.log('Quick action:', action)
   }
 
   return (

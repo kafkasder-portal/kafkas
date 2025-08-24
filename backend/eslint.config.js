@@ -1,35 +1,18 @@
 import js from '@eslint/js'
 import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import { defineConfig, globalIgnores } from 'eslint/config'
+import { defineConfig } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores([
-    'dist',
-    'backend/**/*',
-    'cypress/**/*',
-    'scripts/**/*',
-    'public/**/*',
-    'src/test/**/*',
-    'src/tests/**/*',
-    'create-test-user.js',
-    'cypress.config.js',
-    'vite.config.js'
-  ]),
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['**/*.{js,ts}'],
     extends: [
       js.configs.recommended,
-      reactHooks.configs['recommended-latest'],
-      reactRefresh.configs.vite,
     ],
     languageOptions: {
       ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: globals.node,
       parserOptions: {
         ecmaVersion: 'latest',
-        ecmaFeatures: { jsx: true },
         sourceType: 'module',
       },
     },
@@ -51,6 +34,9 @@ export default defineConfig([
       'no-unsafe-negation': 'error',
       'use-isnan': 'error',
       'valid-typeof': 'error',
+      'no-process-exit': 'error',
+      'no-path-concat': 'error',
+      'prefer-promise-reject-errors': 'error',
     },
   },
 ])

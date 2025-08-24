@@ -71,14 +71,12 @@ export class NotificationService {
 
   // Polling başlat (DEVRE DIŞI)
   startPolling() {
-    console.log('📡 Otomatik bildirim servisi devre dışı bırakıldı')
     // Sürekli bildirim gönderme devre dışı bırakıldı
     return
     
     // if (this.isPolling) return
     // 
     // this.isPolling = true
-    // console.log('📡 Real-time bildirim servisi başlatıldı')
     // 
     // // Ana polling döngüsü (30 saniye)
     // this.pollingInterval = setInterval(() => {
@@ -103,7 +101,6 @@ export class NotificationService {
     if (!this.isPolling) return
     
     this.isPolling = false
-    console.log('📡 Real-time bildirim servisi durduruldu')
     
     if (this.pollingInterval) {
       clearInterval(this.pollingInterval)
@@ -123,7 +120,6 @@ export class NotificationService {
 
   // Yeni bildirimler için kontrol et (DEVRE DIŞI)
   async checkForNewNotifications() {
-    console.log('Otomatik bildirim kontrolü devre dışı bırakıldı')
     return
     
     // try {
@@ -210,7 +206,6 @@ export class NotificationService {
 
   // Demo amaçlı rastgele bildirimler (DEVRE DIŞI)
   startDemoNotifications() {
-    console.log('Demo bildirimleri devre dışı bırakıldı')
     return
     
     // // Her 2-5 dakikada bir rastgele bildirim

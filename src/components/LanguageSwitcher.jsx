@@ -14,7 +14,6 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
   // Dil değişikliklerini dinle
   useEffect(() => {
     const handleLanguageChange = () => {
-      console.log('Language changed event triggered, new language:', i18n.language)
       setCurrentLang(i18n.language)
     }
 
@@ -50,14 +49,10 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
   }, [isOpen])
 
   const handleLanguageChange = async (langCode) => {
-    console.log('Dil değiştiriliyor:', langCode, 'Mevcut:', currentLang)
-    console.log('i18n.language öncesi:', i18n.language)
     try {
       await i18n.changeLanguage(langCode)
-      console.log('i18n.changeLanguage tamamlandı, yeni dil:', i18n.language)
       setCurrentLang(langCode)
       setIsOpen(false)
-      console.log('Dil başarıyla değiştirildi:', langCode)
 
       // Force re-render by triggering a custom event
       window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: langCode } }))

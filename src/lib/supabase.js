@@ -29,7 +29,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 // Test Supabase connection
 export const testSupabaseConnection = async () => {
   try {
-    console.log('🔍 Testing Supabase connection...')
     
     const { data, error } = await supabase.from('users').select('count').limit(1)
     
@@ -38,7 +37,6 @@ export const testSupabaseConnection = async () => {
       return false
     }
     
-    console.log('✅ Supabase connection successful')
     return true
   } catch (error) {
     console.error('❌ Supabase connection test error:', error)

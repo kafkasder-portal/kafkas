@@ -23,7 +23,6 @@ class PerformanceMonitor {
 
     // Skip monitoring in development mode
     if (import.meta.env.DEV) {
-      console.log('🔍 Performance monitoring disabled in development mode')
       return
     }
 
@@ -43,7 +42,6 @@ class PerformanceMonitor {
     this.setupPerformanceMonitoring()
 
     this.isInitialized = true
-    console.log('🔍 Performance monitoring initialized')
   }
 
   // Setup Web Vitals monitoring
@@ -353,7 +351,6 @@ class AnalyticsTracker {
     this.setupPageTracking()
     this.setupUserTracking()
     this.isInitialized = true
-    console.log('📊 Analytics tracking initialized')
   }
 
   // Setup page tracking
@@ -505,7 +502,6 @@ class SystemHealthMonitor {
     this.monitorNetworkHealth()
 
     this.isMonitoring = true
-    console.log('🏥 System health monitoring started')
   }
 
   // Monitor system health
@@ -624,7 +620,6 @@ function initializeMonitoring() {
   analyticsTracker.startPeriodicReporting()
   systemHealthMonitor.startHealthReporting()
 
-  console.log('🚀 Monitoring & Analytics initialized')
 }
 
 // Export monitoring utilities

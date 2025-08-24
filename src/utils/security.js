@@ -339,7 +339,6 @@ export const auditLogger = {
     this.sendToServer(logEntry)
     
     // Also log locally for debugging
-    console.log('Audit Log:', logEntry)
   },
   
   async sendToServer(logEntry) {

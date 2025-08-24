@@ -7,100 +7,104 @@
  * Validates if a field is not empty
  * @param {string} value - The value to validate
  * @param {string} fieldName - The name of the field for error message
- * @returns {string|null} Error message or null if valid
+ * @returns {object} Validation result with isValid and message properties
  */
 export const validateRequired = (value, fieldName) => {
   if (!value || !value.toString().trim()) {
-    return `${fieldName} zorunludur`
+    return { isValid: false, message: `${fieldName} zorunludur` }
   }
-  return null
+  return { isValid: true, message: null }
 }
 
 /**
  * Validates email format
  * @param {string} email - The email to validate
- * @returns {string|null} Error message or null if valid
+ * @returns {object} Validation result with isValid and message properties
  */
 export const validateEmail = (email) => {
-  if (!email) return null
+  if (!email) return { isValid: false, message: 'E-posta gereklidir' }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(email)) {
-    return 'Geçerli bir e-posta adresi girin'
+    return { isValid: false, message: 'Geçerli bir e-posta adresi girin' }
   }
-  return null
+  return { isValid: true, message: null }
 }
 
 /**
  * Validates Turkish phone number format
  * @param {string} phone - The phone number to validate
- * @returns {string|null} Error message or null if valid
+ * @returns {object} Validation result with isValid and message properties
  */
 export const validateTurkishPhone = (phone) => {
-  if (!phone) return null
-  if (!/^\+90\s\d{3}\s\d{3}\s\d{4}$/.test(phone)) {
-    return 'Telefon formatı: +90 5XX XXX XXXX'
+  if (!phone) return { isValid: false, message: 'Telefon numarası gereklidir' }
+  // Accept various Turkish phone formats
+  const phoneRegex = /^(\+90|0)?[5][0-9]{9}$/
+  if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
+    return { isValid: false, message: 'Geçerli bir telefon numarası girin' }
   }
-  return null
+  return { isValid: true, message: null }
 }
 
 /**
  * Validates Turkish ID number (TC Kimlik No)
  * @param {string} tcNo - The TC number to validate
- * @returns {string|null} Error message or null if valid
+ * @returns {object} Validation result with isValid and message properties
  */
 export const validateTCNo = (tcNo) => {
-  if (!tcNo) return null
+  if (!tcNo) return { isValid: false, message: 'TC Kimlik No gereklidir' }
   if (tcNo.length !== 11) {
-    return 'TC Kimlik No 11 haneli olmalıdır'
+    return { isValid: false, message: 'TC Kimlik No 11 haneli olmalıdır' }
   }
-  // Additional TC validation logic can be added here
-  return null
+  if (!/^\d{11}$/.test(tcNo)) {
+    return { isValid: false, message: 'TC Kimlik No sadece rakam içermelidir' }
+  }
+  return { isValid: true, message: null }
 }
 
 /**
  * Validates password strength
  * @param {string} password - The password to validate
- * @returns {string|null} Error message or null if valid
+ * @returns {object} Validation result with isValid and message properties
  */
 export const validatePassword = (password) => {
-  if (!password) return 'Şifre gereklidir'
+  if (!password) return { isValid: false, message: 'Şifre gereklidir' }
   if (password.length < 8) {
-    return 'Şifre en az 8 karakter olmalıdır'
+    return { isValid: false, message: 'Şifre en az 8 karakter olmalıdır' }
   }
   if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-    return 'Şifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir'
+    return { isValid: false, message: 'Şifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir' }
   }
-  return null
+  return { isValid: true, message: null }
 }
 
 /**
  * Validates IBAN format
  * @param {string} iban - The IBAN to validate
- * @returns {string|null} Error message or null if valid
+ * @returns {object} Validation result with isValid and message properties
  */
 export const validateIban = (iban) => {
-  if (!iban) return 'IBAN gereklidir'
+  if (!iban) return { isValid: false, message: 'IBAN gereklidir' }
 
   // Remove spaces and convert to uppercase
   const cleanIban = iban.replace(/\s/g, '').toUpperCase()
 
   // Turkish IBAN should start with TR and be 26 characters
   if (!cleanIban.startsWith('TR')) {
-    return 'IBAN TR ile başlamalıdır'
+    return { isValid: false, message: 'IBAN TR ile başlamalıdır' }
   }
 
   if (cleanIban.length !== 26) {
-    return 'IBAN 26 karakter olmalıdır'
+    return { isValid: false, message: 'IBAN 26 karakter olmalıdır' }
   }
 
-  return null
+  return { isValid: true, message: null }
 }
 
 /**
  * Generic form validation function
  * @param {Object} formData - The form data to validate
  * @param {Object} validationRules - Object containing validation rules for each field
- * @returns {Object} Object containing errors for each field
+ * @returns {Object} Object containing validation result with isValid and errors properties
  */
 export const validateForm = (formData, validationRules) => {
   const errors = {}
@@ -111,50 +115,50 @@ export const validateForm = (formData, validationRules) => {
 
     // Check required fields
     if (rules.required) {
-      const error = validateRequired(value, rules.label || fieldName)
-      if (error) {
-        errors[fieldName] = error
+      const result = validateRequired(value, rules.label || fieldName)
+      if (!result.isValid) {
+        errors[fieldName] = result.message
         return
       }
     }
 
     // Check specific validators
-    if (rules.validator) {
-      const error = rules.validator(value)
-      if (error) {
-        errors[fieldName] = error
+    if (rules.validator && value) {
+      const result = rules.validator(value)
+      if (!result.isValid) {
+        errors[fieldName] = result.message
       }
     }
 
     // Check email validation
     if (rules.email && value) {
-      const error = validateEmail(value)
-      if (error) {
-        errors[fieldName] = error
+      const result = validateEmail(value)
+      if (!result.isValid) {
+        errors[fieldName] = result.message
       }
     }
 
     // Check phone validation
     if (rules.phone && value) {
-      const error = validateTurkishPhone(value)
-      if (error) {
-        errors[fieldName] = error
+      const result = validatePhone(value)
+      if (!result.isValid) {
+        errors[fieldName] = result.message
       }
     }
 
     // Check TC validation
     if (rules.tcNo && value) {
-      const error = validateTCNo(value)
-      if (error) {
-        errors[fieldName] = error
+      const result = validateTCKimlik(value)
+      if (!result.isValid) {
+        errors[fieldName] = result.message
       }
     }
 
     // Check IBAN validation
     if (rules.iban && value) {
-      const error = validateIban(value)
-      if (error) {
-        errors[fieldName] = error
+      const result = validateIBAN(value)
+      if (!result.isValid) {
+        errors[fieldName] = result.message
       }
     }
 
@@ -169,7 +173,10 @@ export const validateForm = (formData, validationRules) => {
     }
   })
 
-  return errors
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors
+  }
 }
 
 /**
@@ -247,6 +254,10 @@ export const validateCSRFToken = (token, expectedToken) => {
  * @returns {Object} Sanitized form data
  */
 export const sanitizeFormData = (formData) => {
+  if (!formData || typeof formData !== 'object') {
+    return {}
+  }
+  
   const sanitized = {}
   
   for (const [key, value] of Object.entries(formData)) {
@@ -256,7 +267,16 @@ export const sanitizeFormData = (formData) => {
         .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
         .replace(/javascript:/gi, '')
         .replace(/on\w+=/gi, '')
+        .replace(/<[^>]*>/g, '') // Remove all HTML tags
         .trim()
+    } else if (Array.isArray(value)) {
+      // Handle arrays
+      sanitized[key] = value.map(item => 
+        typeof item === 'string' ? sanitizeInput(item) : item
+      )
+    } else if (typeof value === 'object' && value !== null) {
+      // Handle nested objects
+      sanitized[key] = sanitizeFormData(value)
     } else {
       sanitized[key] = value
     }
@@ -269,18 +289,78 @@ export const sanitizeFormData = (formData) => {
 export const validatePhone = validateTurkishPhone
 export const validateTCKimlik = validateTCNo
 export const validateIBAN = validateIban
-export const sanitizeInput = sanitizeFormData
+
+/**
+ * Validates date format (YYYY-MM-DD)
+ * @param {string} date - Date to validate
+ * @returns {object} Validation result with isValid and message properties
+ */
+export const validateDate = (date) => {
+  if (!date) return { isValid: false, message: 'Tarih gereklidir' }
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/
+  if (!dateRegex.test(date)) {
+    return { isValid: false, message: 'Geçerli bir tarih girin (YYYY-MM-DD)' }
+  }
+  const dateObj = new Date(date)
+  if (isNaN(dateObj.getTime())) {
+    return { isValid: false, message: 'Geçerli bir tarih girin' }
+  }
+  return { isValid: true, message: null }
+}
+
+/**
+ * Validates time format (HH:MM)
+ * @param {string} time - Time to validate
+ * @returns {object} Validation result with isValid and message properties
+ */
+export const validateTime = (time) => {
+  if (!time) return { isValid: false, message: 'Saat gereklidir' }
+  const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/
+  if (!timeRegex.test(time)) {
+    return { isValid: false, message: 'Geçerli bir saat girin (HH:MM)' }
+  }
+  return { isValid: true, message: null }
+}
+
+/**
+ * Sanitizes a single input value
+ * @param {string} input - Input to sanitize
+ * @returns {string} Sanitized input
+ */
+export const sanitizeInput = (input) => {
+  if (input === null || input === undefined) return ''
+  const str = String(input)
+  return str
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+=/gi, '')
+    .trim()
+}
+
+/**
+ * Validation patterns for common formats
+ */
+export const VALIDATION_PATTERNS = {
+  EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+  PHONE: /^(\+90|0)?[5][0-9]{9}$/,
+  PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/,
+  TC_KIMLIK: /^\d{11}$/,
+  IBAN: /^TR\d{2}\s?\d{4}\s?\d{4}\s?\d{4}\s?\d{4}\s?\d{2}$/,
+  AMOUNT: /^\d+(\.\d{1,2})?$/,
+  DATE: /^\d{4}-\d{2}-\d{2}$/,
+  TIME: /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/
+}
 
 /**
  * Validates monetary amounts
  * @param {string|number} amount - Amount to validate
- * @returns {string|null} Error message or null if valid
+ * @returns {object} Validation result with isValid and message properties
  */
 export const validateAmount = (amount) => {
-  if (!amount && amount !== 0) return 'Tutar gereklidir'
+  if (!amount && amount !== 0) return { isValid: false, message: 'Tutar gereklidir' }
   const numAmount = parseFloat(amount)
-  if (isNaN(numAmount)) return 'Geçerli bir tutar girin'
-  if (numAmount < 0) return 'Tutar negatif olamaz'
-  if (numAmount > 1000000) return 'Tutar çok yüksek'
-  return null
+  if (isNaN(numAmount)) return { isValid: false, message: 'Geçerli bir tutar girin' }
+  if (numAmount <= 0) return { isValid: false, message: 'Tutar pozitif olmalıdır' }
+  if (numAmount > 1000000) return { isValid: false, message: 'Tutar çok yüksek' }
+  return { isValid: true, message: null }
 }

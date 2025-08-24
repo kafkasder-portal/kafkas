@@ -18,7 +18,6 @@ class AnalyticsTracker {
   init() {
     // Skip analytics in development mode
     if (import.meta.env.DEV) {
-      console.log('Analytics disabled in development mode');
       return;
     }
     
@@ -26,7 +25,6 @@ class AnalyticsTracker {
       this.isInitialized = true;
       this.setupAutoFlush();
       this.trackPageView();
-      console.log('Analytics initialized');
     }
   }
 
@@ -138,7 +136,6 @@ class PerformanceMonitor {
       this.setupPerformanceObserver();
       this.setupMemoryMonitoring();
       this.setupNetworkMonitoring();
-      console.log('Performance monitoring initialized');
     }
   }
 
@@ -306,7 +303,6 @@ class SystemHealthMonitor {
     if (import.meta.env.VITE_ENABLE_MONITORING === 'true') {
       this.isInitialized = true;
       this.startMonitoring();
-      console.log('System health monitoring initialized');
     }
   }
 
