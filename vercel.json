@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "kafportal-frontend",
+  "name": "kafportal-fullstack",
   "builds": [
     {
       "src": "package.json",
@@ -8,6 +8,10 @@
       "config": {
         "distDir": "dist"
       }
+    },
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -89,17 +93,17 @@
       ]
     }
   ],
-  "env": {
-    "VITE_APP_ENVIRONMENT": "production",
-    "VITE_ENABLE_ANALYTICS": "true",
-    "VITE_ENABLE_MONITORING": "true",
-    "VITE_ENABLE_PWA": "true"
-  },
-  "functions": {
-    "api/**/*.js": {
-      "maxDuration": 30
-    }
-  },
+      "env": {
+      "VITE_APP_ENVIRONMENT": "production",
+      "VITE_ENABLE_ANALYTICS": "true",
+      "VITE_ENABLE_MONITORING": "true",
+      "VITE_ENABLE_PWA": "true"
+    },
+    "functions": {
+      "api/**/*.js": {
+        "maxDuration": 30
+      }
+    },
   "regions": ["fra1"],
   "build": {
     "env": {
