@@ -84,6 +84,13 @@ const menuItems = [
     path: '/system',
     color: '#ef4444',
   },
+  {
+    id: 'test',
+    title: 'Test',
+    icon: CheckSquare,
+    path: '/test',
+    color: '#10b981',
+  },
 ]
 
 const Sidebar = ({ collapsed, onToggle }) => {

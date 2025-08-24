@@ -254,6 +254,14 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
+                    path="/test"
+                    element={
+                      <ProtectedRoute>
+                        <TestPage />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
                     path="/system/user-management"
                     element={
                       <ProtectedRoute requiredRoles={['admin']}>
