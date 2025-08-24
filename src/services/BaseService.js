@@ -84,8 +84,80 @@ const MOCK_DATA = {
     data: [],
   },
   '/volunteers': {
-    stats: { total: 25, active: 20, thisMonth: 3 },
-    data: [],
+    stats: { 
+      total: 247, 
+      active: 189, 
+      thisMonth: 34,
+      totalHours: 12450,
+      monthlyTrend: [180, 195, 210, 225, 240, 247]
+    },
+    data: [
+      {
+        id: 1,
+        name: 'Ahmet Yılmaz',
+        email: 'ahmet.yilmaz@email.com',
+        phone: '+90 532 123 4567',
+        role: 'Yardım Dağıtımı',
+        location: 'İstanbul',
+        status: 'Aktif',
+        joinDate: '2023-03-15',
+        totalHours: 156,
+        lastActivity: '2024-01-20',
+        skills: ['Lojistik', 'Organizasyon', 'İletişim']
+      },
+      {
+        id: 2,
+        name: 'Fatma Demir',
+        email: 'fatma.demir@email.com',
+        phone: '+90 533 234 5678',
+        role: 'Eğitim Koordinatörü',
+        location: 'Ankara',
+        status: 'Aktif',
+        joinDate: '2023-01-10',
+        totalHours: 234,
+        lastActivity: '2024-01-19',
+        skills: ['Eğitim', 'Mentorluk', 'Proje Yönetimi']
+      },
+      {
+        id: 3,
+        name: 'Mehmet Kaya',
+        email: 'mehmet.kaya@email.com',
+        phone: '+90 534 345 6789',
+        role: 'Sağlık Hizmetleri',
+        location: 'İzmir',
+        status: 'Aktif',
+        joinDate: '2023-06-20',
+        totalHours: 189,
+        lastActivity: '2024-01-18',
+        skills: ['İlk Yardım', 'Sağlık', 'Danışmanlık']
+      },
+      {
+        id: 4,
+        name: 'Ayşe Özkan',
+        email: 'ayse.ozkan@email.com',
+        phone: '+90 535 456 7890',
+        role: 'Sosyal Medya',
+        location: 'Bursa',
+        status: 'Pasif',
+        joinDate: '2023-02-05',
+        totalHours: 89,
+        lastActivity: '2023-12-15',
+        skills: ['Sosyal Medya', 'İçerik Üretimi', 'Pazarlama']
+      },
+      {
+        id: 5,
+        name: 'Hasan Yıldız',
+        email: 'hasan.yildiz@email.com',
+        phone: '+90 536 567 8901',
+        role: 'Teknik Destek',
+        location: 'Antalya',
+        status: 'Aktif',
+        joinDate: '2023-04-12',
+        totalHours: 167,
+        lastActivity: '2024-01-17',
+        skills: ['Teknoloji', 'Sistem Yönetimi', 'Destek']
+      }
+    ],
   },
   '/messages': {
     stats: { 

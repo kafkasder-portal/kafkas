@@ -55,6 +55,11 @@ const Volunteers = () => {
 
   // Arama ve filtreleme
   useEffect(() => {
+    if (!Array.isArray(volunteers)) {
+      setFilteredVolunteers([])
+      return
+    }
+    
     const filtered = volunteers.filter(volunteer =>
       volunteer.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       volunteer.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
