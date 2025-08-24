@@ -43,161 +43,62 @@ const menuItems = [
     color: '#667eea',
   },
   {
-    id: 'donations',
-    title: 'Bağış Yönetimi',
-    icon: Coins,
-    path: '/donations',
-    color: '#10b981',
-    subItems: [
-      { title: 'Bağış Listesi', path: '/donations' },
-      { title: 'Bağış Veznesi', path: '/donations/vault' },
-      { title: 'Kurumlar', path: '/donations/institutions' },
-      { title: 'Kumbara Takibi', path: '/bagis/kumbara-takibi' },
-    ],
-  },
-  {
-    id: 'meetings',
-    title: 'Toplantılar',
-    icon: Calendar,
-    path: '/meetings',
-    color: '#3b82f6',
-    subItems: [
-      { title: 'Tüm Toplantılar', path: '/meetings' },
-      { title: 'Toplantı Planla', path: '/meetings/create' },
-      { title: 'Toplantı Takvimi', path: '/meetings/calendar' },
-    ],
-  },
-  {
-    id: 'aid',
-    title: 'Yardım Yönetimi',
-    icon: HelpingHand,
-    path: '/aid',
-    color: '#10b981',
-    subItems: [
-      { title: 'İhtiyaç Sahipleri', path: '/yardim/ihtiyac-sahipleri' },
-      { title: 'Yardım Başvuruları', path: '/aid/applications' },
-      { title: 'Hastane Sevk', path: '/aid/hospital-referral' },
-    ],
-  },
-  {
-    id: 'finance',
-    title: 'Mali Yönetim',
-    icon: Calculator,
-    path: '/finance',
-    color: '#ef4444',
-    subItems: [
-      { title: 'Muhasebe', path: '/finance/accounting' },
-      { title: 'Banka İşlemleri', path: '/finance/bank-orders' },
-      { title: 'Finansal Raporlar', path: '/finance/reports' },
-    ],
-  },
-  {
-    id: 'volunteers',
-    title: 'Gönüllü Yönetimi',
-    icon: Users,
-    path: '/volunteers',
-    color: '#10b981',
-    subItems: [
-      { title: 'Gönüllü Listesi', path: '/volunteers' },
-      { title: 'Gönüllü Ekle', path: '/volunteers/create' },
-      { title: 'Gönüllü Raporları', path: '/volunteers/reports' },
-    ],
-  },
-  {
-    id: 'tasks',
-    title: 'Görev Yönetimi',
-    icon: CheckSquare,
-    path: '/tasks',
-    color: '#f59e0b',
-    subItems: [
-      { title: 'Görev Listesi', path: '/tasks' },
-      { title: 'Görev Oluştur', path: '/tasks/create' },
-      { title: 'Görev Takvimi', path: '/tasks/calendar' },
-    ],
-  },
-  {
-    id: 'messages',
-    title: 'Mesajlaşma',
-    icon: MessageSquare,
-    path: '/messages',
-    color: '#3b82f6',
-    subItems: [
-      { title: 'Mesaj Listesi', path: '/messages' },
-      { title: 'SMS Gönder', path: '/messages/sms' },
-      { title: 'WhatsApp', path: '/messages/whatsapp' },
-      { title: 'Email', path: '/messages/email' },
-    ],
-  },
-  {
     id: 'inventory',
     title: 'Envanter',
     icon: Package,
     path: '/inventory',
     color: '#f59e0b',
-    subItems: [
-      { title: 'Stok Listesi', path: '/inventory' },
-      { title: 'Stok Girişi', path: '/inventory/stock-in' },
-      { title: 'Stok Çıkışı', path: '/inventory/stock-out' },
-      { title: 'Envanter Raporları', path: '/inventory/reports' },
-    ],
   },
   {
-    id: 'donors',
-    title: 'Bağışçı Yönetimi',
+    id: 'tasks',
+    title: 'Görevler',
+    icon: CheckSquare,
+    path: '/tasks',
+    color: '#f59e0b',
+  },
+  {
+    id: 'donations',
+    title: 'Bağışlar',
+    icon: Coins,
+    path: '/donations',
+    color: '#10b981',
+  },
+  {
+    id: 'beneficiaries',
+    title: 'İhtiyaç Sahipleri',
     icon: Users,
-    path: '/donors',
+    path: '/beneficiaries',
     color: '#10b981',
-    subItems: [
-      { title: 'Bağışçı Listesi', path: '/donors' },
-      { title: 'CRM Yönetimi', path: '/donors/crm' },
-      { title: 'Bağışçı Raporları', path: '/donors/reports' },
-    ],
   },
   {
-    id: 'scholarship',
-    title: 'Burs Yönetimi',
-    icon: GraduationCap,
-    path: '/scholarship',
-    color: '#10b981',
-    subItems: [
-      { title: 'Burs Programları', path: '/scholarship/programs' },
-      { title: 'Burs Başvuruları', path: '/scholarship/applications' },
-    ],
+    id: 'volunteers',
+    title: 'Gönüllüler',
+    icon: Users,
+    path: '/volunteers',
+    color: '#3b82f6',
   },
   {
-    id: 'fund',
-    title: 'Fon Yönetimi',
-    icon: Building2,
-    path: '/fund',
-    color: '#10b981',
-    subItems: [
-      { title: 'Fon Listesi', path: '/fund' },
-      { title: 'Çalışma Alanları', path: '/fund/work-areas' },
-    ],
-  },
-  {
-    id: 'system',
-    title: 'Sistem Yönetimi',
-    icon: Shield,
-    path: '/system',
+    id: 'finance',
+    title: 'Finans',
+    icon: Calculator,
+    path: '/finance',
     color: '#ef4444',
-    subItems: [
-      { title: 'Kullanıcı Yönetimi', path: '/system/user-management' },
-      { title: 'IP Engelleme', path: '/system/ip-blocking' },
-      { title: 'Sistem Ayarları', path: '/system/settings' },
-      { title: 'Güvenlik Testi', path: '/security-test' },
-      { title: 'Performance Dashboard', path: '/performance' },
-    ],
   },
   {
-    id: 'demo',
-    title: 'Bileşenler Demo',
-    icon: Layers,
-    path: '/demo',
+    id: 'messages',
+    title: 'Mesajlar',
+    icon: MessageSquare,
+    path: '/messages',
     color: '#8b5cf6',
   },
   {
-    id: 'reports',
+    id: 'system',
+    title: 'Sistem',
+    icon: Shield,
+    path: '/system',
+    color: '#ef4444',
+  },
+]
     title: 'Rapor Oluşturucu',
     icon: FileText,
     path: '/reports',
@@ -248,26 +149,18 @@ const menuItems = [
 ]
 
 const Sidebar = ({ collapsed, onToggle }) => {
-  const [hoveredItem, setHoveredItem] = useState(null)
-  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 })
+  // Removed hover states for simplified navigation
   const { user, logout, hasPermission } = useAuth()
   const { t } = useTranslation()
   const location = useLocation()
   const deviceInfo = useDeviceDetection()
 
   const handleMouseEnter = useCallback((item, event) => {
-    if (item.subItems) {
-      const rect = event.currentTarget.getBoundingClientRect()
-      setPopupPosition({
-        top: rect.top,
-        left: rect.right + 10,
-      })
-      setHoveredItem(item)
-    }
+    // Simplified hover handling without submenus
   }, [])
 
   const handleMouseLeave = useCallback(() => {
-    setHoveredItem(null)
+    // Simplified mouse leave handling
   }, [])
 
   const isActive = useCallback(
@@ -334,10 +227,6 @@ const Sidebar = ({ collapsed, onToggle }) => {
     return menuItems.map(item => ({
       ...item,
       title: t(`navigation.${item.id}`),
-      subItems: item.subItems?.map(subItem => ({
-        ...subItem,
-        title: getSubItemTranslation(item.id, subItem.path),
-      })),
     }))
   }
 
@@ -388,58 +277,14 @@ const Sidebar = ({ collapsed, onToggle }) => {
                   </motion.div>
                 </Link>
 
-                {item.subItems && (
-                  <div className="submenu-indicator">
-                    <ChevronRight size={12} color="#64748b" />
-                  </div>
-                )}
+                {/* Removed submenu indicators for simplified navigation */}
               </motion.div>
             )
           })}
         </nav>
       </motion.div>
 
-      <AnimatePresence>
-        {hoveredItem && hoveredItem.subItems && (
-          <motion.div
-            className="popup-menu"
-            style={{
-              position: 'fixed',
-              top: popupPosition.top,
-              left: popupPosition.left,
-              zIndex: 1000,
-            }}
-            initial={{ opacity: 0, x: -10, scale: 0.95 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -10, scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-            onMouseEnter={() => setHoveredItem(hoveredItem)}
-            onMouseLeave={handleMouseLeave}
-          >
-            <div className="popup-header">
-              <hoveredItem.icon size={16} color={hoveredItem.color} />
-              <span>{hoveredItem.title}</span>
-            </div>
-            <div className="popup-items">
-              {hoveredItem.subItems.map((subItem, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Link
-                    to={subItem.path}
-                    className={`popup-item ${isActive(subItem.path) ? 'active' : ''}`}
-                  >
-                    {subItem.title}
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Submenu popup removed for simplified navigation */}
 
       {/* Enterprise Features */}
       <div className="mb-4">

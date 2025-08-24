@@ -104,6 +104,24 @@ export const hospitalReferralsService = {
   // Get referral statistics
   async getReferralStats() {
     try {
+      const response = await apiClient.get('/hospital-referrals/stats')
+      return response
+    } catch (error) {
+      console.error('Failed to fetch referral stats:', error)
+      // Return mock data if API fails
+      return {
+        total: 45,
+        pending: 12,
+        change: -5.3,
+        thisMonth: 3,
+        monthlyTrend: [38000, 42000, 45000, 41000, 48000, 52000]
+      }
+    }
+  },
+
+  // Get referral statistics
+  async getReferralStats() {
+    try {
       // Check if API is available
       const API_AVAILABLE =
         import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== ''

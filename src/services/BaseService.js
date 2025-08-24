@@ -7,11 +7,34 @@ const API_AVAILABLE = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_U
 // Mock data for different endpoints
 const MOCK_DATA = {
   '/donations': {
-    stats: { total: 150000, count: 45, thisMonth: 25000 },
+    stats: { 
+      total: 150000, 
+      monthly: 25000, 
+      change: 12.5,
+      count: 45, 
+      thisMonth: 25000,
+      monthlyTrend: [45000, 52000, 48000, 61000, 55000, 67000]
+    },
     data: [],
   },
   '/beneficiaries': {
-    stats: { total: 120, active: 98, thisMonth: 8 },
+    stats: { 
+      total: 120, 
+      active: 98, 
+      change: 8.2,
+      thisMonth: 8,
+      monthlyTrend: [42000, 47000, 51000, 49000, 62000, 58000]
+    },
+    data: [],
+  },
+  '/hospital-referrals': {
+    stats: { 
+      total: 45, 
+      pending: 12, 
+      change: -5.3,
+      thisMonth: 3,
+      monthlyTrend: [38000, 42000, 45000, 41000, 48000, 52000]
+    },
     data: [],
   },
   '/aid': {
