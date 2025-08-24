@@ -8,6 +8,7 @@ export default defineConfig([
   globalIgnores([
     'dist',
     'backend/**/*',
+    'api/**/*',
     'cypress/**/*',
     'scripts/**/*',
     'public/**/*',
@@ -17,6 +18,28 @@ export default defineConfig([
     'cypress.config.js',
     'vite.config.js'
   ]),
+  // Node.js environment for API files
+  {
+    files: ['api/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        require: 'readonly',
+        module: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly'
+      },
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'commonjs'
+      }
+    },
+    rules: {
+      'no-console': 'off',
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }]
+    }
+  },
   {
     files: ['**/*.{js,jsx}'],
     extends: [
@@ -26,7 +49,10 @@ export default defineConfig([
     ],
     languageOptions: {
       ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: {
+        ...globals.browser,
+        ...globals.node, // Node.js globals ekle
+      },
       parserOptions: {
         ecmaVersion: 'latest',
         ecmaFeatures: { jsx: true },
@@ -53,6 +79,23 @@ export default defineConfig([
       'valid-typeof': 'warn',
       'react-hooks/exhaustive-deps': 'warn',
       'react-refresh/only-export-components': 'warn',
+    },
+  },
+  // API dosyaları için özel konfigürasyon
+  {
+    files: ['api/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        module: 'readonly',
+        require: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': 'off', // API dosyalarında console kullanımına izin ver
     },
   },
 ])

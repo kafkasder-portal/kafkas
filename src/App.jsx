@@ -1,60 +1,50 @@
-import React, { Suspense, lazy, memo, useState } from 'react';
-import {
-  Route,
-  BrowserRouter as Router,
-  Routes,
-  RouterProvider,
-} from 'react-router-dom';
-import './App.css';
-import './animations.css';
-import AnimatedRoutes from './components/AnimatedRoutes';
-import ConnectionStatus from './components/ConnectionStatus';
-import ErrorBoundary from './components/ErrorBoundary';
-import LanguageSwitcher from './components/LanguageSwitcher';
-import MobileNavigation from './components/MobileNavigation';
-import NotificationPanel from './components/NotificationPanel';
-import ProtectedRoute from './components/ProtectedRoute';
-import Sidebar from './components/Sidebar';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { NotificationProvider } from './contexts/NotificationContext';
-import { ThemeProvider } from './contexts/ThemeContext';
-import useDeviceDetection from './hooks/useDeviceDetection.jsx';
+import React, { Suspense, lazy, memo, useState } from 'react'
+import { Route, BrowserRouter as Router, Routes, RouterProvider } from 'react-router-dom'
+import './App.css'
+import './animations.css'
+import AnimatedRoutes from './components/AnimatedRoutes'
+import ConnectionStatus from './components/ConnectionStatus'
+import ErrorBoundary from './components/ErrorBoundary'
+import LanguageSwitcher from './components/LanguageSwitcher'
+import MobileNavigation from './components/MobileNavigation'
+import NotificationPanel from './components/NotificationPanel'
+import ProtectedRoute from './components/ProtectedRoute'
+import Sidebar from './components/Sidebar'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { NotificationProvider } from './contexts/NotificationContext'
+import { ThemeProvider } from './contexts/ThemeContext'
+import useDeviceDetection from './hooks/useDeviceDetection.jsx'
 
 // Lazy loading ile sayfa componentlerini yükle
-const Login = lazy(() => import('./pages/Login'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Donations = lazy(() => import('./pages/Donations'));
-const Meetings = lazy(() => import('./pages/Meetings'));
-const Aid = lazy(() => import('./pages/Aid'));
-const Beneficiaries = lazy(() => import('./pages/Beneficiaries'));
-const BeneficiaryDetail = lazy(() => import('./pages/BeneficiaryDetail'));
-const Finance = lazy(() => import('./pages/Finance'));
-const Volunteers = lazy(() => import('./pages/Volunteers'));
-const Tasks = lazy(() => import('./pages/Tasks'));
-const Messages = lazy(() => import('./pages/Messages'));
-const WhatsApp = lazy(() => import('./pages/WhatsApp'));
-const ErrorDashboard = lazy(() => import('./pages/ErrorDashboard'));
-const Inventory = lazy(() => import('./pages/Inventory'));
-const Donors = lazy(() => import('./pages/Donors'));
-const Scholarship = lazy(() => import('./pages/Scholarship'));
-const Fund = lazy(() => import('./pages/Fund'));
-const PiggyBankTracking = lazy(() => import('./pages/PiggyBankTracking'));
-const System = lazy(() => import('./pages/System'));
-const UserManagement = lazy(() => import('./pages/UserManagement'));
-const ReportGenerator = lazy(() => import('./pages/ReportGenerator'));
-const FormBuilder = lazy(() => import('./pages/FormBuilder'));
-const PerformanceDashboard = lazy(() => import('./pages/PerformanceDashboard'));
-const AdvancedAnalytics = lazy(() => import('./pages/AdvancedAnalytics'));
-const RealTimeDashboard = lazy(() => import('./pages/RealTimeDashboard'));
-const WorkflowAutomation = lazy(() => import('./pages/WorkflowAutomation'));
-const HospitalReferral = lazy(() => import('./pages/HospitalReferral'));
-const MonitoringDashboard = lazy(
-  () => import('./components/MonitoringDashboard')
-);
-const TodosList = lazy(() => import('./components/TodosList'));
-const OptimizerDemo = lazy(() => import('./pages/OptimizerDemo'));
-const ProjectManagement = lazy(() => import('./pages/ProjectManagement'));
-const BudgetPlanning = lazy(() => import('./pages/BudgetPlanning'));
+const Login = lazy(() => import('./pages/Login'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Donations = lazy(() => import('./pages/Donations'))
+const Meetings = lazy(() => import('./pages/Meetings'))
+const Aid = lazy(() => import('./pages/Aid'))
+const Beneficiaries = lazy(() => import('./pages/Beneficiaries'))
+const BeneficiaryDetail = lazy(() => import('./pages/BeneficiaryDetail'))
+const Finance = lazy(() => import('./pages/Finance'))
+const Volunteers = lazy(() => import('./pages/Volunteers'))
+const Tasks = lazy(() => import('./pages/Tasks'))
+const Messages = lazy(() => import('./pages/Messages'))
+const WhatsApp = lazy(() => import('./pages/WhatsApp'))
+const ErrorDashboard = lazy(() => import('./pages/ErrorDashboard'))
+const Inventory = lazy(() => import('./pages/Inventory'))
+const Donors = lazy(() => import('./pages/Donors'))
+const Scholarship = lazy(() => import('./pages/Scholarship'))
+const Fund = lazy(() => import('./pages/Fund'))
+const PiggyBankTracking = lazy(() => import('./pages/PiggyBankTracking'))
+const System = lazy(() => import('./pages/System'))
+const UserManagement = lazy(() => import('./pages/UserManagement'))
+const ReportGenerator = lazy(() => import('./pages/ReportGenerator'))
+const FormBuilder = lazy(() => import('./pages/FormBuilder'))
+const PerformanceDashboard = lazy(() => import('./pages/PerformanceDashboard'))
+const AdvancedAnalytics = lazy(() => import('./pages/AdvancedAnalytics'))
+const RealTimeDashboard = lazy(() => import('./pages/RealTimeDashboard'))
+const WorkflowAutomation = lazy(() => import('./pages/WorkflowAutomation'))
+const HospitalReferral = lazy(() => import('./pages/HospitalReferral'))
+const MonitoringDashboard = lazy(() => import('./components/MonitoringDashboard'))
+const TodosList = lazy(() => import('./components/TodosList'))
 
 // Loading component
 const LoadingSpinner = () => (
@@ -80,12 +70,12 @@ const LoadingSpinner = () => (
     ></div>
     <span style={{ marginLeft: '1rem' }}>Yükleniyor...</span>
   </div>
-);
+)
 
 const AppContent = memo(() => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const deviceInfo = useDeviceDetection();
-  const { isAuthenticated } = useAuth();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const deviceInfo = useDeviceDetection()
+  const { isAuthenticated } = useAuth()
 
   return (
     <div className={`app device-${deviceInfo.type} ${deviceInfo.orientation}`}>
@@ -111,9 +101,9 @@ const AppContent = memo(() => {
             className={`main-content ${sidebarCollapsed ? 'expanded' : ''} ${deviceInfo.isMobile ? 'mobile' : ''}`}
           >
             {!deviceInfo.isMobile && (
-              <div className='main-header'>
-                <div className='header-actions'>
-                  <LanguageSwitcher variant='icon' />
+              <div className="main-header">
+                <div className="header-actions">
+                  <LanguageSwitcher variant="icon" />
                   <NotificationPanel />
                 </div>
               </div>
@@ -122,7 +112,7 @@ const AppContent = memo(() => {
               <AnimatedRoutes>
                 <Routes>
                   <Route
-                    path='/'
+                    path="/"
                     element={
                       <ProtectedRoute>
                         <Dashboard />
@@ -130,7 +120,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/donations/*'
+                    path="/donations/*"
                     element={
                       <ProtectedRoute>
                         <Donations />
@@ -138,7 +128,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/meetings/*'
+                    path="/meetings/*"
                     element={
                       <ProtectedRoute>
                         <Meetings />
@@ -146,7 +136,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/aid/*'
+                    path="/aid/*"
                     element={
                       <ProtectedRoute>
                         <Aid />
@@ -154,7 +144,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/aid/hospital-referral'
+                    path="/aid/hospital-referral"
                     element={
                       <ProtectedRoute>
                         <HospitalReferral />
@@ -162,7 +152,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/beneficiaries'
+                    path="/beneficiaries"
                     element={
                       <ProtectedRoute>
                         <Beneficiaries />
@@ -170,7 +160,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/beneficiaries/:id'
+                    path="/beneficiaries/:id"
                     element={
                       <ProtectedRoute>
                         <BeneficiaryDetail />
@@ -178,7 +168,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/finance/*'
+                    path="/finance/*"
                     element={
                       <ProtectedRoute requiredPermissions={['finance']}>
                         <Finance />
@@ -186,7 +176,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/volunteers/*'
+                    path="/volunteers/*"
                     element={
                       <ProtectedRoute>
                         <Volunteers />
@@ -194,7 +184,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/tasks/*'
+                    path="/tasks/*"
                     element={
                       <ProtectedRoute>
                         <Tasks />
@@ -202,7 +192,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/messages/*'
+                    path="/messages/*"
                     element={
                       <ProtectedRoute>
                         <Messages />
@@ -210,7 +200,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/messages/whatsapp'
+                    path="/messages/whatsapp"
                     element={
                       <ProtectedRoute>
                         <WhatsApp />
@@ -218,7 +208,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/system/error-dashboard'
+                    path="/system/error-dashboard"
                     element={
                       <ProtectedRoute requiredRoles={['admin']}>
                         <ErrorDashboard />
@@ -226,7 +216,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/inventory/*'
+                    path="/inventory/*"
                     element={
                       <ProtectedRoute>
                         <Inventory />
@@ -234,7 +224,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/donors/*'
+                    path="/donors/*"
                     element={
                       <ProtectedRoute>
                         <Donors />
@@ -242,7 +232,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/scholarship/*'
+                    path="/scholarship/*"
                     element={
                       <ProtectedRoute>
                         <Scholarship />
@@ -250,7 +240,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/fund/*'
+                    path="/fund/*"
                     element={
                       <ProtectedRoute>
                         <Fund />
@@ -258,7 +248,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/bagis/kumbara-takibi'
+                    path="/bagis/kumbara-takibi"
                     element={
                       <ProtectedRoute>
                         <PiggyBankTracking />
@@ -266,7 +256,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/system/*'
+                    path="/system/*"
                     element={
                       <ProtectedRoute requiredRoles={['admin']}>
                         <System />
@@ -274,7 +264,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/system/user-management'
+                    path="/system/user-management"
                     element={
                       <ProtectedRoute requiredRoles={['admin']}>
                         <UserManagement />
@@ -282,7 +272,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/reports'
+                    path="/reports"
                     element={
                       <ProtectedRoute>
                         <ReportGenerator />
@@ -290,7 +280,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/form-builder'
+                    path="/form-builder"
                     element={
                       <ProtectedRoute>
                         <FormBuilder />
@@ -298,23 +288,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/projects'
-                    element={
-                      <ProtectedRoute>
-                        <ProjectManagement />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path='/budget'
-                    element={
-                      <ProtectedRoute>
-                        <BudgetPlanning />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path='/performance'
+                    path="/performance"
                     element={
                       <ProtectedRoute requiredRoles={['admin']}>
                         <PerformanceDashboard />
@@ -322,7 +296,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/analytics'
+                    path="/analytics"
                     element={
                       <ProtectedRoute>
                         <AdvancedAnalytics />
@@ -330,7 +304,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/realtime'
+                    path="/realtime"
                     element={
                       <ProtectedRoute>
                         <RealTimeDashboard />
@@ -338,7 +312,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/workflow'
+                    path="/workflow"
                     element={
                       <ProtectedRoute>
                         <WorkflowAutomation />
@@ -346,7 +320,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/monitoring-dashboard'
+                    path="/monitoring-dashboard"
                     element={
                       <ProtectedRoute>
                         <MonitoringDashboard />
@@ -354,18 +328,10 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path='/todos'
+                    path="/todos"
                     element={
                       <ProtectedRoute>
                         <TodosList />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path='/optimizer-demo'
-                    element={
-                      <ProtectedRoute requiredRoles={['admin']}>
-                        <OptimizerDemo />
                       </ProtectedRoute>
                     }
                   />
@@ -376,8 +342,10 @@ const AppContent = memo(() => {
         </>
       )}
     </div>
-  );
-});
+  )
+})
+
+
 
 function App() {
   return (
@@ -385,16 +353,14 @@ function App() {
       <ThemeProvider>
         <AuthProvider>
           <NotificationProvider>
-            <Router
-              future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-            >
+            <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <AppContent />
             </Router>
           </NotificationProvider>
         </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>
-  );
+  )
 }
 
-export default App;
+export default App

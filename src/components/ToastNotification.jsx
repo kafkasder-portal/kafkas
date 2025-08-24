@@ -1,6 +1,6 @@
-import { AnimatePresence } from 'framer-motion';
-import React from 'react';
-import { TOAST_TYPES } from '../utils/toast';
+import { AnimatePresence } from 'framer-motion'
+import React from 'react'
+import { TOAST_TYPES } from '../utils/toast'
 
 /**
  * Reusable Toast Notification Component
@@ -10,16 +10,16 @@ const ToastNotification = ({ toast }) => {
   const getBackgroundColor = () => {
     switch (toast.type) {
       case TOAST_TYPES.SUCCESS:
-        return '#10b981';
+        return '#10b981'
       case TOAST_TYPES.ERROR:
-        return '#ef4444';
+        return '#ef4444'
       case TOAST_TYPES.WARNING:
-        return '#f59e0b';
+        return '#f59e0b'
       case TOAST_TYPES.INFO:
       default:
-        return '#3b82f6';
+        return '#3b82f6'
     }
-  };
+  }
 
   return (
     <AnimatePresence>
@@ -40,7 +40,7 @@ const ToastNotification = ({ toast }) => {
             boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
             zIndex: 9999,
             minWidth: '250px',
-            maxWidth: '400px',
+            maxWidth: '400px'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -53,7 +53,7 @@ const ToastNotification = ({ toast }) => {
         </motion.div>
       )}
     </AnimatePresence>
-  );
-};
+  )
+}
 
-export default ToastNotification;
+export default ToastNotification

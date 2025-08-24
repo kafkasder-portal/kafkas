@@ -1,4 +1,4 @@
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion'
 import {
   Calculator,
   CheckSquare,
@@ -10,17 +10,15 @@ import {
   Package,
   Shield,
   Users,
-  Target,
-  DollarSign,
-} from 'lucide-react';
-import { memo, useCallback, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link, NavLink, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import useDeviceDetection from '../hooks/useDeviceDetection.jsx';
-import './Sidebar.css';
-import ThemeToggle from './ThemeToggle';
-import UserProfile from './UserProfile';
+} from 'lucide-react'
+import { memo, useCallback, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Link, NavLink, useLocation } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
+import useDeviceDetection from '../hooks/useDeviceDetection.jsx'
+import './Sidebar.css'
+import ThemeToggle from './ThemeToggle'
+import UserProfile from './UserProfile'
 
 const menuItems = [
   {
@@ -73,20 +71,6 @@ const menuItems = [
     color: '#dc2626',
   },
   {
-    id: 'projects',
-    title: 'Proje Yönetimi',
-    icon: Target,
-    path: '/projects',
-    color: '#059669',
-  },
-  {
-    id: 'budget',
-    title: 'Bütçe Planlama',
-    icon: DollarSign,
-    path: '/budget',
-    color: '#f59e0b',
-  },
-  {
     id: 'messages',
     title: 'Mesajlar',
     icon: MessageSquare,
@@ -102,8 +86,8 @@ const menuItems = [
     subItems: [
       { title: 'Genel Ayarlar', path: '/system' },
       { title: 'Hata Takibi', path: '/system/error-dashboard' },
-      { title: 'Kullanıcı Yönetimi', path: '/system/user-management' },
-    ],
+      { title: 'Kullanıcı Yönetimi', path: '/system/user-management' }
+    ]
   },
   {
     id: 'test',
@@ -112,58 +96,44 @@ const menuItems = [
     path: '/test',
     color: '#059669',
   },
-  {
-    id: 'optimizer-demo',
-    title: 'AI Optimizer',
-    icon: Shield,
-    path: '/optimizer-demo',
-    color: '#2563eb',
-    adminOnly: true,
-  },
-];
+]
 
 const Sidebar = ({ collapsed, onToggle }) => {
-  const { user, logout, hasPermission } = useAuth();
-  const { t } = useTranslation();
-  const location = useLocation();
-  const deviceInfo = useDeviceDetection();
-
-  const [hoveredItem, setHoveredItem] = useState(null);
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
+  const { user, logout, hasPermission } = useAuth()
+  const { t } = useTranslation()
+  const location = useLocation()
+  const deviceInfo = useDeviceDetection()
+  
+  const [hoveredItem, setHoveredItem] = useState(null)
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
 
   const handleMouseEnter = useCallback((item, event) => {
-    const rect = event.currentTarget.getBoundingClientRect();
+    const rect = event.currentTarget.getBoundingClientRect()
     setPopupPosition({
       x: rect.right + 10,
-      y: rect.top,
-    });
-    setHoveredItem(item);
-  }, []);
+      y: rect.top
+    })
+    setHoveredItem(item)
+  }, [])
 
   const handleMouseLeave = useCallback(() => {
-    setHoveredItem(null);
-  }, []);
+    setHoveredItem(null)
+  }, [])
 
   const isActive = useCallback(
     path => {
       if (path === '/') {
-        return location.pathname === '/';
+        return location.pathname === '/'
       }
-      return location.pathname.startsWith(path);
+      return location.pathname.startsWith(path)
     },
     [location.pathname]
-  );
+  )
 
-  // Filter menu items based on user permissions
+  // Show all menu items since auth is removed
   const getFilteredMenuItems = (items = translatedMenuItems) => {
-    return items.filter(item => {
-      // If item requires admin role, check if user is admin
-      if (item.adminOnly) {
-        return user?.role === 'admin';
-      }
-      return true;
-    });
-  };
+    return items // Return all items without filtering
+  }
 
   // Alt menü öğeleri için çeviri anahtarını al
   const getSubItemTranslation = (parentId, path) => {
@@ -204,33 +174,33 @@ const Sidebar = ({ collapsed, onToggle }) => {
       '/system/user-management': 'navigation.userManagement',
       '/system/ip-blocking': 'navigation.ipBlocking',
       '/system/settings': 'navigation.systemSettings',
-    };
+    }
 
-    return t(translationMap[path] || path);
-  };
+    return t(translationMap[path] || path)
+  }
 
   // Menü öğelerini çevir
   const getTranslatedMenuItems = () => {
     return menuItems.map(item => ({
       ...item,
       title: t(`navigation.${item.id}`),
-    }));
-  };
+    }))
+  }
 
-  const translatedMenuItems = getTranslatedMenuItems();
-  const filteredMenuItems = getFilteredMenuItems(translatedMenuItems);
+  const translatedMenuItems = getTranslatedMenuItems()
+  const filteredMenuItems = getFilteredMenuItems(translatedMenuItems)
 
   return (
     <>
       <motion.div
-        className='sidebar'
+        className="sidebar"
         initial={{ x: -100 }}
         animate={{ x: 0 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
-        <div className='sidebar-header'>
+        <div className="sidebar-header">
           <motion.button
-            className='toggle-btn'
+            className="toggle-btn"
             onClick={onToggle}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -239,10 +209,10 @@ const Sidebar = ({ collapsed, onToggle }) => {
           </motion.button>
         </div>
 
-        <nav className='sidebar-nav'>
+        <nav className="sidebar-nav">
           {filteredMenuItems.map(item => {
-            const IconComponent = item.icon;
-            const active = isActive(item.path);
+            const IconComponent = item.icon
+            const active = isActive(item.path)
 
             return (
               <motion.div
@@ -253,27 +223,22 @@ const Sidebar = ({ collapsed, onToggle }) => {
                 whileHover={{ x: 5 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               >
-                <Link
+                <Link 
                   to={item.path}
-                  className='nav-link'
+                  className="nav-link"
                   style={{ textDecoration: 'none' }}
                 >
                   <motion.div
-                    className='icon-wrapper'
-                    style={{
-                      backgroundColor: active ? item.color : 'rgba(0,0,0,0)',
-                    }}
+                    className="icon-wrapper"
+                    style={{ backgroundColor: active ? item.color : 'rgba(0,0,0,0)' }}
                     whileHover={{ scale: 1.1 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                   >
-                    <IconComponent
-                      size={20}
-                      color={active ? 'white' : item.color}
-                    />
+                    <IconComponent size={20} color={active ? 'white' : item.color} />
                   </motion.div>
                 </Link>
               </motion.div>
-            );
+            )
           })}
         </nav>
       </motion.div>
@@ -282,7 +247,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
       <AnimatePresence>
         {hoveredItem && (
           <motion.div
-            className='popup-menu'
+            className="popup-menu"
             initial={{ opacity: 0, x: -20, scale: 0.95 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: -20, scale: 0.95 }}
@@ -291,165 +256,97 @@ const Sidebar = ({ collapsed, onToggle }) => {
               position: 'fixed',
               left: popupPosition.x,
               top: popupPosition.y,
-              zIndex: 1000,
+              zIndex: 1000
             }}
             onMouseEnter={() => setHoveredItem(hoveredItem)}
             onMouseLeave={handleMouseLeave}
           >
-            <div className='popup-header'>
+            <div className="popup-header">
               <hoveredItem.icon size={16} color={hoveredItem.color} />
               {hoveredItem.title}
             </div>
-            <div className='popup-items'>
+            <div className="popup-items">
               {hoveredItem.id === 'dashboard' && (
                 <>
-                  <Link to='/' className='popup-item'>
-                    Ana Dashboard
-                  </Link>
-                  <Link to='/analytics' className='popup-item'>
-                    Analitik
-                  </Link>
-                  <Link to='/reports' className='popup-item'>
-                    Raporlar
-                  </Link>
+                  <Link to="/" className="popup-item">Ana Dashboard</Link>
+                  <Link to="/analytics" className="popup-item">Analitik</Link>
+                  <Link to="/reports" className="popup-item">Raporlar</Link>
                 </>
               )}
-
+              
               {hoveredItem.id === 'donations' && (
                 <>
-                  <Link to='/donations' className='popup-item'>
-                    Bağış Listesi
-                  </Link>
-                  <Link to='/donations/vault' className='popup-item'>
-                    Kumbara Takibi
-                  </Link>
-                  <Link to='/donations/institutions' className='popup-item'>
-                    Kurumlar
-                  </Link>
-                  <Link to='/donors' className='popup-item'>
-                    Bağışçılar
-                  </Link>
+                  <Link to="/donations" className="popup-item">Bağış Listesi</Link>
+                  <Link to="/donations/vault" className="popup-item">Kumbara Takibi</Link>
+                  <Link to="/donations/institutions" className="popup-item">Kurumlar</Link>
+                  <Link to="/donors" className="popup-item">Bağışçılar</Link>
                 </>
               )}
-
+              
               {hoveredItem.id === 'beneficiaries' && (
                 <>
-                  <Link to='/beneficiaries' className='popup-item'>
-                    İhtiyaç Sahipleri
-                  </Link>
-                  <Link to='/aid' className='popup-item'>
-                    Yardım Programları
-                  </Link>
-                  <Link to='/scholarship' className='popup-item'>
-                    Burs Programları
-                  </Link>
-                  <Link to='/hospital-referrals' className='popup-item'>
-                    Hastane Sevkleri
-                  </Link>
+                  <Link to="/beneficiaries" className="popup-item">İhtiyaç Sahipleri</Link>
+                  <Link to="/aid" className="popup-item">Yardım Programları</Link>
+                  <Link to="/scholarship" className="popup-item">Burs Programları</Link>
+                  <Link to="/hospital-referrals" className="popup-item">Hastane Sevkleri</Link>
                 </>
               )}
-
+              
               {hoveredItem.id === 'volunteers' && (
                 <>
-                  <Link to='/volunteers' className='popup-item'>
-                    Gönüllü Listesi
-                  </Link>
-                  <Link to='/volunteers/create' className='popup-item'>
-                    Yeni Gönüllü
-                  </Link>
-                  <Link to='/volunteers/reports' className='popup-item'>
-                    Gönüllü Raporları
-                  </Link>
+                  <Link to="/volunteers" className="popup-item">Gönüllü Listesi</Link>
+                  <Link to="/volunteers/create" className="popup-item">Yeni Gönüllü</Link>
+                  <Link to="/volunteers/reports" className="popup-item">Gönüllü Raporları</Link>
                 </>
               )}
-
+              
               {hoveredItem.id === 'finance' && (
                 <>
-                  <Link to='/finance' className='popup-item'>
-                    Finans Yönetimi
-                  </Link>
-                  <Link to='/finance/accounting' className='popup-item'>
-                    Muhasebe
-                  </Link>
-                  <Link to='/finance/bank-orders' className='popup-item'>
-                    Banka İşlemleri
-                  </Link>
-                  <Link to='/finance/reports' className='popup-item'>
-                    Finansal Raporlar
-                  </Link>
+                  <Link to="/finance" className="popup-item">Finans Yönetimi</Link>
+                  <Link to="/finance/accounting" className="popup-item">Muhasebe</Link>
+                  <Link to="/finance/bank-orders" className="popup-item">Banka İşlemleri</Link>
+                  <Link to="/finance/reports" className="popup-item">Finansal Raporlar</Link>
                 </>
               )}
-
+              
               {hoveredItem.id === 'tasks' && (
                 <>
-                  <Link to='/tasks' className='popup-item'>
-                    Görev Listesi
-                  </Link>
-                  <Link to='/tasks/create' className='popup-item'>
-                    Yeni Görev
-                  </Link>
-                  <Link to='/tasks/calendar' className='popup-item'>
-                    Görev Takvimi
-                  </Link>
+                  <Link to="/tasks" className="popup-item">Görev Listesi</Link>
+                  <Link to="/tasks/create" className="popup-item">Yeni Görev</Link>
+                  <Link to="/tasks/calendar" className="popup-item">Görev Takvimi</Link>
                 </>
               )}
-
+              
               {hoveredItem.id === 'inventory' && (
                 <>
-                  <Link to='/inventory' className='popup-item'>
-                    Envanter Listesi
-                  </Link>
-                  <Link to='/inventory/stock-in' className='popup-item'>
-                    Stok Girişi
-                  </Link>
-                  <Link to='/inventory/stock-out' className='popup-item'>
-                    Stok Çıkışı
-                  </Link>
-                  <Link to='/inventory/reports' className='popup-item'>
-                    Envanter Raporları
-                  </Link>
+                  <Link to="/inventory" className="popup-item">Envanter Listesi</Link>
+                  <Link to="/inventory/stock-in" className="popup-item">Stok Girişi</Link>
+                  <Link to="/inventory/stock-out" className="popup-item">Stok Çıkışı</Link>
+                  <Link to="/inventory/reports" className="popup-item">Envanter Raporları</Link>
                 </>
               )}
-
+              
               {hoveredItem.id === 'messages' && (
                 <>
-                  <Link to='/messages' className='popup-item'>
-                    Mesaj Listesi
-                  </Link>
-                  <Link to='/messages/sms' className='popup-item'>
-                    SMS Gönder
-                  </Link>
-                  <Link to='/messages/whatsapp' className='popup-item'>
-                    WhatsApp
-                  </Link>
-                  <Link to='/messages/email' className='popup-item'>
-                    E-posta
-                  </Link>
+                  <Link to="/messages" className="popup-item">Mesaj Listesi</Link>
+                  <Link to="/messages/sms" className="popup-item">SMS Gönder</Link>
+                  <Link to="/messages/whatsapp" className="popup-item">WhatsApp</Link>
+                  <Link to="/messages/email" className="popup-item">E-posta</Link>
                 </>
               )}
-
+              
               {hoveredItem.id === 'system' && (
                 <>
-                  <Link to='/system' className='popup-item'>
-                    Sistem Ayarları
-                  </Link>
-                  <Link to='/system/user-management' className='popup-item'>
-                    Kullanıcı Yönetimi
-                  </Link>
-                  <Link to='/system/ip-blocking' className='popup-item'>
-                    IP Engelleme
-                  </Link>
-                  <Link to='/system/settings' className='popup-item'>
-                    Genel Ayarlar
-                  </Link>
+                  <Link to="/system" className="popup-item">Sistem Ayarları</Link>
+                  <Link to="/system/user-management" className="popup-item">Kullanıcı Yönetimi</Link>
+                  <Link to="/system/ip-blocking" className="popup-item">IP Engelleme</Link>
+                  <Link to="/system/settings" className="popup-item">Genel Ayarlar</Link>
                 </>
               )}
-
+              
               {hoveredItem.id === 'test' && (
                 <>
-                  <Link to='/test' className='popup-item'>
-                    Test Sayfası
-                  </Link>
+                  <Link to="/test" className="popup-item">Test Sayfası</Link>
                 </>
               )}
             </div>
@@ -458,22 +355,22 @@ const Sidebar = ({ collapsed, onToggle }) => {
       </AnimatePresence>
 
       {/* Device Info */}
-      <div className='sidebar-footer'>
+      <div className="sidebar-footer">
         <UserProfile />
-        <div className='mt-2 space-y-2'>
+        <div className="mt-2 space-y-2">
           <ThemeToggle />
           <button
             onClick={logout}
-            className='w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors'
+            className="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
           >
-            <LogOut className='h-4 w-4 mr-2' />
+            <LogOut className="h-4 w-4 mr-2" />
             Çıkış Yap
           </button>
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 export default memo(Sidebar, (prevProps, nextProps) => {
-  return prevProps.collapsed === nextProps.collapsed;
-});
+  return prevProps.collapsed === nextProps.collapsed
+})

@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react'
+import {  AnimatePresence } from 'framer-motion'
 import {
   Bell,
   BellRing,
@@ -14,13 +14,13 @@ import {
   CheckCircle,
   XCircle,
   Loader,
-} from 'lucide-react';
-import { useNotification } from '../contexts/NotificationContext';
+} from 'lucide-react'
+import { useNotification } from '../contexts/NotificationContext'
 
 const NotificationPanel = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const panelRef = useRef(null);
+  const [isOpen, setIsOpen] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
+  const panelRef = useRef(null)
   const {
     notifications,
     unreadCount,
@@ -33,89 +33,89 @@ const NotificationPanel = () => {
     requestDesktopPermission,
     NOTIFICATION_TYPES,
     NOTIFICATION_PRIORITY,
-  } = useNotification();
+  } = useNotification()
 
   // Panel dışında tıklandığında kapat
   useEffect(() => {
     const handleClickOutside = event => {
       if (panelRef.current && !panelRef.current.contains(event.target)) {
-        setIsOpen(false);
-        setShowSettings(false);
+        setIsOpen(false)
+        setShowSettings(false)
       }
-    };
+    }
 
     const handleEscapeKey = event => {
       if (event.key === 'Escape') {
-        setIsOpen(false);
-        setShowSettings(false);
+        setIsOpen(false)
+        setShowSettings(false)
       }
-    };
+    }
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('keydown', handleEscapeKey);
+      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('keydown', handleEscapeKey)
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscapeKey);
-    };
-  }, [isOpen]);
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscapeKey)
+    }
+  }, [isOpen])
 
   const getNotificationIcon = type => {
     switch (type) {
       case NOTIFICATION_TYPES.SUCCESS:
-        return <CheckCircle size={16} color='#10b981' />;
+        return <CheckCircle size={16} color="#10b981" />
       case NOTIFICATION_TYPES.ERROR:
-        return <XCircle size={16} color='#ef4444' />;
+        return <XCircle size={16} color="#ef4444" />
       case NOTIFICATION_TYPES.WARNING:
-        return <AlertTriangle size={16} color='#f59e0b' />;
+        return <AlertTriangle size={16} color="#f59e0b" />
       case NOTIFICATION_TYPES.LOADING:
-        return <Loader size={16} color='#3b82f6' className='animate-spin' />;
+        return <Loader size={16} color="#3b82f6" className="animate-spin" />
       default:
-        return <Info size={16} color='#6b7280' />;
+        return <Info size={16} color="#6b7280" />
     }
-  };
+  }
 
   const getPriorityColor = priority => {
     switch (priority) {
       case NOTIFICATION_PRIORITY.URGENT:
-        return '#ef4444';
+        return '#ef4444'
       case NOTIFICATION_PRIORITY.HIGH:
-        return '#f59e0b';
+        return '#f59e0b'
       case NOTIFICATION_PRIORITY.MEDIUM:
-        return '#3b82f6';
+        return '#3b82f6'
       default:
-        return '#6b7280';
+        return '#6b7280'
     }
-  };
+  }
 
   const formatTime = timestamp => {
-    const now = new Date();
-    const time = new Date(timestamp);
-    const diff = now - time;
+    const now = new Date()
+    const time = new Date(timestamp)
+    const diff = now - time
 
-    if (diff < 60000) return 'Şimdi';
-    if (diff < 3600000) return `${Math.floor(diff / 60000)} dk önce`;
-    if (diff < 86400000) return `${Math.floor(diff / 3600000)} saat önce`;
+    if (diff < 60000) return 'Şimdi'
+    if (diff < 3600000) return `${Math.floor(diff / 60000)} dk önce`
+    if (diff < 86400000) return `${Math.floor(diff / 3600000)} saat önce`
     return time.toLocaleDateString('tr-TR', {
       day: 'numeric',
       month: 'short',
       hour: '2-digit',
       minute: '2-digit',
-    });
-  };
+    })
+  }
 
   const handleEnableDesktop = async () => {
-    const granted = await requestDesktopPermission();
+    const granted = await requestDesktopPermission()
     if (granted) {
-      updateSettings({ enableDesktop: true });
+      updateSettings({ enableDesktop: true })
     }
-  };
+  }
 
   return (
     <div
-      className='notification-panel'
+      className="notification-panel"
       ref={panelRef}
       style={{
         position: 'relative',
@@ -123,7 +123,7 @@ const NotificationPanel = () => {
     >
       {/* Bildirim Butonu */}
       <motion.button
-        className='notification-button'
+        className="notification-button"
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{
           scale: 1.05,
@@ -145,9 +145,9 @@ const NotificationPanel = () => {
         }}
       >
         {unreadCount > 0 ? (
-          <BellRing size={20} color='#3b82f6' />
+          <BellRing size={20} color="#3b82f6" />
         ) : (
-          <Bell size={20} color='#6b7280' />
+          <Bell size={20} color="#6b7280" />
         )}
 
         {unreadCount > 0 && (
@@ -267,9 +267,7 @@ const NotificationPanel = () => {
                 )}
               </div>
 
-              <div
-                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-              >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 {unreadCount > 0 && (
                   <motion.button
                     onClick={markAllAsRead}
@@ -285,9 +283,9 @@ const NotificationPanel = () => {
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}
-                    title='Tümünü okundu olarak işaretle'
+                    title="Tümünü okundu olarak işaretle"
                   >
-                    <CheckCheck size={14} color='#3b82f6' />
+                    <CheckCheck size={14} color="#3b82f6" />
                   </motion.button>
                 )}
 
@@ -305,9 +303,9 @@ const NotificationPanel = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
-                  title='Ayarlar'
+                  title="Ayarlar"
                 >
-                  <Settings size={14} color='#6b7280' />
+                  <Settings size={14} color="#6b7280" />
                 </motion.button>
               </div>
             </div>
@@ -337,13 +335,7 @@ const NotificationPanel = () => {
                     Bildirim Ayarları
                   </h4>
 
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '8px',
-                    }}
-                  >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <label
                       style={{
                         display: 'flex',
@@ -353,11 +345,9 @@ const NotificationPanel = () => {
                       }}
                     >
                       <input
-                        type='checkbox'
+                        type="checkbox"
                         checked={settings.enableSound}
-                        onChange={e =>
-                          updateSettings({ enableSound: e.target.checked })
-                        }
+                        onChange={e => updateSettings({ enableSound: e.target.checked })}
                       />
                       Ses bildirimleri
                     </label>
@@ -371,7 +361,7 @@ const NotificationPanel = () => {
                       }}
                     >
                       <input
-                        type='checkbox'
+                        type="checkbox"
                         checked={settings.enableDesktop}
                         onChange={e =>
                           e.target.checked
@@ -391,11 +381,9 @@ const NotificationPanel = () => {
                       }}
                     >
                       <input
-                        type='checkbox'
+                        type="checkbox"
                         checked={settings.autoRead}
-                        onChange={e =>
-                          updateSettings({ autoRead: e.target.checked })
-                        }
+                        onChange={e => updateSettings({ autoRead: e.target.checked })}
                       />
                       Otomatik okundu işaretle
                     </label>
@@ -444,14 +432,8 @@ const NotificationPanel = () => {
                     color: '#64748b',
                   }}
                 >
-                  <Bell
-                    size={32}
-                    color='#cbd5e1'
-                    style={{ margin: '0 auto 8px' }}
-                  />
-                  <p style={{ fontSize: '14px', margin: 0 }}>
-                    Henüz bildirim yok
-                  </p>
+                  <Bell size={32} color="#cbd5e1" style={{ margin: '0 auto 8px' }} />
+                  <p style={{ fontSize: '14px', margin: 0 }}>Henüz bildirim yok</p>
                 </div>
               ) : (
                 notifications.map((notification, index) => (
@@ -496,13 +478,7 @@ const NotificationPanel = () => {
                     }}
                     onClick={() => markAsRead(notification.id)}
                   >
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: '12px',
-                      }}
-                    >
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                       <div style={{ flexShrink: 0, marginTop: '2px' }}>
                         {getNotificationIcon(notification.type)}
                       </div>
@@ -551,18 +527,12 @@ const NotificationPanel = () => {
                         </div>
                       </div>
 
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                        }}
-                      >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         {!notification.read && (
                           <motion.button
                             onClick={e => {
-                              e.stopPropagation();
-                              markAsRead(notification.id);
+                              e.stopPropagation()
+                              markAsRead(notification.id)
                             }}
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
@@ -573,16 +543,16 @@ const NotificationPanel = () => {
                               backgroundColor: 'rgba(0,0,0,0)',
                               cursor: 'pointer',
                             }}
-                            title='Okundu olarak işaretle'
+                            title="Okundu olarak işaretle"
                           >
-                            <Check size={12} color='#10b981' />
+                            <Check size={12} color="#10b981" />
                           </motion.button>
                         )}
 
                         <motion.button
                           onClick={e => {
-                            e.stopPropagation();
-                            removeNotification(notification.id);
+                            e.stopPropagation()
+                            removeNotification(notification.id)
                           }}
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
@@ -593,9 +563,9 @@ const NotificationPanel = () => {
                             backgroundColor: 'rgba(0,0,0,0)',
                             cursor: 'pointer',
                           }}
-                          title='Bildirimi sil'
+                          title="Bildirimi sil"
                         >
-                          <X size={12} color='#ef4444' />
+                          <X size={12} color="#ef4444" />
                         </motion.button>
                       </div>
                     </div>
@@ -607,7 +577,7 @@ const NotificationPanel = () => {
         )}
       </AnimatePresence>
     </div>
-  );
-};
+  )
+}
 
-export default NotificationPanel;
+export default NotificationPanel

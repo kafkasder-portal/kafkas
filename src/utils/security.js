@@ -4,6 +4,29 @@ import {
   validateCSRFToken,
 } from './validation';
 
+// Production'da console.log kullanımını kısıtla
+export const safeLog = (level, message, ...args) => {
+  if (import.meta.env.DEV) {
+    switch (level) {
+      case 'error':
+        console.error(message, ...args);
+        break;
+      case 'warn':
+        console.warn(message, ...args);
+        break;
+      case 'info':
+        console.info(message, ...args);
+        break;
+      default:
+        console.log(message, ...args);
+    }
+  }
+  // Production'da sadece error'ları logla
+  else if (level === 'error') {
+    console.error(message, ...args);
+  }
+};
+
 // Security headers configuration
 export const SECURITY_HEADERS = {
   'X-Content-Type-Options': 'nosniff',

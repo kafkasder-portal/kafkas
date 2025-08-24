@@ -295,22 +295,46 @@ export class BaseService {
   async handleRequest(requestFn, operation = 'API request') {
     try {
       const result = await requestFn();
-      return result;
+      return { data: result, error: null };
     } catch (error) {
-      // Use the standardized error handler
-      handleApiError(error);
-
-      // Log additional context for debugging
-      console.error(`Failed ${operation}:`, {
-        endpoint: this.endpoint,
-        error: error.message,
-        status: error.status,
-        details: error.data,
-      });
-
-      // Re-throw the error so components can handle it appropriately
-      throw error;
+      if (import.meta.env.DEV) {
+        console.error(`${operation} hatası:`, error);
+      }
+      return { data: null, error };
     }
+  }
+
+  /**
+   * Standardized Supabase request wrapper
+   * @param {Function} supabaseFn - Supabase query function
+   * @param {string} operation - Operation description
+   * @returns {Promise} Standardized response
+   */
+  async handleSupabaseRequest(supabaseFn, operation = 'Supabase request') {
+    try {
+      const { data, error } = await supabaseFn();
+      if (error) throw error;
+      return { data, error: null };
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error(`${operation} hatası:`, error);
+      }
+      return { data: null, error };
+    }
+  }
+
+  /**
+   * Standardized response formatter
+   * @param {any} data - Response data
+   * @param {Error|null} error - Error object
+   * @param {any} fallbackData - Fallback data for errors
+   * @returns {Object} Standardized response
+   */
+  formatResponse(data, error = null, fallbackData = null) {
+    if (error) {
+      return { data: fallbackData, error };
+    }
+    return { data, error: null };
   }
 
   // Standard CRUD operations with consistent error handling
@@ -327,22 +351,21 @@ export class BaseService {
 
   async getById(id) {
     if (!API_AVAILABLE) {
-      return Promise.resolve({ id, name: 'Mock Data', status: 'active' });
+      const mockData = MOCK_DATA[this.endpoint]?.data || [];
+      const item = mockData.find(item => item.id === id);
+      return Promise.resolve(this.formatResponse(item, null, null));
     }
 
     return this.handleRequest(
       () => apiClient.get(`${this.endpoint}/${id}`),
-      `to fetch ${this.endpoint} with id ${id}`
+      `to fetch ${this.endpoint} by id: ${id}`
     );
   }
 
   async create(data) {
     if (!API_AVAILABLE) {
-      return Promise.resolve({
-        id: Date.now(),
-        ...data,
-        created_at: new Date().toISOString(),
-      });
+      const newItem = { id: Date.now().toString(), ...data };
+      return Promise.resolve(this.formatResponse(newItem, null, null));
     }
 
     return this.handleRequest(
@@ -353,50 +376,52 @@ export class BaseService {
 
   async update(id, data) {
     if (!API_AVAILABLE) {
-      return Promise.resolve({
-        id,
-        ...data,
-        updated_at: new Date().toISOString(),
-      });
+      return Promise.resolve(this.formatResponse({ id, ...data }, null, null));
     }
 
     return this.handleRequest(
       () => apiClient.put(`${this.endpoint}/${id}`, data),
-      `to update ${this.endpoint} with id ${id}`
+      `to update ${this.endpoint} with id: ${id}`
     );
   }
 
   async delete(id) {
     if (!API_AVAILABLE) {
-      return Promise.resolve({ success: true, id });
+      return Promise.resolve(this.formatResponse(true, null, false));
     }
 
     return this.handleRequest(
       () => apiClient.delete(`${this.endpoint}/${id}`),
-      `to delete ${this.endpoint} with id ${id}`
+      `to delete ${this.endpoint} with id: ${id}`
     );
   }
 
   async search(query) {
     if (!API_AVAILABLE) {
-      return Promise.resolve([]);
+      const mockData = MOCK_DATA[this.endpoint]?.data || [];
+      const filtered = mockData.filter(item =>
+        Object.values(item).some(value =>
+          String(value).toLowerCase().includes(query.toLowerCase())
+        )
+      );
+      return Promise.resolve(this.formatResponse(filtered, null, []));
     }
 
     return this.handleRequest(
-      () =>
-        apiClient.get(`${this.endpoint}/search?q=${encodeURIComponent(query)}`),
-      `to search ${this.endpoint}`
+      () => apiClient.get(`${this.endpoint}/search?q=${encodeURIComponent(query)}`),
+      `to search ${this.endpoint} with query: ${query}`
     );
   }
 
   async getStats() {
     if (!API_AVAILABLE) {
-      // Return mock data when API is not available
       const mockData = MOCK_DATA[this.endpoint]?.stats || {
         total: 0,
-        count: 0,
+        active: 0,
+        change: 0,
+        thisMonth: 0,
       };
-      return Promise.resolve(mockData);
+      return Promise.resolve(this.formatResponse(mockData, null, mockData));
     }
 
     return this.handleRequest(

@@ -22,7 +22,9 @@ class BudgetService extends BaseService {
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
-      console.error('Bütçeler getirilirken hata:', error);
+      if (import.meta.env.DEV) {
+        console.error('Bütçeler getirilirken hata:', error);
+      }
       return { data: [], error };
     }
   }

@@ -1,44 +1,20 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
-import toast, { Toaster } from 'react-hot-toast';
-import { createNotificationService } from '../services/notificationService';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast'
+import { createNotificationService } from '../services/notificationService'
+import { NOTIFICATION_TYPES, NOTIFICATION_PRIORITY } from './notificationConstants'
 
-const NotificationContext = createContext();
+const NotificationContext = createContext()
 
 export const useNotification = () => {
-  const context = useContext(NotificationContext);
+  const context = useContext(NotificationContext)
   if (!context) {
-    throw new Error(
-      'useNotification must be used within a NotificationProvider'
-    );
+    throw new Error('useNotification must be used within a NotificationProvider')
   }
-  return context;
-};
-
-// Bildirim türleri
-export const NOTIFICATION_TYPES = {
-  SUCCESS: 'success',
-  ERROR: 'error',
-  WARNING: 'warning',
-  INFO: 'info',
-  LOADING: 'loading',
-};
-
-// Bildirim öncelikleri
-export const NOTIFICATION_PRIORITY = {
-  LOW: 'low',
-  MEDIUM: 'medium',
-  HIGH: 'high',
-  URGENT: 'urgent',
-};
+  return context
+}
 
 export const NotificationProvider = ({ children }) => {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState([])
   const [settings, setSettings] = useState({
     enableSound: true,
     enableDesktop: true,
@@ -46,42 +22,39 @@ export const NotificationProvider = ({ children }) => {
     enableSMS: false,
     autoRead: true,
     readTimeout: 5000,
-  });
-  // const [notificationService, setNotificationService] = useState(null);
+  })
+  const [notificationService, setNotificationService] = useState(null)
 
   // Toast bildirimi göster
-  const showToast = useCallback(
-    (message, type = NOTIFICATION_TYPES.INFO, options = {}) => {
-      const toastOptions = {
-        duration: options.duration || 4000,
-        position: options.position || 'top-right',
-        style: {
-          borderRadius: '10px',
-          background: getToastBackground(type),
-          color: '#fff',
-          fontSize: '14px',
-          fontWeight: '500',
-          padding: '12px 16px',
-          ...options.style,
-        },
-        ...options,
-      };
+  const showToast = useCallback((message, type = NOTIFICATION_TYPES.INFO, options = {}) => {
+    const toastOptions = {
+      duration: options.duration || 4000,
+      position: options.position || 'top-right',
+      style: {
+        borderRadius: '10px',
+        background: getToastBackground(type),
+        color: '#fff',
+        fontSize: '14px',
+        fontWeight: '500',
+        padding: '12px 16px',
+        ...options.style,
+      },
+      ...options,
+    }
 
-      switch (type) {
-        case NOTIFICATION_TYPES.SUCCESS:
-          return toast.success(message, toastOptions);
-        case NOTIFICATION_TYPES.ERROR:
-          return toast.error(message, toastOptions);
-        case NOTIFICATION_TYPES.WARNING:
-          return toast(message, { ...toastOptions, icon: '⚠️' });
-        case NOTIFICATION_TYPES.LOADING:
-          return toast.loading(message, toastOptions);
-        default:
-          return toast(message, toastOptions);
-      }
-    },
-    []
-  );
+    switch (type) {
+      case NOTIFICATION_TYPES.SUCCESS:
+        return toast.success(message, toastOptions)
+      case NOTIFICATION_TYPES.ERROR:
+        return toast.error(message, toastOptions)
+      case NOTIFICATION_TYPES.WARNING:
+        return toast(message, { ...toastOptions, icon: '⚠️' })
+      case NOTIFICATION_TYPES.LOADING:
+        return toast.loading(message, toastOptions)
+      default:
+        return toast(message, toastOptions)
+    }
+  }, [])
 
   // Sistem bildirimi ekle
   const addNotification = useCallback(
@@ -92,122 +65,103 @@ export const NotificationProvider = ({ children }) => {
         read: false,
         priority: NOTIFICATION_PRIORITY.MEDIUM,
         ...notification,
-      };
+      }
 
-      setNotifications(prev => [newNotification, ...prev]);
+      setNotifications(prev => [newNotification, ...prev])
 
       // Toast göster
       if (notification.showToast !== false) {
-        showToast(
-          notification.message,
-          notification.type,
-          notification.toastOptions
-        );
+        showToast(notification.message, notification.type, notification.toastOptions)
       }
 
       // Ses çal (eğer etkinse)
-      if (
-        settings.enableSound &&
-        notification.priority !== NOTIFICATION_PRIORITY.LOW
-      ) {
-        playNotificationSound(notification.type);
+      if (settings.enableSound && notification.priority !== NOTIFICATION_PRIORITY.LOW) {
+        playNotificationSound(notification.type)
       }
 
       // Desktop bildirim (eğer etkinse ve izin varsa)
       if (settings.enableDesktop && Notification.permission === 'granted') {
-        showDesktopNotification(notification);
+        showDesktopNotification(notification)
       }
 
       // Otomatik okundu olarak işaretle
-      if (
-        settings.autoRead &&
-        notification.priority === NOTIFICATION_PRIORITY.LOW
-      ) {
+      if (settings.autoRead && notification.priority === NOTIFICATION_PRIORITY.LOW) {
         setTimeout(() => {
-          markAsRead(newNotification.id);
-        }, settings.readTimeout);
+          markAsRead(newNotification.id)
+        }, settings.readTimeout)
       }
 
-      return newNotification.id;
+      return newNotification.id
     },
     [settings, showToast]
-  );
+  )
 
   // Bildirimi okundu olarak işaretle
   const markAsRead = useCallback(notificationId => {
     setNotifications(prev =>
       prev.map(notification =>
-        notification.id === notificationId
-          ? { ...notification, read: true }
-          : notification
+        notification.id === notificationId ? { ...notification, read: true } : notification
       )
-    );
-  }, []);
+    )
+  }, [])
 
   // Tüm bildirimleri okundu olarak işaretle
   const markAllAsRead = useCallback(() => {
-    setNotifications(prev =>
-      prev.map(notification => ({ ...notification, read: true }))
-    );
-  }, []);
+    setNotifications(prev => prev.map(notification => ({ ...notification, read: true })))
+  }, [])
 
   // Bildirimi sil
   const removeNotification = useCallback(notificationId => {
-    setNotifications(prev =>
-      prev.filter(notification => notification.id !== notificationId)
-    );
-  }, []);
+    setNotifications(prev => prev.filter(notification => notification.id !== notificationId))
+  }, [])
 
   // Tüm bildirimleri temizle
   const clearAllNotifications = useCallback(() => {
-    setNotifications([]);
-  }, []);
+    setNotifications([])
+  }, [])
 
   // Okunmamış bildirim sayısı
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter(n => !n.read).length
 
   // Desktop bildirim izni iste
   const requestDesktopPermission = useCallback(async () => {
     if ('Notification' in window) {
-      const permission = await Notification.requestPermission();
-      return permission === 'granted';
+      const permission = await Notification.requestPermission()
+      return permission === 'granted'
     }
-    return false;
-  }, []);
+    return false
+  }, [])
 
   // Ayarları güncelle
   const updateSettings = useCallback(newSettings => {
-    setSettings(prev => ({ ...prev, ...newSettings }));
-  }, []);
+    setSettings(prev => ({ ...prev, ...newSettings }))
+  }, [])
 
   // Hızlı bildirim fonksiyonları
   const success = useCallback(
-    (message, options) =>
-      showToast(message, NOTIFICATION_TYPES.SUCCESS, options),
+    (message, options) => showToast(message, NOTIFICATION_TYPES.SUCCESS, options),
     [showToast]
-  );
+  )
 
   const error = useCallback(
     (message, options) => showToast(message, NOTIFICATION_TYPES.ERROR, options),
     [showToast]
-  );
+  )
 
   const warning = useCallback(
-    (message, options) =>
-      showToast(message, NOTIFICATION_TYPES.WARNING, options),
+    (message, options) => showToast(message, NOTIFICATION_TYPES.WARNING, options),
     [showToast]
-  );
+  )
 
   const info = useCallback(
     (message, options) => showToast(message, NOTIFICATION_TYPES.INFO, options),
     [showToast]
-  );
+  )
 
   const loading = useCallback(
-    (message, options) =>
-      showToast(message, NOTIFICATION_TYPES.LOADING, options),
+    (message, options) => showToast(message, NOTIFICATION_TYPES.LOADING, options),
     [showToast]
-  );
+  )
 
   // Sistem bildirimleri
   const notifyTaskDeadline = useCallback(
@@ -219,10 +173,10 @@ export const NotificationProvider = ({ children }) => {
         priority: NOTIFICATION_PRIORITY.HIGH,
         category: 'task_deadline',
         data: { taskId: task.id, deadline: task.deadline },
-      });
+      })
     },
     [addNotification]
-  );
+  )
 
   const notifyNewDonation = useCallback(
     donation => {
@@ -233,10 +187,10 @@ export const NotificationProvider = ({ children }) => {
         priority: NOTIFICATION_PRIORITY.MEDIUM,
         category: 'donation',
         data: { donationId: donation.id },
-      });
+      })
     },
     [addNotification]
-  );
+  )
 
   const notifySystemUpdate = useCallback(
     update => {
@@ -247,10 +201,10 @@ export const NotificationProvider = ({ children }) => {
         priority: NOTIFICATION_PRIORITY.LOW,
         category: 'system',
         showToast: false,
-      });
+      })
     },
     [addNotification]
-  );
+  )
 
   const notifyUserActivity = useCallback(
     activity => {
@@ -261,10 +215,10 @@ export const NotificationProvider = ({ children }) => {
         priority: NOTIFICATION_PRIORITY.LOW,
         category: 'user_activity',
         showToast: false,
-      });
+      })
     },
     [addNotification]
-  );
+  )
 
   const value = {
     // State
@@ -300,7 +254,7 @@ export const NotificationProvider = ({ children }) => {
     // Constants
     NOTIFICATION_TYPES,
     NOTIFICATION_PRIORITY,
-  };
+  }
 
   // Notification service'i başlat
   useEffect(() => {
@@ -313,24 +267,24 @@ export const NotificationProvider = ({ children }) => {
       notifyUserActivity,
       NOTIFICATION_TYPES,
       NOTIFICATION_PRIORITY,
-    });
+    })
 
-    setNotificationService(service);
+    setNotificationService(service)
 
     // Real-time polling'i başlat
-    service.startPolling();
+    service.startPolling()
 
     // Component unmount olduğunda polling'i durdur
     return () => {
-      service.stopPolling();
-    };
-  }, [addNotification, notifyNewDonation, notifySystemUpdate, notifyTaskDeadline, notifyUserActivity, showToast]);
+      service.stopPolling()
+    }
+  }, [])
 
   return (
     <NotificationContext.Provider value={value}>
       {children}
       <Toaster
-        position='top-center'
+        position="top-center"
         gutter={8}
         containerStyle={{
           position: 'fixed',
@@ -357,60 +311,56 @@ export const NotificationProvider = ({ children }) => {
         }}
       />
     </NotificationContext.Provider>
-  );
-};
+  )
+}
 
 // Yardımcı fonksiyonlar
 const getToastBackground = type => {
   switch (type) {
     case NOTIFICATION_TYPES.SUCCESS:
-      return '#10b981';
+      return '#10b981'
     case NOTIFICATION_TYPES.ERROR:
-      return '#ef4444';
+      return '#ef4444'
     case NOTIFICATION_TYPES.WARNING:
-      return '#f59e0b';
+      return '#f59e0b'
     case NOTIFICATION_TYPES.LOADING:
-      return '#3b82f6';
+      return '#3b82f6'
     default:
-      return '#6b7280';
+      return '#6b7280'
   }
-};
+}
 
 const playNotificationSound = type => {
   // Basit beep sesi (gerçek uygulamada ses dosyaları kullanılabilir)
   if ('AudioContext' in window) {
     try {
-      const audioContext = new (window.AudioContext ||
-        window.webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+      const oscillator = audioContext.createOscillator()
+      const gainNode = audioContext.createGain()
 
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
+      oscillator.connect(gainNode)
+      gainNode.connect(audioContext.destination)
 
       // Bildirim türüne göre ses frekansı
-      const frequency = type === NOTIFICATION_TYPES.ERROR ? 400 : 800;
-      oscillator.frequency.value = frequency;
-      oscillator.type = 'sine';
+      const frequency = type === NOTIFICATION_TYPES.ERROR ? 400 : 800
+      oscillator.frequency.value = frequency
+      oscillator.type = 'sine'
 
-      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(
-        0.01,
-        audioContext.currentTime + 0.1
-      );
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime)
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1)
 
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.1);
+      oscillator.start(audioContext.currentTime)
+      oscillator.stop(audioContext.currentTime + 0.1)
     } catch {
       // ignore
     }
   }
-};
+}
 
 const showDesktopNotification = notification => {
   if ('Notification' in window && Notification.permission === 'granted') {
     new Notification(notification.title || 'Bildirim', {
       body: notification.message,
-    });
+    })
   }
-};
+}

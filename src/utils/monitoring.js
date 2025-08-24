@@ -11,133 +11,129 @@ class PerformanceMonitor {
       userInteractions: {},
       apiCalls: {},
       errors: [],
-      performance: {},
-    };
-    this.observers = [];
-    this.isInitialized = false;
+      performance: {}
+    }
+    this.observers = []
+    this.isInitialized = false
   }
 
   // Initialize performance monitoring
   init() {
-    if (this.isInitialized) return;
+    if (this.isInitialized) return
 
     // Skip monitoring in development mode
     if (import.meta.env.DEV) {
-      return;
+      return
     }
 
     // Web Vitals monitoring
-    this.setupWebVitals();
+    this.setupWebVitals()
 
     // User interaction tracking
-    this.setupUserInteractionTracking();
+    this.setupUserInteractionTracking()
 
     // API call monitoring
-    this.setupAPIMonitoring();
+    this.setupAPIMonitoring()
 
     // Error tracking
-    this.setupErrorTracking();
+    this.setupErrorTracking()
 
     // Memory and performance monitoring
-    this.setupPerformanceMonitoring();
+    this.setupPerformanceMonitoring()
 
-    this.isInitialized = true;
+    this.isInitialized = true
   }
 
   // Setup Web Vitals monitoring
   setupWebVitals() {
     if ('PerformanceObserver' in window) {
       // Largest Contentful Paint (LCP)
-      const lcpObserver = new PerformanceObserver(list => {
-        const entries = list.getEntries();
-        const lastEntry = entries[entries.length - 1];
-        this.metrics.performance.lcp = lastEntry.startTime;
-        this.reportMetric('LCP', lastEntry.startTime);
-      });
-      lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+      const lcpObserver = new PerformanceObserver((list) => {
+        const entries = list.getEntries()
+        const lastEntry = entries[entries.length - 1]
+        this.metrics.performance.lcp = lastEntry.startTime
+        this.reportMetric('LCP', lastEntry.startTime)
+      })
+      lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] })
 
       // First Input Delay (FID)
-      const fidObserver = new PerformanceObserver(list => {
-        const entries = list.getEntries();
+      const fidObserver = new PerformanceObserver((list) => {
+        const entries = list.getEntries()
         entries.forEach(entry => {
-          this.metrics.performance.fid =
-            entry.processingStart - entry.startTime;
-          this.reportMetric('FID', entry.processingStart - entry.startTime);
-        });
-      });
-      fidObserver.observe({ entryTypes: ['first-input'] });
+          this.metrics.performance.fid = entry.processingStart - entry.startTime
+          this.reportMetric('FID', entry.processingStart - entry.startTime)
+        })
+      })
+      fidObserver.observe({ entryTypes: ['first-input'] })
 
       // Cumulative Layout Shift (CLS)
-      let clsValue = 0;
-      const clsObserver = new PerformanceObserver(list => {
-        const entries = list.getEntries();
+      let clsValue = 0
+      const clsObserver = new PerformanceObserver((list) => {
+        const entries = list.getEntries()
         entries.forEach(entry => {
           if (!entry.hadRecentInput) {
-            clsValue += entry.value;
+            clsValue += entry.value
           }
-        });
-        this.metrics.performance.cls = clsValue;
-        this.reportMetric('CLS', clsValue);
-      });
-      clsObserver.observe({ entryTypes: ['layout-shift'] });
+        })
+        this.metrics.performance.cls = clsValue
+        this.reportMetric('CLS', clsValue)
+      })
+      clsObserver.observe({ entryTypes: ['layout-shift'] })
     }
   }
 
   // Setup user interaction tracking
   setupUserInteractionTracking() {
-    let interactionCount = 0;
-    const trackInteraction = event => {
-      interactionCount++;
+    let interactionCount = 0
+    const trackInteraction = (event) => {
+      interactionCount++
       this.metrics.userInteractions[event.type] =
-        (this.metrics.userInteractions[event.type] || 0) + 1;
+        (this.metrics.userInteractions[event.type] || 0) + 1
 
       // Track specific interactions
       if (event.target.tagName === 'BUTTON' || event.target.closest('button')) {
-        this.trackButtonClick(event.target);
+        this.trackButtonClick(event.target)
       }
 
       if (event.target.tagName === 'A' || event.target.closest('a')) {
-        this.trackLinkClick(event.target);
+        this.trackLinkClick(event.target)
       }
 
-      if (
-        event.target.tagName === 'INPUT' ||
-        event.target.tagName === 'TEXTAREA'
-      ) {
-        this.trackFormInteraction(event.target);
+      if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+        this.trackFormInteraction(event.target)
       }
-    };
+    }
 
     // Track various user interactions
     ['click', 'input', 'scroll', 'keydown', 'mouseover'].forEach(eventType => {
-      document.addEventListener(eventType, trackInteraction, { passive: true });
-    });
+      document.addEventListener(eventType, trackInteraction, { passive: true })
+    })
   }
 
   // Setup API call monitoring
   setupAPIMonitoring() {
-    const originalFetch = window.fetch;
+    const originalFetch = window.fetch
     window.fetch = async (...args) => {
-      const startTime = performance.now();
-      const url = args[0];
+      const startTime = performance.now()
+      const url = args[0]
 
       try {
-        const response = await originalFetch(...args);
-        const endTime = performance.now();
-        const duration = endTime - startTime;
+        const response = await originalFetch(...args)
+        const endTime = performance.now()
+        const duration = endTime - startTime
 
         this.trackAPICall({
           url: typeof url === 'string' ? url : url.url,
           method: args[1]?.method || 'GET',
           status: response.status,
           duration,
-          success: response.ok,
-        });
+          success: response.ok
+        })
 
-        return response;
+        return response
       } catch (error) {
-        const endTime = performance.now();
-        const duration = endTime - startTime;
+        const endTime = performance.now()
+        const duration = endTime - startTime
 
         this.trackAPICall({
           url: typeof url === 'string' ? url : url.url,
@@ -145,18 +141,18 @@ class PerformanceMonitor {
           status: 0,
           duration,
           success: false,
-          error: error.message,
-        });
+          error: error.message
+        })
 
-        throw error;
+        throw error
       }
-    };
+    }
   }
 
   // Setup error tracking
   setupErrorTracking() {
     // JavaScript errors
-    window.addEventListener('error', event => {
+    window.addEventListener('error', (event) => {
       this.trackError({
         type: 'javascript',
         message: event.message,
@@ -164,29 +160,29 @@ class PerformanceMonitor {
         lineno: event.lineno,
         colno: event.colno,
         stack: event.error?.stack,
-        timestamp: new Date().toISOString(),
-      });
-    });
+        timestamp: new Date().toISOString()
+      })
+    })
 
     // Promise rejections
-    window.addEventListener('unhandledrejection', event => {
+    window.addEventListener('unhandledrejection', (event) => {
       this.trackError({
         type: 'promise',
         message: event.reason?.message || 'Unhandled Promise Rejection',
         stack: event.reason?.stack,
-        timestamp: new Date().toISOString(),
-      });
-    });
+        timestamp: new Date().toISOString()
+      })
+    })
 
     // React error boundary errors
-    window.addEventListener('react-error', event => {
+    window.addEventListener('react-error', (event) => {
       this.trackError({
         type: 'react',
         message: event.detail?.message,
         componentStack: event.detail?.componentStack,
-        timestamp: new Date().toISOString(),
-      });
-    });
+        timestamp: new Date().toISOString()
+      })
+    })
   }
 
   // Setup performance monitoring
@@ -194,27 +190,25 @@ class PerformanceMonitor {
     // Memory usage monitoring
     if ('memory' in performance) {
       setInterval(() => {
-        const memory = performance.memory;
+        const memory = performance.memory
         this.metrics.performance.memory = {
           used: Math.round(memory.usedJSHeapSize / 1024 / 1024),
           total: Math.round(memory.totalJSHeapSize / 1024 / 1024),
-          limit: Math.round(memory.jsHeapSizeLimit / 1024 / 1024),
-        };
-      }, 30000); // Every 30 seconds
+          limit: Math.round(memory.jsHeapSizeLimit / 1024 / 1024)
+        }
+      }, 30000) // Every 30 seconds
     }
 
     // Navigation timing
     if ('navigation' in performance) {
-      const navigation = performance.getEntriesByType('navigation')[0];
+      const navigation = performance.getEntriesByType('navigation')[0]
       if (navigation) {
         this.metrics.pageLoad = {
-          domContentLoaded:
-            navigation.domContentLoadedEventEnd -
-            navigation.domContentLoadedEventStart,
+          domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
           loadComplete: navigation.loadEventEnd - navigation.loadEventStart,
           domInteractive: navigation.domInteractive,
-          firstPaint: navigation.domContentLoadedEventEnd,
-        };
+          firstPaint: navigation.domContentLoadedEventEnd
+        }
       }
     }
   }
@@ -222,16 +216,13 @@ class PerformanceMonitor {
   // Track button clicks
   trackButtonClick(element) {
     const buttonData = {
-      text:
-        element.textContent?.trim() ||
-        element.getAttribute('aria-label') ||
-        'Unknown',
+      text: element.textContent?.trim() || element.getAttribute('aria-label') || 'Unknown',
       className: element.className,
       id: element.id,
-      timestamp: new Date().toISOString(),
-    };
+      timestamp: new Date().toISOString()
+    }
 
-    this.reportMetric('button_click', buttonData);
+    this.reportMetric('button_click', buttonData)
   }
 
   // Track link clicks
@@ -239,10 +230,10 @@ class PerformanceMonitor {
     const linkData = {
       href: element.href,
       text: element.textContent?.trim() || 'Unknown',
-      timestamp: new Date().toISOString(),
-    };
+      timestamp: new Date().toISOString()
+    }
 
-    this.reportMetric('link_click', linkData);
+    this.reportMetric('link_click', linkData)
   }
 
   // Track form interactions
@@ -252,57 +243,54 @@ class PerformanceMonitor {
       name: element.name,
       id: element.id,
       form: element.form?.id || 'unknown',
-      timestamp: new Date().toISOString(),
-    };
+      timestamp: new Date().toISOString()
+    }
 
-    this.reportMetric('form_interaction', formData);
+    this.reportMetric('form_interaction', formData)
   }
 
   // Track API calls
   trackAPICall(data) {
-    this.metrics.apiCalls[data.url] = this.metrics.apiCalls[data.url] || [];
-    this.metrics.apiCalls[data.url].push(data);
+    this.metrics.apiCalls[data.url] = this.metrics.apiCalls[data.url] || []
+    this.metrics.apiCalls[data.url].push(data)
 
     // Keep only last 100 calls per endpoint
     if (this.metrics.apiCalls[data.url].length > 100) {
-      this.metrics.apiCalls[data.url] =
-        this.metrics.apiCalls[data.url].slice(-100);
+      this.metrics.apiCalls[data.url] = this.metrics.apiCalls[data.url].slice(-100)
     }
 
-    this.reportMetric('api_call', data);
+    this.reportMetric('api_call', data)
   }
 
   // Track errors
   trackError(error) {
-    this.metrics.errors.push(error);
+    this.metrics.errors.push(error)
 
     // Keep only last 50 errors
     if (this.metrics.errors.length > 50) {
-      this.metrics.errors = this.metrics.errors.slice(-50);
+      this.metrics.errors = this.metrics.errors.slice(-50)
     }
 
-    this.reportMetric('error', error);
+    this.reportMetric('error', error)
   }
 
   // Report metric to observers
   reportMetric(type, data) {
     this.observers.forEach(observer => {
       if (observer.type === type || observer.type === 'all') {
-        observer.callback(data);
+        observer.callback(data)
       }
-    });
+    })
   }
 
   // Add metric observer
   addObserver(type, callback) {
-    this.observers.push({ type, callback });
+    this.observers.push({ type, callback })
   }
 
   // Remove metric observer
   removeObserver(callback) {
-    this.observers = this.observers.filter(
-      observer => observer.callback !== callback
-    );
+    this.observers = this.observers.filter(observer => observer.callback !== callback)
   }
 
   // Get current metrics
@@ -310,102 +298,92 @@ class PerformanceMonitor {
     return {
       ...this.metrics,
       timestamp: new Date().toISOString(),
-      sessionId: this.getSessionId(),
-    };
+      sessionId: this.getSessionId()
+    }
   }
 
   // Get session ID
   getSessionId() {
-    let sessionId = sessionStorage.getItem('kaf_session_id');
+    let sessionId = sessionStorage.getItem('kaf_session_id')
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      sessionStorage.setItem('kaf_session_id', sessionId);
+      sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      sessionStorage.setItem('kaf_session_id', sessionId)
     }
-    return sessionId;
+    return sessionId
   }
 
   // Send metrics to server
   async sendMetrics() {
     try {
-      const metrics = this.getMetrics();
+      const metrics = this.getMetrics()
       await fetch('/api/analytics/metrics', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(metrics),
-      });
+        body: JSON.stringify(metrics)
+      })
     } catch (error) {
-      console.warn('Failed to send metrics:', error);
+      console.warn('Failed to send metrics:', error)
     }
   }
 
   // Start periodic metric sending
-  startPeriodicReporting(interval = 60000) {
-    // 1 minute
+  startPeriodicReporting(interval = 60000) { // 1 minute
     setInterval(() => {
-      this.sendMetrics();
-    }, interval);
+      this.sendMetrics()
+    }, interval)
   }
 }
 
 // Analytics tracking
 class AnalyticsTracker {
   constructor() {
-    this.events = [];
-    this.userProperties = {};
-    this.isInitialized = false;
+    this.events = []
+    this.userProperties = {}
+    this.isInitialized = false
   }
 
   // Initialize analytics
   init() {
-    if (this.isInitialized) return;
+    if (this.isInitialized) return
 
-    this.setupPageTracking();
-    this.setupUserTracking();
-    this.isInitialized = true;
+    this.setupPageTracking()
+    this.setupUserTracking()
+    this.isInitialized = true
   }
 
   // Setup page tracking
   setupPageTracking() {
     // Track initial page load
-    this.trackPageView(window.location.pathname);
+    this.trackPageView(window.location.pathname)
 
     // Track route changes (for SPA)
-    let currentPath = window.location.pathname;
+    let currentPath = window.location.pathname
     const observer = new MutationObserver(() => {
       if (window.location.pathname !== currentPath) {
-        currentPath = window.location.pathname;
-        this.trackPageView(currentPath);
+        currentPath = window.location.pathname
+        this.trackPageView(currentPath)
       }
-    });
+    })
 
     observer.observe(document.body, {
       childList: true,
-      subtree: true,
-    });
+      subtree: true
+    })
   }
 
   // Setup user tracking
   setupUserTracking() {
     // Track user properties
-    this.setUserProperty('userAgent', navigator.userAgent);
-    this.setUserProperty('language', navigator.language);
-    this.setUserProperty('platform', navigator.platform);
-    this.setUserProperty(
-      'screenResolution',
-      `${screen.width}x${screen.height}`
-    );
-    this.setUserProperty(
-      'viewport',
-      `${window.innerWidth}x${window.innerHeight}`
-    );
+    this.setUserProperty('userAgent', navigator.userAgent)
+    this.setUserProperty('language', navigator.language)
+    this.setUserProperty('platform', navigator.platform)
+    this.setUserProperty('screenResolution', `${screen.width}x${screen.height}`)
+    this.setUserProperty('viewport', `${window.innerWidth}x${window.innerHeight}`)
 
     // Track timezone
-    this.setUserProperty(
-      'timezone',
-      Intl.DateTimeFormat().resolvedOptions().timeZone
-    );
+    this.setUserProperty('timezone', Intl.DateTimeFormat().resolvedOptions().timeZone)
   }
 
   // Track page view
@@ -414,8 +392,8 @@ class AnalyticsTracker {
       path,
       title,
       referrer: document.referrer,
-      timestamp: new Date().toISOString(),
-    });
+      timestamp: new Date().toISOString()
+    })
   }
 
   // Track custom event
@@ -425,36 +403,36 @@ class AnalyticsTracker {
       properties: {
         ...properties,
         timestamp: new Date().toISOString(),
-        sessionId: this.getSessionId(),
-      },
-    };
+        sessionId: this.getSessionId()
+      }
+    }
 
-    this.events.push(event);
+    this.events.push(event)
 
     // Keep only last 100 events
     if (this.events.length > 100) {
-      this.events = this.events.slice(-100);
+      this.events = this.events.slice(-100)
     }
 
     // Send to server immediately for important events
     if (['error', 'exception', 'critical_action'].includes(eventName)) {
-      this.sendEvent(event);
+      this.sendEvent(event)
     }
   }
 
   // Set user property
   setUserProperty(key, value) {
-    this.userProperties[key] = value;
+    this.userProperties[key] = value
   }
 
   // Get session ID
   getSessionId() {
-    let sessionId = sessionStorage.getItem('kaf_session_id');
+    let sessionId = sessionStorage.getItem('kaf_session_id')
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      sessionStorage.setItem('kaf_session_id', sessionId);
+      sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      sessionStorage.setItem('kaf_session_id', sessionId)
     }
-    return sessionId;
+    return sessionId
   }
 
   // Send event to server
@@ -463,44 +441,43 @@ class AnalyticsTracker {
       await fetch('/api/analytics/events', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(event),
-      });
+        body: JSON.stringify(event)
+      })
     } catch (error) {
-      console.warn('Failed to send analytics event:', error);
+      console.warn('Failed to send analytics event:', error)
     }
   }
 
   // Send all events to server
   async sendAllEvents() {
-    if (this.events.length === 0) return;
+    if (this.events.length === 0) return
 
     try {
       await fetch('/api/analytics/events/batch', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           events: this.events,
-          userProperties: this.userProperties,
-        }),
-      });
+          userProperties: this.userProperties
+        })
+      })
 
       // Clear sent events
-      this.events = [];
+      this.events = []
     } catch (error) {
-      console.warn('Failed to send analytics events:', error);
+      console.warn('Failed to send analytics events:', error)
     }
   }
 
   // Start periodic event sending
-  startPeriodicReporting(interval = 30000) {
-    // 30 seconds
+  startPeriodicReporting(interval = 30000) { // 30 seconds
     setInterval(() => {
-      this.sendAllEvents();
-    }, interval);
+      this.sendAllEvents()
+    }, interval)
   }
 }
 
@@ -511,20 +488,20 @@ class SystemHealthMonitor {
       system: {},
       application: {},
       database: {},
-      network: {},
-    };
-    this.isMonitoring = false;
+      network: {}
+    }
+    this.isMonitoring = false
   }
 
   // Start health monitoring
   startMonitoring() {
-    if (this.isMonitoring) return;
+    if (this.isMonitoring) return
 
-    this.monitorSystemHealth();
-    this.monitorApplicationHealth();
-    this.monitorNetworkHealth();
+    this.monitorSystemHealth()
+    this.monitorApplicationHealth()
+    this.monitorNetworkHealth()
 
-    this.isMonitoring = true;
+    this.isMonitoring = true
   }
 
   // Monitor system health
@@ -532,29 +509,27 @@ class SystemHealthMonitor {
     setInterval(() => {
       // Memory usage
       if ('memory' in performance) {
-        const memory = performance.memory;
+        const memory = performance.memory
         this.healthData.system.memory = {
           used: Math.round(memory.usedJSHeapSize / 1024 / 1024),
           total: Math.round(memory.totalJSHeapSize / 1024 / 1024),
           limit: Math.round(memory.jsHeapSizeLimit / 1024 / 1024),
-          percentage: Math.round(
-            (memory.usedJSHeapSize / memory.jsHeapSizeLimit) * 100
-          ),
-        };
+          percentage: Math.round((memory.usedJSHeapSize / memory.jsHeapSizeLimit) * 100)
+        }
       }
 
       // CPU usage (simplified)
-      const startTime = performance.now();
+      const startTime = performance.now()
       setTimeout(() => {
-        const endTime = performance.now();
+        const endTime = performance.now()
         this.healthData.system.cpu = {
-          load: Math.round((endTime - startTime) / 100),
-        };
-      }, 100);
+          load: Math.round((endTime - startTime) / 100)
+        }
+      }, 100)
 
       // Uptime
-      this.healthData.system.uptime = Math.round(performance.now() / 1000);
-    }, 10000); // Every 10 seconds
+      this.healthData.system.uptime = Math.round(performance.now() / 1000)
+    }, 10000) // Every 10 seconds
   }
 
   // Monitor application health
@@ -569,41 +544,41 @@ class SystemHealthMonitor {
           database: true,
           websocket: true,
           fileUpload: true,
-          notifications: true,
-        },
-      };
-    }, 30000); // Every 30 seconds
+          notifications: true
+        }
+      }
+    }, 30000) // Every 30 seconds
   }
 
   // Monitor network health
   monitorNetworkHealth() {
     setInterval(async () => {
       try {
-        const startTime = performance.now();
+        const startTime = performance.now()
         const response = await fetch('/api/health', {
           method: 'GET',
-          cache: 'no-cache',
-        });
-        const endTime = performance.now();
+          cache: 'no-cache'
+        })
+        const endTime = performance.now()
 
         this.healthData.network = {
           status: response.status,
           responseTime: Math.round(endTime - startTime),
-          timestamp: new Date().toISOString(),
-        };
+          timestamp: new Date().toISOString()
+        }
       } catch (error) {
         this.healthData.network = {
           status: 'error',
           error: error.message,
-          timestamp: new Date().toISOString(),
-        };
+          timestamp: new Date().toISOString()
+        }
       }
-    }, 15000); // Every 15 seconds
+    }, 15000) // Every 15 seconds
   }
 
   // Get health data
   getHealthData() {
-    return this.healthData;
+    return this.healthData
   }
 
   // Send health data to server
@@ -612,55 +587,52 @@ class SystemHealthMonitor {
       await fetch('/api/health/report', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(this.healthData),
-      });
+        body: JSON.stringify(this.healthData)
+      })
     } catch (error) {
-      console.warn('Failed to send health data:', error);
+      console.warn('Failed to send health data:', error)
     }
   }
 
   // Start periodic health reporting
-  startHealthReporting(interval = 60000) {
-    // 1 minute
+  startHealthReporting(interval = 60000) { // 1 minute
     setInterval(() => {
-      this.sendHealthData();
-    }, interval);
+      this.sendHealthData()
+    }, interval)
   }
 }
 
 // Create singleton instances
-const performanceMonitor = new PerformanceMonitor();
-const analyticsTracker = new AnalyticsTracker();
-const systemHealthMonitor = new SystemHealthMonitor();
+const performanceMonitor = new PerformanceMonitor()
+const analyticsTracker = new AnalyticsTracker()
+const systemHealthMonitor = new SystemHealthMonitor()
 
 // Initialize monitoring
 function initializeMonitoring() {
-  performanceMonitor.init();
-  analyticsTracker.init();
-  systemHealthMonitor.startMonitoring();
+  performanceMonitor.init()
+  analyticsTracker.init()
+  systemHealthMonitor.startMonitoring()
 
   // Start periodic reporting
-  performanceMonitor.startPeriodicReporting();
-  analyticsTracker.startPeriodicReporting();
-  systemHealthMonitor.startHealthReporting();
+  performanceMonitor.startPeriodicReporting()
+  analyticsTracker.startPeriodicReporting()
+  systemHealthMonitor.startHealthReporting()
+
 }
 
 // Export monitoring utilities
 export {
-  analyticsTracker,
-  initializeMonitoring,
-  performanceMonitor,
-  systemHealthMonitor,
-};
+  analyticsTracker, initializeMonitoring, performanceMonitor, systemHealthMonitor
+}
 
 // Auto-initialize if in browser environment
 if (typeof window !== 'undefined') {
   // Initialize after DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeMonitoring);
+    document.addEventListener('DOMContentLoaded', initializeMonitoring)
   } else {
-    initializeMonitoring();
+    initializeMonitoring()
   }
 }

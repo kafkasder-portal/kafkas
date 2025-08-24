@@ -1,152 +1,158 @@
-/* eslint-env node */
-const express = require('express');
-const cors = require('cors');
+// =====================================================
+// VERCEL SERVERLESS FUNCTION - ANALYTICS API
+// =====================================================
 
-const app = express();
-const PORT = process.env.PORT || 3001;
-const NODE_ENV = process.env.NODE_ENV || 'development';
+const { createClient } = require('@supabase/supabase-js');
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Initialize Supabase client
+const supabaseUrl = process.env.VITE_PUBLIC_SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// Analytics data storage
-let analyticsData = {
-  pageViews: {},
-  userSessions: {},
-  performance: {},
-  errors: {},
-  conversions: {}
+// In-memory storage for analytics data (in production, use Redis or database)
+const analyticsData = {
+  events: [],
+  metrics: [],
+  healthReports: []
 };
 
-// Routes
-app.get('/api/analytics/health', (req, res) => {
-  res.json({ status: 'healthy', timestamp: new Date().toISOString() });
-});
+module.exports = async function handler(req, res) {
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-app.post('/api/analytics/track', (req, res) => {
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   try {
-    const { event, data, userId, sessionId } = req.body;
-    
-    switch (event) {
-      case 'page_view': {
-        const page = data.page || 'unknown';
-        analyticsData.pageViews[page] = (analyticsData.pageViews[page] || 0) + 1;
-        break;
-      }
-      
-      case 'user_session': {
-        const session = {
-          userId,
-          sessionId,
-          startTime: new Date().toISOString(),
-          data
+    switch (req.method) {
+      case 'GET': {
+        // Get analytics summary
+        const { period = '24h' } = req.query;
+        
+        const now = new Date();
+        let startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000); // Default 24h
+        
+        switch (period) {
+          case '1h':
+            startTime = new Date(now.getTime() - 60 * 60 * 1000);
+            break;
+          case '7d':
+            startTime = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            break;
+          case '30d':
+            startTime = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            break;
+        }
+
+        // Filter data by time period
+        const filteredEvents = analyticsData.events.filter(event => 
+          new Date(event.properties.timestamp) >= startTime
+        );
+
+        const filteredMetrics = analyticsData.metrics.filter(metric => 
+          new Date(metric.timestamp) >= startTime
+        );
+
+        const summary = {
+          period,
+          events: {
+            total: filteredEvents.length,
+            byType: filteredEvents.reduce((acc, event) => {
+              acc[event.name] = (acc[event.name] || 0) + 1;
+              return acc;
+            }, {})
+          },
+          performance: {
+            avgLCP: calculateAverage(filteredMetrics, 'performance.LCP'),
+            avgFID: calculateAverage(filteredMetrics, 'performance.FID'),
+            avgCLS: calculateAverage(filteredMetrics, 'performance.CLS')
+          }
         };
-        analyticsData.userSessions[sessionId] = session;
+
+        res.status(200).json(summary);
         break;
       }
-      
-      case 'performance': {
-        const metric = data.metric || 'unknown';
-        if (!analyticsData.performance[metric]) {
-          analyticsData.performance[metric] = [];
+
+      case 'POST': {
+        // Handle analytics data
+        const { events, performance, timestamp, sessionId } = req.body;
+
+        if (events) {
+          // Store events
+          analyticsData.events.push(...events);
+          
+          // Limit storage size
+          if (analyticsData.events.length > 10000) {
+            analyticsData.events = analyticsData.events.slice(-5000);
+          }
+
+          // Save to Supabase (optional)
+          if (events.length > 0) {
+            try {
+              await supabase
+                .from('analytics_events')
+                .insert(events.map(event => ({
+                  name: event.name,
+                  properties: event.properties,
+                  session_id: event.properties.sessionId,
+                  user_id: event.properties.userId,
+                  timestamp: event.properties.timestamp
+                })));
+            } catch (error) {
+              console.error('Error saving analytics events:', error);
+            }
+          }
         }
-        analyticsData.performance[metric].push({
-          value: data.value,
-          timestamp: new Date().toISOString()
-        });
-        break;
-      }
-      
-      case 'error': {
-        const errorType = data.type || 'unknown';
-        if (!analyticsData.errors[errorType]) {
-          analyticsData.errors[errorType] = [];
+
+        if (performance) {
+          // Store performance metrics
+          analyticsData.metrics.push({ performance, timestamp, sessionId });
+          
+          // Limit storage size
+          if (analyticsData.metrics.length > 1000) {
+            analyticsData.metrics = analyticsData.metrics.slice(-500);
+          }
         }
-        analyticsData.errors[errorType].push({
-          message: data.message,
-          stack: data.stack,
-          timestamp: new Date().toISOString()
-        });
+
+        res.status(200).json({ success: true });
         break;
       }
-      
-      case 'conversion': {
-        const conversionType = data.type || 'unknown';
-        analyticsData.conversions[conversionType] = (analyticsData.conversions[conversionType] || 0) + 1;
-        break;
-      }
-      
+
       default:
-        console.warn(`Unknown analytics event: ${event}`);
+        res.setHeader('Allow', ['GET', 'POST']);
+        res.status(405).json({
+          success: false,
+          message: `Method ${req.method} Not Allowed`
+        });
     }
-    
-    res.json({ success: true, message: 'Event tracked successfully' });
   } catch (error) {
-    console.error('Error tracking analytics event:', error);
-    res.status(500).json({ success: false, message: 'Failed to track event' });
+    console.error('Analytics API Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
-});
-
-app.get('/api/analytics/summary', (req, res) => {
-  try {
-    const summary = {
-      totalPageViews: Object.values(analyticsData.pageViews).reduce((sum, count) => sum + count, 0),
-      activeSessions: Object.keys(analyticsData.userSessions).length,
-      totalErrors: Object.values(analyticsData.errors).reduce((sum, errors) => sum + errors.length, 0),
-      totalConversions: Object.values(analyticsData.conversions).reduce((sum, count) => sum + count, 0),
-      topPages: Object.entries(analyticsData.pageViews)
-        .sort(([,a], [,b]) => b - a)
-        .slice(0, 5)
-        .map(([page, count]) => ({ page, count })),
-      errorTypes: Object.keys(analyticsData.errors),
-      conversionTypes: Object.keys(analyticsData.conversions)
-    };
-    
-    console.log('Analytics summary requested:', summary);
-    res.json({ success: true, data: summary });
-  } catch (error) {
-    console.error('Error generating analytics summary:', error);
-    res.status(500).json({ success: false, message: 'Failed to generate summary' });
-  }
-});
-
-app.get('/api/analytics/performance', (req, res) => {
-  try {
-    const { metric } = req.query;
-    const performanceData = analyticsData.performance[metric] || [];
-    
-    if (performanceData.length === 0) {
-      return res.json({ success: true, data: [] });
-    }
-    
-    const values = performanceData.map(item => item.value);
-    const stats = {
-      count: values.length,
-      average: values.reduce((sum, val) => sum + val, 0) / values.length,
-      min: Math.min(...values),
-      max: Math.max(...values),
-      recent: performanceData.slice(-10)
-    };
-    
-    res.json({ success: true, data: stats });
-  } catch (error) {
-    console.error('Error getting performance data:', error);
-    res.status(500).json({ success: false, message: 'Failed to get performance data' });
-  }
-});
-
-// Error handling middleware
-app.use((error, req, res, next) => {
-  console.error('Unhandled error:', error);
-  res.status(500).json({ success: false, message: 'Internal server error' });
-});
-
-// Start server
-if (NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
-    console.log(`Analytics API server running on port ${PORT}`);
-  });
 }
 
-module.exports = app;
+// Utility functions
+function calculateAverage(data, path) {
+  const values = data
+    .map(item => getNestedValue(item, path))
+    .filter(value => value !== null && value !== undefined && !isNaN(value));
+  
+  if (values.length === 0) return 0;
+  
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function getNestedValue(obj, path) {
+  return path.split('.').reduce((current, key) => {
+    return current && current[key] !== undefined ? current[key] : null;
+  }, obj);
+}
