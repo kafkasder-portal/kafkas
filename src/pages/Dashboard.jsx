@@ -26,10 +26,7 @@ const Dashboard = () => {
     referrals: { total: 0, pending: 0, change: 0 },
     volunteers: { total: 0, active: 0, change: 0 },
   });
-  const [chartData, setChartData] = useState({
-    donationTrend: [],
-    monthlyData: [],
-  });
+
 
   useEffect(() => {
     loadDashboardData();
@@ -54,26 +51,7 @@ const Dashboard = () => {
         volunteers: { total: 1247, active: 892, change: 8.2 }, // Mock data for now
       });
 
-      // Chart verilerini hazırla
-      const donationTrendData = [
-        { label: 'Oca', value: donationStats.monthlyTrend?.[0] || 45000 },
-        { label: 'Şub', value: donationStats.monthlyTrend?.[1] || 52000 },
-        { label: 'Mar', value: donationStats.monthlyTrend?.[2] || 48000 },
-        { label: 'Nis', value: donationStats.monthlyTrend?.[3] || 61000 },
-        { label: 'May', value: donationStats.monthlyTrend?.[4] || 55000 },
-        { label: 'Haz', value: donationStats.monthlyTrend?.[5] || 67000 },
-      ];
 
-      const monthlyData = [
-        { label: 'Oca', value: beneficiaryStats.monthlyTrend?.[0] || 42000 },
-        { label: 'Şub', value: beneficiaryStats.monthlyTrend?.[1] || 47000 },
-        { label: 'Mar', value: beneficiaryStats.monthlyTrend?.[2] || 51000 },
-        { label: 'Nis', value: beneficiaryStats.monthlyTrend?.[3] || 49000 },
-        { label: 'May', value: beneficiaryStats.monthlyTrend?.[4] || 62000 },
-        { label: 'Haz', value: beneficiaryStats.monthlyTrend?.[5] || 58000 },
-      ];
-
-      setChartData({ donationTrend: donationTrendData, monthlyData });
     } catch (error) {
       console.error('Dashboard verisi yüklenirken hata:', error);
     } finally {
@@ -166,28 +144,70 @@ const Dashboard = () => {
         <p className='page-subtitle'>{t('dashboard.subtitle')}</p>
       </motion.div>
 
-      {/* Charts Section */}
-      <div className='grid grid-2' style={{ marginTop: '2rem' }}>
+      {/* Stats Cards */}
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8'>
         <motion.div variants={itemVariants}>
-          <ChartContainer title='Aylık Bağış Trendi' loading={loading}>
-            <LineChart
-              data={chartData.donationTrend}
-              width={400}
-              height={300}
-              color='#10b981'
-            />
-          </ChartContainer>
+          <div className='bg-white rounded-lg shadow-sm border p-6'>
+            <div className='flex items-center justify-between'>
+              <div>
+                <p className='text-sm font-medium text-gray-600'>Toplam Bağış</p>
+                <p className='text-2xl font-bold text-gray-900'>
+                  ₺{dashboardData.donations.total.toLocaleString()}
+                </p>
+              </div>
+              <div className='p-2 bg-green-100 rounded-full'>
+                <CheckCircle className='h-6 w-6 text-green-600' />
+              </div>
+            </div>
+          </div>
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <ChartContainer title='Aylık Karşılaştırma' loading={loading}>
-            <BarChart
-              data={chartData.monthlyData}
-              width={400}
-              height={300}
-              color='#3b82f6'
-            />
-          </ChartContainer>
+          <div className='bg-white rounded-lg shadow-sm border p-6'>
+            <div className='flex items-center justify-between'>
+              <div>
+                <p className='text-sm font-medium text-gray-600'>Yardım Alanlar</p>
+                <p className='text-2xl font-bold text-gray-900'>
+                  {dashboardData.beneficiaries.total}
+                </p>
+              </div>
+              <div className='p-2 bg-blue-100 rounded-full'>
+                <Users className='h-6 w-6 text-blue-600' />
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div variants={itemVariants}>
+          <div className='bg-white rounded-lg shadow-sm border p-6'>
+            <div className='flex items-center justify-between'>
+              <div>
+                <p className='text-sm font-medium text-gray-600'>Gönüllüler</p>
+                <p className='text-2xl font-bold text-gray-900'>
+                  {dashboardData.volunteers.total}
+                </p>
+              </div>
+              <div className='p-2 bg-purple-100 rounded-full'>
+                <Users className='h-6 w-6 text-purple-600' />
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div variants={itemVariants}>
+          <div className='bg-white rounded-lg shadow-sm border p-6'>
+            <div className='flex items-center justify-between'>
+              <div>
+                <p className='text-sm font-medium text-gray-600'>Referanslar</p>
+                <p className='text-2xl font-bold text-gray-900'>
+                  {dashboardData.referrals.total}
+                </p>
+              </div>
+              <div className='p-2 bg-orange-100 rounded-full'>
+                <AlertCircle className='h-6 w-6 text-orange-600' />
+              </div>
+            </div>
+          </div>
         </motion.div>
       </div>
 
