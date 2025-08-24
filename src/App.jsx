@@ -27,6 +27,7 @@ const Finance = lazy(() => import('./pages/Finance'))
 const Volunteers = lazy(() => import('./pages/Volunteers'))
 const Tasks = lazy(() => import('./pages/Tasks'))
 const Messages = lazy(() => import('./pages/Messages'))
+const WhatsApp = lazy(() => import('./pages/WhatsApp'))
 const Inventory = lazy(() => import('./pages/Inventory'))
 const Donors = lazy(() => import('./pages/Donors'))
 const Scholarship = lazy(() => import('./pages/Scholarship'))
@@ -202,6 +203,14 @@ const AppContent = memo(() => {
                     element={
                       <ProtectedRoute>
                         <Messages />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/messages/whatsapp"
+                    element={
+                      <ProtectedRoute>
+                        <WhatsApp />
                       </ProtectedRoute>
                     }
                   />
