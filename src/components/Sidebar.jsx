@@ -203,37 +203,27 @@ const Sidebar = ({ collapsed, onToggle }) => {
             const active = isActive(item.path)
 
             return (
-              <motion.div
+              <div
                 key={item.id}
-                className={`nav-item ${active ? 'active' : ''}`}
-                onMouseEnter={e => handleMouseEnter(item, e)}
-                onMouseLeave={handleMouseLeave}
-                whileHover={{ x: 5 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                style={{
+                  padding: '10px',
+                  margin: '5px',
+                  backgroundColor: active ? item.color : 'transparent',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  border: '1px solid #ccc'
+                }}
+                onClick={() => {
+                  console.log('Simple div clicked:', item.path)
+                  alert('Clicked: ' + item.path)
+                  window.location.href = item.path
+                }}
               >
-                <div 
-                  className="nav-link"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    console.log('Div clicked:', item.path)
-                    console.log('Current location:', window.location.pathname)
-                    alert('Clicked: ' + item.path)
-                    // Manual navigation
-                    window.location.href = item.path
-                  }}
-                >
-                  <motion.div
-                    className="icon-wrapper"
-                    style={{ backgroundColor: active ? item.color : 'transparent' }}
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                  >
-                    <IconComponent size={20} color={active ? 'white' : item.color} />
-                  </motion.div>
-                </div>
-
-                {/* Removed submenu indicators for simplified navigation */}
-              </motion.div>
+                <IconComponent size={20} color={active ? 'white' : item.color} />
+                <span style={{ marginLeft: '10px', color: active ? 'white' : item.color }}>
+                  {item.title}
+                </span>
+              </div>
             )
           })}
         </nav>
