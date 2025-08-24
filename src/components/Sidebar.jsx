@@ -94,18 +94,25 @@ const menuItems = [
 ]
 
 const Sidebar = ({ collapsed, onToggle }) => {
-  // Removed hover states for simplified navigation
   const { user, logout, hasPermission } = useAuth()
   const { t } = useTranslation()
   const location = useLocation()
   const deviceInfo = useDeviceDetection()
+  
+  const [hoveredItem, setHoveredItem] = useState(null)
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 })
 
   const handleMouseEnter = useCallback((item, event) => {
-    // Simplified hover handling without submenus
+    const rect = event.currentTarget.getBoundingClientRect()
+    setPopupPosition({
+      x: rect.right + 10,
+      y: rect.top
+    })
+    setHoveredItem(item)
   }, [])
 
   const handleMouseLeave = useCallback(() => {
-    // Simplified mouse leave handling
+    setHoveredItem(null)
   }, [])
 
   const isActive = useCallback(
@@ -203,35 +210,73 @@ const Sidebar = ({ collapsed, onToggle }) => {
             const active = isActive(item.path)
 
             return (
-              <div
+              <motion.div
                 key={item.id}
-                style={{
-                  padding: '10px',
-                  margin: '5px',
-                  backgroundColor: active ? item.color : 'transparent',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  border: '1px solid #ccc'
-                }}
-                onClick={() => {
-                  console.log('Simple div clicked:', item.path)
-                  alert('Clicked: ' + item.path)
-                  window.location.href = item.path
-                }}
+                className={`nav-item ${active ? 'active' : ''}`}
+                onMouseEnter={e => handleMouseEnter(item, e)}
+                onMouseLeave={handleMouseLeave}
+                whileHover={{ x: 5 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               >
-                <IconComponent size={20} color={active ? 'white' : item.color} />
-                <span style={{ marginLeft: '10px', color: active ? 'white' : item.color }}>
-                  {item.title}
-                </span>
-              </div>
+                <Link 
+                  to={item.path}
+                  className="nav-link"
+                  style={{ textDecoration: 'none' }}
+                >
+                  <motion.div
+                    className="icon-wrapper"
+                    style={{ backgroundColor: active ? item.color : 'transparent' }}
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                  >
+                    <IconComponent size={20} color={active ? 'white' : item.color} />
+                  </motion.div>
+                </Link>
+              </motion.div>
             )
           })}
         </nav>
       </motion.div>
 
-      {/* Submenu popup removed for simplified navigation */}
-
-      {/* Enterprise Features removed for simplified navigation */}
+      {/* Submenu popup */}
+      <AnimatePresence>
+        {hoveredItem && (
+          <motion.div
+            className="popup-menu"
+            initial={{ opacity: 0, x: -20, scale: 0.95 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -20, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            style={{
+              position: 'fixed',
+              left: popupPosition.x,
+              top: popupPosition.y,
+              zIndex: 1000
+            }}
+            onMouseEnter={() => setHoveredItem(hoveredItem)}
+            onMouseLeave={handleMouseLeave}
+          >
+            <div className="popup-header">
+              <hoveredItem.icon size={16} color={hoveredItem.color} />
+              {hoveredItem.title}
+            </div>
+            <div className="popup-items">
+              <Link to={hoveredItem.path} className="popup-item">
+                Ana Sayfa
+              </Link>
+              <Link to={`${hoveredItem.path}/list`} className="popup-item">
+                Liste Görünümü
+              </Link>
+              <Link to={`${hoveredItem.path}/create`} className="popup-item">
+                Yeni Ekle
+              </Link>
+              <Link to={`${hoveredItem.path}/reports`} className="popup-item">
+                Raporlar
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Device Info */}
       <div className="sidebar-footer">

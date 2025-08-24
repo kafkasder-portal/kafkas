@@ -123,6 +123,10 @@
   position: relative;
 }
 
+.nav-text {
+  display: none;
+}
+
 .icon-wrapper {
   display: flex;
   align-items: center;
