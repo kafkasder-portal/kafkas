@@ -1,486 +1,379 @@
 /**
- * ⚙️ CURSOR AI AGENT CONFIGURATION
- * Bu dosya Cursor AI Agent'ın performans optimizasyonu ve konfigürasyon ayarlarını içerir
+ * Cursor AI Configuration
+ * KAF Portal için özel Cursor AI optimizasyon ayarları
  */
 
-// ============================================================================
-// PERFORMANCE OPTIMIZATION SETTINGS
-// ============================================================================
+// Environment detection
+const isDevelopment = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+const isProduction = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
+const isTest = typeof window !== 'undefined' && window.location.hostname.includes('test');
 
-export const performanceConfig = {
-  // Bundle optimization
-  bundle: {
-    // Chunk size limit (KB)
-    maxChunkSize: 500,
-    // Enable tree shaking
-    treeShaking: true,
-    // Enable code splitting
-    codeSplitting: true,
-    // Enable dynamic imports
-    dynamicImports: true,
+// Base configuration
+export const cursorConfig = {
+  // Performance settings
+  performance: {
+    enableLazyLoading: true,
+    enableCodeSplitting: true,
+    enableMemoization: true,
+    enableDebouncing: true,
+    enableThrottling: true,
+    maxBundleSize: 500, // KB
+    maxLoadTime: 3000, // ms
+    enableServiceWorker: true,
+    enablePWA: true
   },
 
-  // Image optimization
-  images: {
-    // Enable lazy loading
-    lazyLoading: true,
-    // Enable responsive images
-    responsive: true,
-    // Enable WebP format
-    webp: true,
-    // Image quality (0-100)
-    quality: 85,
-    // Max image width
-    maxWidth: 1920,
+  // Search settings
+  search: {
+    enableSemanticSearch: true,
+    enableFuzzySearch: true,
+    enablePatternMatching: true,
+    maxSearchResults: 50,
+    searchTimeout: 3000,
+    enableAutoComplete: true,
+    enableSearchHistory: true
   },
 
-  // Caching strategy
-  caching: {
-    // Enable service worker
-    serviceWorker: true,
-    // Cache duration (seconds)
-    cacheDuration: 86400, // 24 hours
-    // Enable runtime caching
-    runtimeCaching: true,
-    // Enable offline support
-    offline: true,
+  // Code generation settings
+  codeGeneration: {
+    enableTypeScript: true,
+    enablePropTypes: true,
+    enableJSDoc: true,
+    enableErrorHandling: true,
+    enableLoadingStates: true,
+    enableAccessibility: true,
+    enableResponsiveDesign: true,
+    enableBestPractices: true
   },
 
-  // Code optimization
-  code: {
-    // Enable minification
-    minify: true,
-    // Enable source maps in development
-    sourceMaps: process.env.NODE_ENV === 'development',
-    // Enable dead code elimination
-    deadCodeElimination: true,
-    // Enable constant folding
-    constantFolding: true,
-  },
-};
-
-// ============================================================================
-// DEVELOPMENT SETTINGS
-// ============================================================================
-
-export const developmentConfig = {
-  // Hot reload settings
-  hotReload: {
-    // Enable fast refresh
-    fastRefresh: true,
-    // Enable overlay for errors
-    overlay: true,
-    // Enable source maps
-    sourceMaps: true,
+  // Component patterns
+  componentPatterns: {
+    form: ['validation', 'error-handling', 'loading-states'],
+    table: ['pagination', 'sorting', 'filtering', 'search'],
+    modal: ['backdrop-click', 'keyboard-navigation', 'focus-management'],
+    loading: ['skeleton', 'spinner', 'progress-indicators'],
+    navigation: ['sidebar', 'breadcrumb', 'mobile-navigation']
   },
 
-  // Debug settings
-  debug: {
-    // Enable React DevTools
-    reactDevTools: true,
-    // Enable Redux DevTools
-    reduxDevTools: true,
-    // Enable performance monitoring
-    performanceMonitoring: true,
-    // Enable error tracking
-    errorTracking: true,
+  // Service patterns
+  servicePatterns: {
+    api: ['restful-endpoints', 'error-handling', 'retry-logic'],
+    auth: ['jwt-tokens', 'role-based-access', 'session-management'],
+    database: ['supabase-integration', 'real-time-subscriptions'],
+    file: ['upload', 'download', 'image-optimization'],
+    notification: ['real-time-alerts', 'toast-messages']
+  },
+
+  // Hook patterns
+  hookPatterns: {
+    state: ['local-state', 'global-state', 'form-state'],
+    effect: ['side-effects', 'cleanup', 'dependencies'],
+    custom: ['business-logic', 'api-calls', 'utilities'],
+    performance: ['memoization', 'debouncing', 'throttling']
+  },
+
+  // File structure
+  fileStructure: {
+    components: 'src/components',
+    pages: 'src/pages',
+    services: 'src/services',
+    hooks: 'src/hooks',
+    contexts: 'src/contexts',
+    utils: 'src/utils',
+    i18n: 'src/i18n',
+    styles: 'src/styles'
+  },
+
+  // Naming conventions
+  namingConventions: {
+    components: 'PascalCase',
+    files: 'camelCase',
+    functions: 'camelCase',
+    constants: 'UPPER_SNAKE_CASE',
+    cssClasses: 'kebab-case'
   },
 
   // Code quality
   codeQuality: {
-    // Enable ESLint
-    eslint: true,
-    // Enable Prettier
-    prettier: true,
-    // Enable TypeScript checking
-    typescript: true,
-    // Enable pre-commit hooks
-    preCommitHooks: true,
-  },
-};
-
-// ============================================================================
-// AI AGENT OPTIMIZATION SETTINGS
-// ============================================================================
-
-export const aiAgentConfig = {
-  // Code generation settings
-  codeGeneration: {
-    // Enable TypeScript by default
-    typescript: true,
-    // Enable PropTypes
-    propTypes: true,
-    // Enable JSDoc comments
-    jsdoc: true,
-    // Enable error handling
-    errorHandling: true,
-    // Enable loading states
-    loadingStates: true,
-    // Enable accessibility
-    accessibility: true,
-    // Enable responsive design
-    responsive: true,
+    enableTypeScript: true,
+    enablePropTypes: true,
+    enableJSDoc: true,
+    enableErrorHandling: true,
+    enableLoadingStates: true,
+    enableAccessibility: true,
+    enableResponsiveDesign: true
   },
 
-  // Search optimization
-  search: {
-    // Enable fuzzy search
-    fuzzySearch: true,
-    // Enable semantic search
-    semanticSearch: true,
-    // Enable pattern matching
-    patternMatching: true,
-    // Search result limit
-    resultLimit: 10,
-    // Enable search suggestions
-    suggestions: true,
-  },
-
-  // Suggestion settings
-  suggestions: {
-    // Enable auto-complete
-    autoComplete: true,
-    // Enable code snippets
-    codeSnippets: true,
-    // Enable best practices
-    bestPractices: true,
-    // Enable performance tips
-    performanceTips: true,
-    // Enable security tips
-    securityTips: true,
-  },
-
-  // Context awareness
-  context: {
-    // Enable project context
-    projectContext: true,
-    // Enable file context
-    fileContext: true,
-    // Enable function context
-    functionContext: true,
-    // Enable import context
-    importContext: true,
-  },
-};
-
-// ============================================================================
-// PROJECT-SPECIFIC SETTINGS
-// ============================================================================
-
-export const projectConfig = {
-  // KAF Portal specific settings
-  kafPortal: {
-    // Multi-language support
-    languages: ['tr', 'en', 'ru'],
-    // Default language
-    defaultLanguage: 'tr',
-    // Enable real-time features
-    realTime: true,
-    // Enable WebSocket connections
-    webSocket: true,
-    // Enable offline mode
-    offlineMode: true,
-  },
-
-  // Database settings
-  database: {
-    // Supabase configuration
-    supabase: {
-      // Enable real-time subscriptions
-      realTime: true,
-      // Enable row level security
-      rls: true,
-      // Enable automatic backups
-      backups: true,
-    },
-  },
-
-  // API settings
-  api: {
-    // Base URL
-    baseURL: process.env.VITE_API_BASE_URL || 'http://localhost:5001',
-    // Timeout (ms)
-    timeout: 10000,
-    // Retry attempts
-    retryAttempts: 3,
-    // Enable request caching
-    caching: true,
-  },
-
-  // Security settings
-  security: {
-    // Enable HTTPS
-    https: process.env.NODE_ENV === 'production',
-    // Enable CSP headers
-    csp: true,
-    // Enable XSS protection
-    xssProtection: true,
-    // Enable CSRF protection
-    csrfProtection: true,
-  },
-};
-
-// ============================================================================
-// PERFORMANCE MONITORING
-// ============================================================================
-
-export const performanceMonitoring = {
-  // Metrics to track
-  metrics: {
-    // Page load time
-    pageLoadTime: true,
-    // First contentful paint
-    firstContentfulPaint: true,
-    // Largest contentful paint
-    largestContentfulPaint: true,
-    // Cumulative layout shift
-    cumulativeLayoutShift: true,
-    // First input delay
-    firstInputDelay: true,
-    // Bundle size
-    bundleSize: true,
-    // Memory usage
-    memoryUsage: true,
-  },
-
-  // Performance budgets
-  budgets: {
-    // Max bundle size (KB)
-    maxBundleSize: 1000,
-    // Max initial load time (ms)
-    maxLoadTime: 3000,
-    // Max time to interactive (ms)
-    maxTTI: 5000,
-    // Max first contentful paint (ms)
-    maxFCP: 2000,
-  },
-
-  // Reporting
-  reporting: {
-    // Enable console logging
-    console: process.env.NODE_ENV === 'development',
-    // Enable analytics
-    analytics: true,
-    // Enable error reporting
-    errorReporting: true,
-    // Enable performance alerts
-    alerts: true,
-  },
-};
-
-// ============================================================================
-// OPTIMIZATION HELPERS
-// ============================================================================
-
-/**
- * Performance optimization helper
- */
-export const optimizePerformance = {
   // Bundle optimization
-  optimizeBundle: (config = {}) => {
-    return {
-      ...performanceConfig.bundle,
-      ...config,
-    };
+  bundleOptimization: {
+    enableCodeSplitting: true,
+    enableTreeShaking: true,
+    enableDynamicImports: true,
+    enableBundleAnalysis: true,
+    maxChunkSize: 250 // KB
   },
 
   // Image optimization
-  optimizeImages: (config = {}) => {
-    return {
-      ...performanceConfig.images,
-      ...config,
-    };
+  imageOptimization: {
+    enableWebP: true,
+    enableLazyLoading: true,
+    enableResponsiveImages: true,
+    quality: 85,
+    maxWidth: 1920
   },
 
-  // Caching optimization
-  optimizeCaching: (config = {}) => {
-    return {
-      ...performanceConfig.caching,
-      ...config,
-    };
+  // Caching strategy
+  cachingStrategy: {
+    enableServiceWorker: true,
+    enableRuntimeCaching: true,
+    enableStaticCaching: true,
+    enableCacheInvalidation: true,
+    cacheVersion: '1.0.0'
   },
 
-  // Code optimization
-  optimizeCode: (config = {}) => {
-    return {
-      ...performanceConfig.code,
-      ...config,
-    };
-  },
-};
-
-/**
- * Development optimization helper
- */
-export const optimizeDevelopment = {
-  // Hot reload optimization
-  optimizeHotReload: (config = {}) => {
-    return {
-      ...developmentConfig.hotReload,
-      ...config,
-    };
+  // Multi-language support
+  multiLanguage: {
+    languages: ['tr', 'en', 'ru'],
+    defaultLanguage: 'tr',
+    enableAutoDetection: true,
+    enableTranslationKeys: true
   },
 
-  // Debug optimization
-  optimizeDebug: (config = {}) => {
-    return {
-      ...developmentConfig.debug,
-      ...config,
-    };
+  // Real-time features
+  realTime: {
+    enableWebSocket: true,
+    enableSupabase: true,
+    enableNotifications: true,
+    enableLiveUpdates: true
   },
 
-  // Code quality optimization
-  optimizeCodeQuality: (config = {}) => {
-    return {
-      ...developmentConfig.codeQuality,
-      ...config,
-    };
-  },
-};
-
-/**
- * AI Agent optimization helper
- */
-export const optimizeAIAgent = {
-  // Code generation optimization
-  optimizeCodeGeneration: (config = {}) => {
-    return {
-      ...aiAgentConfig.codeGeneration,
-      ...config,
-    };
+  // Database integration
+  database: {
+    enableSupabase: true,
+    enableRLS: true,
+    enableRealTime: true,
+    enableBackups: true
   },
 
-  // Search optimization
-  optimizeSearch: (config = {}) => {
-    return {
-      ...aiAgentConfig.search,
-      ...config,
-    };
+  // Security features
+  security: {
+    enableAuthentication: true,
+    enableAuthorization: true,
+    enableCSP: true,
+    enableXSSProtection: true
   },
 
-  // Suggestions optimization
-  optimizeSuggestions: (config = {}) => {
-    return {
-      ...aiAgentConfig.suggestions,
-      ...config,
-    };
+  // Testing strategy
+  testing: {
+    enableUnitTests: true,
+    enableIntegrationTests: true,
+    enablePerformanceTests: true,
+    enableAccessibilityTests: true
   },
 
-  // Context optimization
-  optimizeContext: (config = {}) => {
-    return {
-      ...aiAgentConfig.context,
-      ...config,
-    };
+  // Monitoring and analytics
+  monitoring: {
+    enablePerformanceMonitoring: true,
+    enableErrorTracking: true,
+    enableUserAnalytics: true,
+    enableRealTimeMonitoring: true
   },
-};
 
-// ============================================================================
-// CONFIGURATION VALIDATION
-// ============================================================================
+  // Deployment and CI/CD
+  deployment: {
+    enableProductionBuild: true,
+    enableSourceMaps: false,
+    enableAssetOptimization: true,
+    enableBundleSplitting: true
+  },
 
-/**
- * Validate configuration
- */
-export const validateConfig = (config) => {
-  const errors = [];
-
-  // Validate performance config
-  if (config.performance) {
-    if (config.performance.bundle?.maxChunkSize < 100) {
-      errors.push('Bundle size should be at least 100KB');
-    }
-    if (config.performance.images?.quality < 0 || config.performance.images?.quality > 100) {
-      errors.push('Image quality should be between 0 and 100');
+  // Environment configuration
+  environment: {
+    development: {
+      enableHotReload: true,
+      enableSourceMaps: true,
+      enableDebugMode: true,
+      enableMockData: true
+    },
+    staging: {
+      enablePreProductionTesting: true,
+      enablePerformanceTesting: true,
+      enableSecurityTesting: true,
+      enableUserTesting: true
+    },
+    production: {
+      enableOptimization: true,
+      enableCaching: true,
+      enableCDN: true,
+      enableMonitoring: true
     }
   }
-
-  // Validate development config
-  if (config.development) {
-    if (config.development.hotReload?.fastRefresh === false) {
-      errors.push('Fast refresh is recommended for development');
-    }
-  }
-
-  // Validate AI agent config
-  if (config.aiAgent) {
-    if (config.aiAgent.search?.resultLimit < 1) {
-      errors.push('Search result limit should be at least 1');
-    }
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors,
-  };
 };
 
-// ============================================================================
-// CONFIGURATION MERGER
-// ============================================================================
-
-/**
- * Merge configurations
- */
-export const mergeConfigs = (...configs) => {
-  return configs.reduce((merged, config) => {
+// Environment-specific configuration
+export const getEnvironmentConfig = () => {
+  if (isDevelopment) {
     return {
-      ...merged,
-      ...config,
+      ...cursorConfig,
       performance: {
-        ...merged.performance,
-        ...config.performance,
+        ...cursorConfig.performance,
+        enableLazyLoading: false,
+        enableCodeSplitting: false
       },
-      development: {
-        ...merged.development,
-        ...config.development,
-      },
-      aiAgent: {
-        ...merged.aiAgent,
-        ...config.aiAgent,
-      },
-      project: {
-        ...merged.project,
-        ...config.project,
-      },
+      monitoring: {
+        ...cursorConfig.monitoring,
+        enablePerformanceMonitoring: false,
+        enableErrorTracking: false
+      }
     };
-  }, {});
+  }
+
+  if (isTest) {
+    return {
+      ...cursorConfig,
+      performance: {
+        ...cursorConfig.performance,
+        enableLazyLoading: false,
+        enableCodeSplitting: false
+      },
+      monitoring: {
+        ...cursorConfig.monitoring,
+        enablePerformanceMonitoring: true,
+        enableErrorTracking: true
+      }
+    };
+  }
+
+  return cursorConfig;
 };
 
-// ============================================================================
-// DEFAULT CONFIGURATION
-// ============================================================================
-
-export const defaultConfig = mergeConfigs(
-  { performance: performanceConfig },
-  { development: developmentConfig },
-  { aiAgent: aiAgentConfig },
-  { project: projectConfig }
-);
-
-// ============================================================================
-// EXPORT ALL CONFIGURATIONS
-// ============================================================================
-
-export const cursorConfig = {
-  // Base configurations
-  performance: performanceConfig,
-  development: developmentConfig,
-  aiAgent: aiAgentConfig,
-  project: projectConfig,
-  monitoring: performanceMonitoring,
-
-  // Optimization helpers
-  optimize: {
-    performance: optimizePerformance,
-    development: optimizeDevelopment,
-    aiAgent: optimizeAIAgent,
+// Quick commands configuration
+export const quickCommands = {
+  component: {
+    pattern: '@component {name} {type} {props}',
+    description: 'Component üret',
+    examples: [
+      '@component UserForm form name:string email:string age:number',
+      '@component DataTable table data:array columns:array',
+      '@component ConfirmModal modal title:string message:string'
+    ]
   },
-
-  // Utilities
-  validate: validateConfig,
-  merge: mergeConfigs,
-  default: defaultConfig,
+  service: {
+    pattern: '@service {name} {type}',
+    description: 'Service üret',
+    examples: [
+      '@service UserService api',
+      '@service AuthService auth',
+      '@service FileService file'
+    ]
+  },
+  hook: {
+    pattern: '@hook {name} {type}',
+    description: 'Hook üret',
+    examples: [
+      '@hook useUserData custom',
+      '@hook useFormValidation form',
+      '@hook useApiCache api'
+    ]
+  },
+  search: {
+    pattern: '@search {query}',
+    description: 'Arama yap',
+    examples: [
+      '@search form validation',
+      '@search table pagination',
+      '@search modal component'
+    ]
+  },
+  optimize: {
+    pattern: '@optimize {type}',
+    description: 'Optimizasyon yap',
+    examples: [
+      '@optimize bundle',
+      '@optimize image',
+      '@optimize performance',
+      '@optimize accessibility'
+    ]
+  }
 };
 
-export default cursorConfig;
+// Performance thresholds
+export const performanceThresholds = {
+  bundleSize: {
+    warning: 500, // KB
+    error: 1000 // KB
+  },
+  loadTime: {
+    warning: 3000, // ms
+    error: 5000 // ms
+  },
+  lcp: {
+    warning: 2500, // ms
+    error: 4000 // ms
+  },
+  fid: {
+    warning: 100, // ms
+    error: 300 // ms
+  },
+  cls: {
+    warning: 0.1,
+    error: 0.25
+  }
+};
+
+// Search patterns
+export const searchPatterns = {
+  component: {
+    form: ['form', 'input', 'validation', 'submit'],
+    table: ['table', 'data', 'pagination', 'sort'],
+    modal: ['modal', 'dialog', 'popup', 'overlay'],
+    loading: ['loading', 'spinner', 'skeleton'],
+    navigation: ['nav', 'menu', 'sidebar', 'breadcrumb']
+  },
+  service: {
+    api: ['api', 'service', 'client', 'request'],
+    auth: ['auth', 'login', 'token', 'session'],
+    database: ['database', 'query', 'sql', 'table'],
+    file: ['file', 'upload', 'download', 'storage']
+  },
+  hook: {
+    state: ['useState', 'useReducer', 'state'],
+    effect: ['useEffect', 'mount', 'unmount'],
+    custom: ['use', 'hook', 'custom', 'logic']
+  }
+};
+
+// Code snippets
+export const codeSnippets = {
+  react: {
+    rfc: 'Functional component',
+    rfcs: 'Component with useState',
+    rfce: 'Component with useEffect',
+    rhook: 'Custom hook',
+    rctx: 'Context provider'
+  },
+  form: {
+    form: 'Basic form',
+    formv: 'Form with validation',
+    input: 'Input field',
+    select: 'Select field',
+    textarea: 'Textarea field'
+  },
+  api: {
+    get: 'GET request',
+    post: 'POST request',
+    put: 'PUT request',
+    delete: 'DELETE request',
+    useapi: 'API hook'
+  },
+  utility: {
+    ls: 'Local storage',
+    gls: 'Get from local storage',
+    date: 'Date formatting',
+    currency: 'Currency formatting',
+    debounce: 'Debounce hook'
+  }
+};
+
+// Export default configuration
+export default getEnvironmentConfig();

@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   Activity,
   AlertCircle,
@@ -107,7 +107,7 @@ const WorkflowAutomation = () => {
   useEffect(() => {
     setWorkflows(mockWorkflows);
     setExecutionHistory(mockExecutions);
-  }, []);
+  }, [mockExecutions, mockWorkflows]);
 
   const WorkflowCard = ({ workflow }) => {
     const getStatusColor = status => {

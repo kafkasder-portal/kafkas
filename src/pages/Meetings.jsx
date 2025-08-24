@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 import {
   Calendar,
   Clock,
@@ -26,7 +26,7 @@ const Meetings = () => {
       setError(null);
       const data = await meetingsService.getAll();
       setMeetings(data);
-    } catch (_err) {
+    } catch (_error) {
       setError('Toplantılar yüklenirken hata oluştu');
       toast.error('Toplantılar yüklenemedi');
     } finally {
@@ -40,7 +40,7 @@ const Meetings = () => {
       await meetingsService.update(id, updates);
       await loadMeetings();
       toast.success('Toplantı güncellendi');
-    } catch (_err) {
+    } catch (_error) {
       toast.error('Toplantı güncellenirken hata oluştu');
     }
   };
@@ -51,7 +51,7 @@ const Meetings = () => {
       await meetingsService.delete(id);
       await loadMeetings();
       toast.success('Toplantı silindi');
-    } catch (_err) {
+    } catch (_error) {
       toast.error('Toplantı silinirken hata oluştu');
     }
   };

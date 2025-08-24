@@ -3,7 +3,6 @@ import {
   Route,
   BrowserRouter as Router,
   Routes,
-  createBrowserRouter,
   RouterProvider,
 } from 'react-router-dom';
 import './App.css';
@@ -54,6 +53,8 @@ const MonitoringDashboard = lazy(
 );
 const TodosList = lazy(() => import('./components/TodosList'));
 const OptimizerDemo = lazy(() => import('./pages/OptimizerDemo'));
+const ProjectManagement = lazy(() => import('./pages/ProjectManagement'));
+const BudgetPlanning = lazy(() => import('./pages/BudgetPlanning'));
 
 // Loading component
 const LoadingSpinner = () => (
@@ -293,6 +294,22 @@ const AppContent = memo(() => {
                     element={
                       <ProtectedRoute>
                         <FormBuilder />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path='/projects'
+                    element={
+                      <ProtectedRoute>
+                        <ProjectManagement />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path='/budget'
+                    element={
+                      <ProtectedRoute>
+                        <BudgetPlanning />
                       </ProtectedRoute>
                     }
                   />

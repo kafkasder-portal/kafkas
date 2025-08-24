@@ -1,221 +1,182 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-/**
- * usePerformance Hook
- * @description Performance monitoring hook for Core Web Vitals and other metrics
- * @returns {Object} Performance metrics and monitoring functions
- */
-const usePerformance = () => {
+export const usePerformance = () => {
   const [metrics, setMetrics] = useState({
-    lcp: null,
-    fid: null,
-    cls: null,
-    fcp: null,
-    ttfb: null,
-    bundleSize: null,
-    loadTime: null,
+    fcp: 0,
+    lcp: 0,
+    fid: 0,
+    cls: 0,
+    ttfb: 0,
+    memory: null,
+    cpu: null
   });
 
-  const [isMonitoring, setIsMonitoring] = useState(false);
+  const [isSupported, setIsSupported] = useState(false);
 
-  // Measure Core Web Vitals
-  const measureCoreWebVitals = useCallback(() => {
-    // LCP (Largest Contentful Paint)
-    const lcpObserver = new PerformanceObserver((list) => {
-      const entries = list.getEntries();
-      const lastEntry = entries[entries.length - 1];
-      setMetrics(prev => ({
-        ...prev,
-        lcp: lastEntry.startTime,
-      }));
-    });
-    lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+  useEffect(() => {
+    // Check if Performance API is supported
+    if (typeof window !== 'undefined' && 'PerformanceObserver' in window) {
+      setIsSupported(true);
+      initializePerformanceMonitoring();
+    }
+  }, []);
 
-    // FID (First Input Delay)
-    const fidObserver = new PerformanceObserver((list) => {
-      const entries = list.getEntries();
-      entries.forEach(entry => {
-        const fid = entry.processingStart - entry.startTime;
-        setMetrics(prev => ({
-          ...prev,
-          fid,
+  const initializePerformanceMonitoring = useCallback(() => {
+    if (typeof window === 'undefined') return;
+
+    // First Contentful Paint
+    if ('PerformanceObserver' in window) {
+      try {
+        const fcpObserver = new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          const fcpEntry = entries.find(entry => entry.name === 'first-contentful-paint');
+          if (fcpEntry) {
+            setMetrics(prev => ({ ...prev, fcp: fcpEntry.startTime }));
+          }
+        });
+        fcpObserver.observe({ entryTypes: ['paint'] });
+      } catch (error) {
+        console.warn('FCP observer error:', error);
+      }
+
+      // Largest Contentful Paint
+      try {
+        const lcpObserver = new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          const lastEntry = entries[entries.length - 1];
+          if (lastEntry) {
+            setMetrics(prev => ({ ...prev, lcp: lastEntry.startTime }));
+          }
+        });
+        lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+      } catch (error) {
+        console.warn('LCP observer error:', error);
+      }
+
+      // First Input Delay
+      try {
+        const fidObserver = new PerformanceObserver((list) => {
+          const entries = list.getEntries();
+          entries.forEach(entry => {
+            if (entry.processingStart && entry.startTime) {
+              const fid = entry.processingStart - entry.startTime;
+              setMetrics(prev => ({ ...prev, fid }));
+            }
+          });
+        });
+        fidObserver.observe({ entryTypes: ['first-input'] });
+      } catch (error) {
+        console.warn('FID observer error:', error);
+      }
+
+      // Cumulative Layout Shift
+      try {
+        const clsObserver = new PerformanceObserver((list) => {
+          let clsValue = 0;
+          const entries = list.getEntries();
+          entries.forEach(entry => {
+            if (!entry.hadRecentInput) {
+              clsValue += entry.value;
+            }
+          });
+          setMetrics(prev => ({ ...prev, cls: clsValue }));
+        });
+        clsObserver.observe({ entryTypes: ['layout-shift'] });
+      } catch (error) {
+        console.warn('CLS observer error:', error);
+      }
+    }
+
+    // Time to First Byte
+    if ('navigation' in performance) {
+      const navigation = performance.getEntriesByType('navigation')[0];
+      if (navigation) {
+        setMetrics(prev => ({ ...prev, ttfb: navigation.responseStart - navigation.requestStart }));
+      }
+    }
+
+    // Memory usage (if available)
+    if ('memory' in performance) {
+      const updateMemory = () => {
+        setMetrics(prev => ({ 
+          ...prev, 
+          memory: {
+            used: performance.memory.usedJSHeapSize,
+            total: performance.memory.totalJSHeapSize,
+            limit: performance.memory.jsHeapSizeLimit
+          }
         }));
-      });
-    });
-    fidObserver.observe({ entryTypes: ['first-input'] });
-
-    // CLS (Cumulative Layout Shift)
-    let cls = 0;
-    const clsObserver = new PerformanceObserver((list) => {
-      list.getEntries().forEach(entry => {
-        if (!entry.hadRecentInput) {
-          cls += entry.value;
-        }
-      });
-      setMetrics(prev => ({
-        ...prev,
-        cls,
-      }));
-    });
-    clsObserver.observe({ entryTypes: ['layout-shift'] });
-
-    // FCP (First Contentful Paint)
-    const fcpObserver = new PerformanceObserver((list) => {
-      const entries = list.getEntries();
-      const fcp = entries[entries.length - 1].startTime;
-      setMetrics(prev => ({
-        ...prev,
-        fcp,
-      }));
-    });
-    fcpObserver.observe({ entryTypes: ['first-contentful-paint'] });
-
-    // TTFB (Time to First Byte)
-    const navigationEntry = performance.getEntriesByType('navigation')[0];
-    if (navigationEntry) {
-      setMetrics(prev => ({
-        ...prev,
-        ttfb: navigationEntry.responseStart - navigationEntry.requestStart,
-      }));
+      };
+      updateMemory();
+      setInterval(updateMemory, 5000);
     }
 
-    return () => {
-      lcpObserver.disconnect();
-      fidObserver.disconnect();
-      clsObserver.disconnect();
-      fcpObserver.disconnect();
+    // CPU usage estimation
+    const updateCPU = () => {
+      const start = performance.now();
+      setTimeout(() => {
+        const end = performance.now();
+        const cpuUsage = ((end - start) / 16.67) * 100; // 60fps = 16.67ms per frame
+        setMetrics(prev => ({ ...prev, cpu: Math.min(cpuUsage, 100) }));
+      }, 16);
     };
+    updateCPU();
+    setInterval(updateCPU, 1000);
   }, []);
 
-  // Measure bundle size
-  const measureBundleSize = useCallback(() => {
-    if (process.env.NODE_ENV === 'production') {
-      const resources = performance.getEntriesByType('resource');
-      const jsResources = resources.filter(resource => 
-        resource.name.includes('.js') && !resource.name.includes('chunk')
-      );
-      
-      const totalSize = jsResources.reduce((total, resource) => {
-        return total + (resource.transferSize || 0);
-      }, 0);
-
-      setMetrics(prev => ({
-        ...prev,
-        bundleSize: totalSize / 1024, // Convert to KB
-      }));
-    }
-  }, []);
-
-  // Measure page load time
-  const measureLoadTime = useCallback(() => {
-    const navigationEntry = performance.getEntriesByType('navigation')[0];
-    if (navigationEntry) {
-      setMetrics(prev => ({
-        ...prev,
-        loadTime: navigationEntry.loadEventEnd - navigationEntry.loadEventStart,
-      }));
-    }
-  }, []);
-
-  // Start monitoring
-  const startMonitoring = useCallback(() => {
-    setIsMonitoring(true);
-    const cleanup = measureCoreWebVitals();
-    
-    // Measure bundle size after a delay
-    setTimeout(measureBundleSize, 1000);
-    
-    // Measure load time when page is fully loaded
-    if (document.readyState === 'complete') {
-      measureLoadTime();
-    } else {
-      window.addEventListener('load', measureLoadTime);
-    }
-
-    return cleanup;
-  }, [measureCoreWebVitals, measureBundleSize, measureLoadTime]);
-
-  // Stop monitoring
-  const stopMonitoring = useCallback(() => {
-    setIsMonitoring(false);
-  }, []);
-
-  // Get performance score
   const getPerformanceScore = useCallback(() => {
-    let score = 100;
+    const scores = {
+      fcp: metrics.fcp < 1800 ? 100 : metrics.fcp < 3000 ? 50 : 0,
+      lcp: metrics.lcp < 2500 ? 100 : metrics.lcp < 4000 ? 50 : 0,
+      fid: metrics.fid < 100 ? 100 : metrics.fid < 300 ? 50 : 0,
+      cls: metrics.cls < 0.1 ? 100 : metrics.cls < 0.25 ? 50 : 0,
+      ttfb: metrics.ttfb < 800 ? 100 : metrics.ttfb < 1800 ? 50 : 0
+    };
 
-    // LCP scoring (0-100)
-    if (metrics.lcp) {
-      if (metrics.lcp <= 2500) score -= 0;
-      else if (metrics.lcp <= 4000) score -= 10;
-      else score -= 25;
-    }
-
-    // FID scoring (0-100)
-    if (metrics.fid) {
-      if (metrics.fid <= 100) score -= 0;
-      else if (metrics.fid <= 300) score -= 10;
-      else score -= 25;
-    }
-
-    // CLS scoring (0-100)
-    if (metrics.cls) {
-      if (metrics.cls <= 0.1) score -= 0;
-      else if (metrics.cls <= 0.25) score -= 10;
-      else score -= 25;
-    }
-
-    // Bundle size scoring
-    if (metrics.bundleSize) {
-      if (metrics.bundleSize <= 500) score -= 0;
-      else if (metrics.bundleSize <= 1000) score -= 10;
-      else score -= 25;
-    }
-
-    return Math.max(0, score);
+    const totalScore = Object.values(scores).reduce((sum, score) => sum + score, 0);
+    return Math.round(totalScore / Object.keys(scores).length);
   }, [metrics]);
 
-  // Get performance recommendations
+  const getPerformanceGrade = useCallback(() => {
+    const score = getPerformanceScore();
+    if (score >= 90) return 'A';
+    if (score >= 80) return 'B';
+    if (score >= 70) return 'C';
+    if (score >= 60) return 'D';
+    return 'F';
+  }, [getPerformanceScore]);
+
   const getRecommendations = useCallback(() => {
     const recommendations = [];
 
-    if (metrics.lcp && metrics.lcp > 2500) {
-      recommendations.push('LCP is too slow. Optimize images and critical resources.');
+    if (metrics.fcp > 1800) {
+      recommendations.push('Optimize First Contentful Paint by reducing server response time and critical resources');
     }
 
-    if (metrics.fid && metrics.fid > 100) {
-      recommendations.push('FID is too high. Reduce JavaScript execution time.');
+    if (metrics.lcp > 2500) {
+      recommendations.push('Improve Largest Contentful Paint by optimizing images and reducing render-blocking resources');
     }
 
-    if (metrics.cls && metrics.cls > 0.1) {
-      recommendations.push('CLS is too high. Avoid layout shifts.');
+    if (metrics.fid > 100) {
+      recommendations.push('Reduce First Input Delay by minimizing main thread work and breaking up long tasks');
     }
 
-    if (metrics.bundleSize && metrics.bundleSize > 500) {
-      recommendations.push('Bundle size is too large. Implement code splitting.');
+    if (metrics.cls > 0.1) {
+      recommendations.push('Fix Cumulative Layout Shift by setting explicit dimensions for images and ads');
     }
 
-    if (metrics.loadTime && metrics.loadTime > 3000) {
-      recommendations.push('Page load time is slow. Optimize resources.');
+    if (metrics.ttfb > 800) {
+      recommendations.push('Optimize Time to First Byte by improving server response time and using CDN');
     }
 
     return recommendations;
   }, [metrics]);
 
-  // Auto-start monitoring on mount
-  useEffect(() => {
-    const cleanup = startMonitoring();
-    return cleanup;
-  }, [startMonitoring]);
-
   return {
     metrics,
-    isMonitoring,
-    startMonitoring,
-    stopMonitoring,
+    isSupported,
     getPerformanceScore,
-    getRecommendations,
+    getPerformanceGrade,
+    getRecommendations
   };
 };
-
-export default usePerformance;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 import {
   DollarSign,
   TrendingUp,
@@ -106,7 +106,7 @@ const Finance = () => {
           bgColor: 'rgba(245, 158, 11, 0.1)',
         },
       ]);
-    } catch (_err) {
+    } catch (_error) {
       setError('Finans verileri yüklenirken hata oluştu');
       toast.error('Finans verileri yüklenemedi');
     } finally {
@@ -120,7 +120,7 @@ const Finance = () => {
       await financeService.update(id, updates);
       await loadFinanceData();
       toast.success('İşlem güncellendi');
-    } catch (_err) {
+    } catch (_error) {
       toast.error('İşlem güncellenirken hata oluştu');
     }
   };
@@ -131,7 +131,7 @@ const Finance = () => {
       await financeService.delete(id);
       await loadFinanceData();
       toast.success('İşlem silindi');
-    } catch (_err) {
+    } catch (_error) {
       toast.error('İşlem silinirken hata oluştu');
     }
   };

@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   Activity,
   AlertCircle,
@@ -22,14 +22,14 @@ import {
 import { useEffect, useRef, useState } from 'react';
 
 const RealTimeDashboard = () => {
-  const [isConnected, setIsConnected] = useState(true);
+  // const [isConnected, setIsConnected] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [liveData, setLiveData] = useState({});
   const [lastUpdate, setLastUpdate] = useState(new Date());
 
-  const wsRef = useRef(null);
+  // const wsRef = useRef(null);
   const intervalRef = useRef(null);
 
   // Simulated WebSocket connection

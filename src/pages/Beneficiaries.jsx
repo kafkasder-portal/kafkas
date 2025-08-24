@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   AlertCircle,
   Calendar,
@@ -24,7 +24,7 @@ import { beneficiariesService } from '../services/beneficiariesService';
 
 const Beneficiaries = () => {
   const navigate = useNavigate();
-  const { pageClasses, cardClasses, buttonClasses } = usePageAnimation();
+  // const { pageClasses, cardClasses, buttonClasses } = usePageAnimation();
 
   const [beneficiaries, setBeneficiaries] = useState([]);
   const [filteredBeneficiaries, setFilteredBeneficiaries] = useState([]);

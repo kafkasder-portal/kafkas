@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   MessageSquare,
   Send,
@@ -36,7 +36,7 @@ const WhatsApp = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [showNewContactModal, setShowNewContactModal] = useState(false);
   const [newContact, setNewContact] = useState({
     name: '',
@@ -45,7 +45,7 @@ const WhatsApp = () => {
     notes: '',
   });
   const [isWhatsAppConnected, setIsWhatsAppConnected] = useState(false);
-  const [whatsAppSession, setWhatsAppSession] = useState(null);
+  // const [whatsAppSession, setWhatsAppSession] = useState(null);
   const messagesEndRef = useRef(null);
 
   // Mock data for contacts
@@ -160,13 +160,13 @@ const WhatsApp = () => {
 
   useEffect(() => {
     setContacts(mockContacts);
-  }, []);
+  }, [mockContacts]);
 
   useEffect(() => {
     if (selectedContact) {
       setMessages(mockMessages);
     }
-  }, [selectedContact]);
+  }, [selectedContact, mockMessages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

@@ -633,7 +633,7 @@ export default $1;
 `,
 
   // useMemo
-  'memo': `
+  'usememo': `
 const $1 = useMemo(() => {
   return $2;
 }, [$3]);

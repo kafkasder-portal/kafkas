@@ -634,7 +634,7 @@ ${propTypeDefinitions}
   return (
     <div 
       role="main"
-      aria-label="${componentName} component"
+      aria-label="Component"
       onKeyDown={handleKeyDown}
       tabIndex={0}
     >
@@ -667,8 +667,8 @@ ${propTypeDefinitions}
 `;
 
     return code.replace(
-      'export default ${serviceName};',
-      errorHandlingCode + '\nexport default ${serviceName};'
+      'export default',
+      errorHandlingCode + '\nexport default'
     );
   }
 
@@ -711,7 +711,7 @@ const ${hookName} = (): ${hookName}Return => {
 `;
 
     return code.replace(
-      `const ${hookName} = () => {`,
+      'const ' + hookName + ' = () => {',
       typescriptCode
     );
   }

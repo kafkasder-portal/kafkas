@@ -55,7 +55,7 @@ const Aid = () => {
         beneficiaries,
         distributionPoints,
       });
-    } catch (err) {
+    } catch (_err) {
       setError('Yardım programları yüklenirken hata oluştu');
       toast.error('Yardım programları yüklenemedi');
     } finally {
@@ -69,7 +69,7 @@ const Aid = () => {
       await aidService.update(id, updates);
       toast.success('Program başarıyla güncellendi');
       loadAidPrograms();
-    } catch (err) {
+    } catch (_err) {
       toast.error('Program güncellenirken hata oluştu');
     }
   };
@@ -80,7 +80,7 @@ const Aid = () => {
       await aidService.delete(id);
       toast.success('Program başarıyla silindi');
       loadAidPrograms();
-    } catch (err) {
+    } catch (_err) {
       toast.error('Program silinirken hata oluştu');
     }
   };

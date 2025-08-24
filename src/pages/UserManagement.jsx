@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   AlertCircle,
   Check,
@@ -148,21 +148,21 @@ const UserManagement = () => {
     form.reset();
   };
 
-  const getRoleColor = role => {
-    const colors = {
-      [ROLES.ADMIN]: '#ef4444',
-      [ROLES.MANAGER]: '#3b82f6',
-      [ROLES.COORDINATOR]: '#10b981',
-      [ROLES.VOLUNTEER]: '#f59e0b',
-      [ROLES.VIEWER]: '#64748b',
-    };
-    return colors[role] || '#64748b';
-  };
+  // const getRoleColor = role => {
+  //   const colors = {
+  //     [ROLES.ADMIN]: '#ef4444',
+  //     [ROLES.MANAGER]: '#3b82f6',
+  //     [ROLES.COORDINATOR]: '#10b981',
+  //     [ROLES.VOLUNTEER]: '#f59e0b',
+  //     [ROLES.VIEWER]: '#64748b',
+  //   };
+  //   return colors[role] || '#64748b';
+  // };
 
-  const formatDate = dateString => {
-    if (!dateString) return 'Hiç giriş yapılmamış';
-    return new Date(dateString).toLocaleString('tr-TR');
-  };
+  // const formatDate = dateString => {
+  //   if (!dateString) return 'Hiç giriş yapılmamış';
+  //   return new Date(dateString).toLocaleString('tr-TR');
+  // };
 
   return (
     <ProtectedRoute requiredRole={ROLES.ADMIN}>
@@ -276,7 +276,7 @@ const UserManagement = () => {
                   }}
                 >
                   <option value=''>Tüm Roller</option>
-                  {Object.entries(ROLES).map(([key, value]) => (
+                  {Object.entries(ROLES).map(([_key, value]) => (
                     <option key={value} value={value}>
                       {getRoleName(value)}
                     </option>
@@ -805,7 +805,7 @@ const UserManagement = () => {
                           backgroundColor: 'white',
                         }}
                       >
-                        {Object.entries(ROLES).map(([key, value]) => (
+                        {Object.entries(ROLES).map(([_key, value]) => (
                           <option key={value} value={value}>
                             {getRoleName(value)}
                           </option>

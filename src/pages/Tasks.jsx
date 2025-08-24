@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 import {
   AlertCircle,
   Calendar,
@@ -27,7 +27,7 @@ const Tasks = () => {
       setError(null);
       const data = await tasksService.getAll();
       setTasks(data);
-    } catch (_err) {
+    } catch (_error) {
       setError('Görevler yüklenirken hata oluştu');
       toast.error('Görevler yüklenirken hata oluştu');
     } finally {
@@ -41,7 +41,7 @@ const Tasks = () => {
       await tasksService.update(taskId, updates);
       toast.success('Görev başarıyla güncellendi');
       loadTasks();
-    } catch (_err) {
+    } catch (_error) {
       toast.error('Görev güncellenirken hata oluştu');
     }
   };
@@ -52,7 +52,7 @@ const Tasks = () => {
       await tasksService.delete(taskId);
       toast.success('Görev başarıyla silindi');
       loadTasks();
-    } catch (_err) {
+    } catch (_error) {
       toast.error('Görev silinirken hata oluştu');
     }
   };

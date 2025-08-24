@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 import {
   GraduationCap,
   Users,
@@ -54,7 +54,7 @@ const Scholarship = () => {
         graduates,
         totalBudget,
       });
-    } catch (_err) {
+    } catch (_error) {
       setError('Burslar yüklenirken hata oluştu');
       toast.error('Burslar yüklenemedi');
     } finally {
@@ -68,7 +68,7 @@ const Scholarship = () => {
       await scholarshipService.update(id, updates);
       toast.success('Burs başarıyla güncellendi');
       loadScholarships();
-    } catch (_err) {
+    } catch (_error) {
       toast.error('Burs güncellenirken hata oluştu');
     }
   };
@@ -79,7 +79,7 @@ const Scholarship = () => {
       await scholarshipService.delete(id);
       toast.success('Burs başarıyla silindi');
       loadScholarships();
-    } catch (_err) {
+    } catch (_error) {
       toast.error('Burs silinirken hata oluştu');
     }
   };

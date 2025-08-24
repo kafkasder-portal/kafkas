@@ -83,7 +83,7 @@ const useDeviceDetection = () => {
           ? 'ontouchstart' in window || navigator.maxTouchPoints > 0
           : false,
     };
-  }, []);
+  }, [getBrowserInfo, getOSInfo]);
 
   const getBrowserInfo = useCallback(() => {
     if (typeof navigator === 'undefined') return 'Unknown';

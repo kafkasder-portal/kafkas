@@ -47,7 +47,7 @@ export const NotificationProvider = ({ children }) => {
     autoRead: true,
     readTimeout: 5000,
   });
-  const [notificationService, setNotificationService] = useState(null);
+  // const [notificationService, setNotificationService] = useState(null);
 
   // Toast bildirimi göster
   const showToast = useCallback(
@@ -324,7 +324,7 @@ export const NotificationProvider = ({ children }) => {
     return () => {
       service.stopPolling();
     };
-  }, []);
+  }, [addNotification, notifyNewDonation, notifySystemUpdate, notifyTaskDeadline, notifyUserActivity, showToast]);
 
   return (
     <NotificationContext.Provider value={value}>

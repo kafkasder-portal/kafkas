@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   AlertCircle,
   ArrowLeft,
@@ -128,7 +128,7 @@ const BeneficiaryDetail = () => {
       category: 'Banka',
     },
   ]);
-  const [selectedDocument, setSelectedDocument] = useState(null);
+  // const [selectedDocument, setSelectedDocument] = useState(null);
   const [uploadingDocument, setUploadingDocument] = useState(false);
 
   // Baktığı Yetimler state'leri
@@ -285,7 +285,7 @@ const BeneficiaryDetail = () => {
       setFormData(mockBeneficiary);
       setLoading(false);
     }, 1000);
-  }, [id]);
+  }, [id, mockBeneficiary]);
 
   const getDurumColor = durum => {
     switch (durum) {
@@ -375,7 +375,6 @@ const BeneficiaryDetail = () => {
 
   // Banka hesapları fonksiyonları
   const validateIban = iban => {
-    const cleanIban = iban.replace(/\s/g, '');
     const ibanRegex =
       /^TR\d{2}\s?\d{4}\s?\d{4}\s?\d{4}\s?\d{4}\s?\d{4}\s?\d{2}$/;
     return ibanRegex.test(iban);

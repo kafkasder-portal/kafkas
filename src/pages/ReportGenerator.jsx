@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   BarChart3,
   CheckSquare,
@@ -17,7 +17,7 @@ import { useState } from 'react';
 const ReportGenerator = () => {
   const [selectedReportType, setSelectedReportType] = useState('');
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
-  const [filters, setFilters] = useState({});
+  // const [filters, setFilters] = useState({});
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedReport, setGeneratedReport] = useState(null);
 
@@ -56,11 +56,11 @@ const ReportGenerator = () => {
     },
   ];
 
-  const chartTypes = [
+  // const chartTypes = [
     { id: 'bar', name: 'Bar Chart', icon: BarChart3 },
     { id: 'pie', name: 'Pie Chart', icon: PieChart },
     { id: 'line', name: 'Line Chart', icon: TrendingUp },
-  ];
+  // ];
 
   const generateReport = async () => {
     if (!selectedReportType) return;
@@ -107,7 +107,7 @@ const ReportGenerator = () => {
     setIsGenerating(false);
   };
 
-  const exportReport = format => {
+  const exportReport = _format => {
     // Simulate export
     // In real app, this would trigger download
   };

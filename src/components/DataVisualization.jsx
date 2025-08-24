@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 import {
   Activity,
   CheckCircle,
@@ -10,7 +10,7 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react';
-import { useRef } from 'react';
+// import { useRef } from 'react';
 
 // Simple Chart Components (without external dependencies)
 

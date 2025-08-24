@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { runOptimizerTests, getTestResults } from '../utils/testOptimizer.js';
 import CursorAIOptimizer from '../utils/cursorOptimizer.js';
 

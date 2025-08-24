@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   MessageSquare,
   Send,
@@ -64,8 +64,8 @@ const Messages = () => {
           activeChats: 0,
         });
       }
-    } catch (err) {
-      setError(`Mesajlar yüklenirken hata oluştu: ${err.message}`);
+    } catch (_err) {
+      setError(`Mesajlar yüklenirken hata oluştu: ${_err.message}`);
       toast.error('Mesajlar yüklenemedi');
     } finally {
       setLoading(false);
@@ -78,7 +78,7 @@ const Messages = () => {
       await messagesService.update(id, updates);
       await loadMessages();
       toast.success('Mesaj güncellendi');
-    } catch (err) {
+    } catch (_err) {
       toast.error('Mesaj güncellenirken hata oluştu');
     }
   };
@@ -89,7 +89,7 @@ const Messages = () => {
       await messagesService.delete(id);
       await loadMessages();
       toast.success('Mesaj silindi');
-    } catch (err) {
+    } catch (_err) {
       toast.error('Mesaj silinirken hata oluştu');
     }
   };
@@ -108,7 +108,7 @@ const Messages = () => {
       setShowNewMessageModal(false);
       await loadMessages();
       toast.success('Mesaj gönderildi');
-    } catch (err) {
+    } catch (_err) {
       toast.error('Mesaj gönderilirken hata oluştu');
     }
   };

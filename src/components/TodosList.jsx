@@ -16,7 +16,7 @@ const TodosList = () => {
       const savedTodos = localStorage.getItem('todos');
       const data = savedTodos ? JSON.parse(savedTodos) : [];
       setTodos(data);
-    } catch (err) {
+    } catch (_err) {
       setError('Todos yüklenirken hata oluştu');
     } finally {
       setLoading(false);
@@ -39,7 +39,7 @@ const TodosList = () => {
 
       const newTodos = [...todos, newTodo];
       saveTodos(newTodos);
-    } catch (err) {
+    } catch (_err) {
       setError('Todo eklenirken hata oluştu');
     }
   };
@@ -50,7 +50,7 @@ const TodosList = () => {
         todo.id === id ? { ...todo, completed } : todo
       );
       saveTodos(newTodos);
-    } catch (err) {
+    } catch (_err) {
       setError('Todo güncellenirken hata oluştu');
     }
   };
@@ -59,7 +59,7 @@ const TodosList = () => {
     try {
       const newTodos = todos.filter(todo => todo.id !== id);
       saveTodos(newTodos);
-    } catch (err) {
+    } catch (_err) {
       setError('Todo silinirken hata oluştu');
     }
   };

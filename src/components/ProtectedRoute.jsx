@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 import { Loader } from 'lucide-react';
 
 const ProtectedRoute = ({

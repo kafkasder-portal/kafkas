@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 import {
   Award,
   Calendar,
@@ -18,11 +18,11 @@ import { useEffect, useState } from 'react';
 
 const AdvancedAnalytics = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState('7d');
-  const [selectedMetrics, setSelectedMetrics] = useState([
+  const selectedMetrics = [
     'donations',
     'volunteers',
     'tasks',
-  ]);
+  ];
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState(null);
 
@@ -91,7 +91,7 @@ const AdvancedAnalytics = () => {
 
   useEffect(() => {
     loadData(selectedTimeRange);
-  }, [selectedTimeRange]);
+  }, [selectedTimeRange, loadData]);
 
   const calculateTrend = (data, metric) => {
     if (!data || data.length < 2) return { value: 0, trend: 'neutral' };

@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 import {
   Award,
   Clock,
@@ -29,7 +29,7 @@ const Volunteers = () => {
       setError(null);
       const data = await volunteersService.getAll();
       setVolunteers(data);
-    } catch (_err) {
+    } catch (_error) {
       setError('Gönüllüler yüklenirken hata oluştu');
       toast.error('Gönüllüler yüklenirken hata oluştu');
     } finally {
@@ -43,7 +43,7 @@ const Volunteers = () => {
       await volunteersService.update(volunteerId, updates);
       toast.success('Gönüllü başarıyla güncellendi');
       loadVolunteers();
-    } catch (_err) {
+    } catch (_error) {
       toast.error('Gönüllü güncellenirken hata oluştu');
     }
   };
@@ -54,7 +54,7 @@ const Volunteers = () => {
       await volunteersService.delete(volunteerId);
       toast.success('Gönüllü başarıyla silindi');
       loadVolunteers();
-    } catch (_err) {
+    } catch (_error) {
       toast.error('Gönüllü silinirken hata oluştu');
     }
   };

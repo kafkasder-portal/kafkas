@@ -146,7 +146,7 @@ const Login = () => {
           },
         });
       }
-    } catch (error) {
+    } catch (_error) {
       setSecurityStatus('error');
       setAttempts(prev => prev + 1);
       toast.error('Giriş yapılırken bir hata oluştu');

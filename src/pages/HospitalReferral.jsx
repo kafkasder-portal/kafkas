@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   Activity,
   Ambulance,
@@ -23,7 +23,7 @@ const HospitalReferral = () => {
   const [filteredReferrals, setFilteredReferrals] = useState([]);
   const [selectedReferral, setSelectedReferral] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState('view'); // 'view', 'add', 'edit'
+  // const [modalMode, setModalMode] = useState('view'); // 'view', 'add', 'edit'
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [urgencyFilter, setUrgencyFilter] = useState('all');

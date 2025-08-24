@@ -1,89 +1,143 @@
-// =====================================================
-// VERCEL SERVERLESS FUNCTION - USERS API
-// =====================================================
+/* eslint-env node */
+const express = require('express');
+const cors = require('cors');
 
-const { createClient } = require('@supabase/supabase-js');
+const app = express();
+const PORT = process.env.PORT || 3005;
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
-// Initialize Supabase client
-const supabaseUrl = process.env.VITE_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+// Middleware
+app.use(cors());
+app.use(express.json());
 
-module.exports = async function handler(req, res) {
-  // CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+// Mock users data
+let usersData = [
+  {
+    id: 1,
+    name: 'Ahmet Yılmaz',
+    email: 'ahmet@example.com',
+    role: 'admin',
+    status: 'active',
+    createdAt: new Date().toISOString(),
+    lastLogin: new Date().toISOString()
+  },
+  {
+    id: 2,
+    name: 'Fatma Demir',
+    email: 'fatma@example.com',
+    role: 'user',
+    status: 'active',
+    createdAt: new Date().toISOString(),
+    lastLogin: new Date().toISOString()
   }
+];
 
+// Routes
+app.get('/api/users', (req, res) => {
   try {
-    switch (req.method) {
-      case 'GET':
-        // Get all users
-        const { data: users, error: getError } = await supabase
-          .from('users')
-          .select('*')
-          .order('created_at', { ascending: false });
-
-        if (getError) throw getError;
-
-        res.status(200).json({
-          success: true,
-          data: users,
-          count: users.length
-        });
-        break;
-
-      case 'POST':
-        // Create new user
-        const { email, password_hash, first_name, last_name, role, status } = req.body;
-
-        if (!email || !password_hash || !first_name || !last_name) {
-          return res.status(400).json({
-            success: false,
-            message: 'Missing required fields'
-          });
-        }
-
-        const { data: newUser, error: createError } = await supabase
-          .from('users')
-          .insert([{
-            email,
-            password_hash,
-            first_name,
-            last_name,
-            role: role || 'user',
-            status: status || 'active'
-          }])
-          .select()
-          .single();
-
-        if (createError) throw createError;
-
-        res.status(201).json({
-          success: true,
-          data: newUser
-        });
-        break;
-
-      default:
-        res.setHeader('Allow', ['GET', 'POST']);
-        res.status(405).json({
-          success: false,
-          message: `Method ${req.method} Not Allowed`
-        });
+    const { role, status, search } = req.query;
+    let filteredData = [...usersData];
+    
+    if (role) {
+      filteredData = filteredData.filter(user => user.role === role);
     }
+    
+    if (status) {
+      filteredData = filteredData.filter(user => user.status === status);
+    }
+    
+    if (search) {
+      filteredData = filteredData.filter(user => 
+        user.name.toLowerCase().includes(search.toLowerCase()) ||
+        user.email.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    
+    res.json({ success: true, data: filteredData });
   } catch (error) {
-    console.error('Users API Error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal Server Error',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
+    console.error('Error fetching users:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch users' });
   }
-};
+});
+
+app.post('/api/users', (req, res) => {
+  try {
+    const { name, email, role, status } = req.body;
+    
+    const newUser = {
+      id: usersData.length + 1,
+      name,
+      email,
+      role: role || 'user',
+      status: status || 'active',
+      createdAt: new Date().toISOString(),
+      lastLogin: new Date().toISOString()
+    };
+    
+    usersData.push(newUser);
+    
+    console.log('New user added:', newUser);
+    res.status(201).json({ success: true, data: newUser });
+  } catch (error) {
+    console.error('Error adding user:', error);
+    res.status(500).json({ success: false, message: 'Failed to add user' });
+  }
+});
+
+app.put('/api/users/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+    
+    const userIndex = usersData.findIndex(user => user.id === parseInt(id));
+    
+    if (userIndex === -1) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    
+    usersData[userIndex] = {
+      ...usersData[userIndex],
+      ...updates,
+      lastLogin: new Date().toISOString()
+    };
+    
+    res.json({ success: true, data: usersData[userIndex] });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ success: false, message: 'Failed to update user' });
+  }
+});
+
+app.delete('/api/users/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const userIndex = usersData.findIndex(user => user.id === parseInt(id));
+    
+    if (userIndex === -1) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    
+    usersData.splice(userIndex, 1);
+    
+    res.json({ success: true, message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ success: false, message: 'Failed to delete user' });
+  }
+});
+
+// Error handling middleware
+app.use((error, req, res, next) => {
+  console.error('Users API error:', error);
+  res.status(500).json({ success: false, message: 'Internal server error' });
+});
+
+// Start server
+if (NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`Users API server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;

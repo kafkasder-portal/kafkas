@@ -28,12 +28,12 @@ const PerformanceDashboard = ({
   } = usePerformance();
 
   // Cache performance data
-  const { data: cacheInfo } = useApiCache(
-    'performance-metrics',
-    () => Promise.resolve(metrics),
-    30000, // 30 seconds TTL
-    true
-  );
+  // const { data: cacheInfo } = useApiCache(
+  //   'performance-metrics',
+  //   () => Promise.resolve(metrics),
+  //   30000, // 30 seconds TTL
+  //   true
+  // );
 
   const performanceScore = getPerformanceScore();
   const recommendations = getRecommendations();

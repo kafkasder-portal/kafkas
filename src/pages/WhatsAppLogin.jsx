@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   Smartphone,
   QrCode,
@@ -20,7 +20,7 @@ const WhatsAppLogin = ({ onLoginSuccess, onBack }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState('connecting');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [showSettings, setShowSettings] = useState(false);
+  // const [showSettings, setShowSettings] = useState(false);
   const qrRefreshInterval = useRef(null);
   const connectionCheckInterval = useRef(null);
 
@@ -127,7 +127,7 @@ const WhatsAppLogin = ({ onLoginSuccess, onBack }) => {
         clearInterval(connectionCheckInterval.current);
       }
     };
-  }, []);
+  }, [startConnectionCheck, startQRGeneration]);
 
   const getStatusIcon = () => {
     switch (connectionStatus) {

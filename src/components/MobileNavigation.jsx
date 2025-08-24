@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { LogOut, Menu, Search, Settings, X } from 'lucide-react';
 import { useState } from 'react';
 import useDeviceDetection from '../hooks/useDeviceDetection.jsx';

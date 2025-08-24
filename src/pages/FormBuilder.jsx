@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 import {
   Plus,
   Save,
@@ -43,11 +43,11 @@ const FormBuilder = () => {
     toast.success('Form dışa aktarıldı!');
   };
 
-  const handleDuplicateForm = formId => {
+  const handleDuplicateForm = _formId => {
     toast.success('Form kopyalandı!');
   };
 
-  const handleDeleteForm = formId => {
+  const handleDeleteForm = _formId => {
     setSavedForms(prev => prev.filter(form => form.id !== formId));
     toast.success('Form silindi!');
   };

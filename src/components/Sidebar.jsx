@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   Calculator,
   CheckSquare,
@@ -10,6 +10,8 @@ import {
   Package,
   Shield,
   Users,
+  Target,
+  DollarSign,
 } from 'lucide-react';
 import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -69,6 +71,20 @@ const menuItems = [
     icon: Calculator,
     path: '/finance',
     color: '#dc2626',
+  },
+  {
+    id: 'projects',
+    title: 'Proje Yönetimi',
+    icon: Target,
+    path: '/projects',
+    color: '#059669',
+  },
+  {
+    id: 'budget',
+    title: 'Bütçe Planlama',
+    icon: DollarSign,
+    path: '/budget',
+    color: '#f59e0b',
   },
   {
     id: 'messages',
