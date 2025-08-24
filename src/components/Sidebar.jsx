@@ -211,7 +211,14 @@ const Sidebar = ({ collapsed, onToggle }) => {
                 whileHover={{ x: 5 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               >
-                <Link to={item.path} className="nav-link">
+                <Link 
+                  to={item.path} 
+                  className="nav-link"
+                  onClick={() => {
+                    console.log('Link clicked:', item.path)
+                    console.log('Current location:', window.location.pathname)
+                  }}
+                >
                   <motion.div
                     className="icon-wrapper"
                     style={{ backgroundColor: active ? item.color : 'transparent' }}
