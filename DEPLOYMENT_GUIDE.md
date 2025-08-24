@@ -1,292 +1,279 @@
-# 🚀 PRODUCTION DEPLOYMENT REHBERİ
+# 🚀 KAF Portal Deployment Guide
 
-## 📋 **Genel Bakış**
+## 📋 Overview
 
-Bu rehber, Kafkas Derneği Portal projesini production'a deploy etmek için adım adım talimatları içerir.
+Bu rehber KAF Portal projesinin GitHub Actions ve Vercel ile CI/CD pipeline'ını açıklar.
 
----
+## 🏗️ CI/CD Pipeline
 
-## 🗄️ **Adım 1: Supabase Kurulumu**
+### GitHub Actions Workflow
 
-### 1.1 Supabase Projesi Oluşturma
-1. [supabase.com](https://supabase.com) adresine gidin
-2. GitHub ile giriş yapın
-3. "New Project" butonuna tıklayın
-4. Proje adı: `kafportal`
-5. Database password belirleyin
-6. Region seçin (West Europe önerilir)
-7. "Create new project" butonuna tıklayın
+Pipeline şu adımları içerir:
 
-### 1.2 Proje Bilgilerini Not Edin
+1. **Lint and Test** - Kod kalitesi kontrolü
+2. **Build** - Uygulama derleme
+3. **Security Scan** - Güvenlik taraması
+4. **Performance Test** - Performans testleri
+5. **Deploy to Staging** - Staging ortamına deployment
+6. **Deploy to Production** - Production ortamına deployment
+7. **Notify Team** - Takım bildirimi
+8. **Update Documentation** - Dokümantasyon güncelleme
+
+### Workflow Triggers
+
+- **Push to main** → Production deployment
+- **Push to develop** → Staging deployment
+- **Pull Request** → Test ve lint kontrolü
+
+## 🔧 Setup
+
+### 1. GitHub Secrets
+
+GitHub repository'de şu secrets'ları ayarlayın:
+
 ```bash
-# Bu bilgileri güvenli bir yerde saklayın
-Project URL: https://[project-id].supabase.co
-Anon Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-Service Role Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+# Vercel Configuration
+VERCEL_TOKEN=your_vercel_token
+VERCEL_ORG_ID=your_vercel_org_id
+VERCEL_PROJECT_ID=your_vercel_project_id
+
+# Security
+SNYK_TOKEN=your_snyk_token
+
+# Notifications
+SLACK_WEBHOOK=your_slack_webhook_url
 ```
 
-### 1.3 Veritabanı Tablolarını Oluşturma
-Supabase SQL Editor'de aşağıdaki komutları çalıştırın:
+### 2. Vercel Setup
 
-```sql
--- Users tablosu
-CREATE TABLE users (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  email VARCHAR(255) UNIQUE NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
-  first_name VARCHAR(100) NOT NULL,
-  last_name VARCHAR(100) NOT NULL,
-  role VARCHAR(50) DEFAULT 'user',
-  status VARCHAR(50) DEFAULT 'active',
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+```bash
+# Vercel CLI kurulumu
+npm i -g vercel
 
--- Inventory tablosu
-CREATE TABLE inventory (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name VARCHAR(255) NOT NULL,
-  description TEXT,
-  category VARCHAR(100),
-  quantity INTEGER DEFAULT 0,
-  unit VARCHAR(50),
-  status VARCHAR(50) DEFAULT 'available',
-  location VARCHAR(255),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+# Vercel'e login
+vercel login
 
--- Tasks tablosu
-CREATE TABLE tasks (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title VARCHAR(255) NOT NULL,
-  description TEXT,
-  status VARCHAR(50) DEFAULT 'pending',
-  priority VARCHAR(50) DEFAULT 'medium',
-  assigned_to UUID REFERENCES users(id),
-  due_date TIMESTAMP WITH TIME ZONE,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Aid records tablosu
-CREATE TABLE aid_records (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  beneficiary_id UUID,
-  aid_type VARCHAR(100) NOT NULL,
-  amount DECIMAL(10,2),
-  description TEXT,
-  aid_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  created_by UUID REFERENCES users(id),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Financial transactions tablosu
-CREATE TABLE financial_transactions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  type VARCHAR(50) NOT NULL CHECK (type IN ('income', 'expense')),
-  category VARCHAR(100) NOT NULL,
-  amount DECIMAL(10,2) NOT NULL,
-  description TEXT NOT NULL,
-  reference VARCHAR(255),
-  status VARCHAR(50) DEFAULT 'pending',
-  transaction_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+# Proje bağlantısı
+vercel link
 ```
 
----
+### 3. Environment Variables
 
-## 🔐 **Adım 2: Güvenlik Ayarları**
-
-### 2.1 Row Level Security (RLS) Etkinleştirme
-```sql
--- Tüm tablolar için RLS'yi etkinleştirin
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE inventory ENABLE ROW LEVEL SECURITY;
-ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
-ALTER TABLE aid_records ENABLE ROW LEVEL SECURITY;
-ALTER TABLE financial_transactions ENABLE ROW LEVEL SECURITY;
+#### Staging Environment
+```bash
+NODE_ENV=staging
+VITE_APP_ENV=staging
+VITE_API_URL=https://staging-api.kafportal.com
+VITE_SUPABASE_URL=your_staging_supabase_url
+VITE_SUPABASE_ANON_KEY=your_staging_supabase_key
 ```
 
-### 2.2 Güvenlik Politikaları
-```sql
--- Temel politikalar
-CREATE POLICY "Anyone can view inventory" ON inventory FOR SELECT USING (true);
-CREATE POLICY "Anyone can view aid records" ON aid_records FOR SELECT USING (true);
-CREATE POLICY "Anyone can view financial transactions" ON financial_transactions FOR SELECT USING (true);
-```
-
----
-
-## 🚀 **Adım 3: Backend Deployment (Railway)**
-
-### 3.1 Railway Hesabı Oluşturma
-1. [railway.app](https://railway.app) adresine gidin
-2. GitHub ile giriş yapın
-3. "New Project" butonuna tıklayın
-4. "Deploy from GitHub repo" seçin
-
-### 3.2 Repository Bağlama
-1. GitHub repository'nizi seçin
-2. "Deploy Now" butonuna tıklayın
-3. Root directory: `backend` olarak ayarlayın
-
-### 3.3 Environment Variables Ayarlama
-Railway Dashboard'da "Variables" sekmesine gidin ve şu değişkenleri ekleyin:
-
-```env
-SUPABASE_URL=https://[your-project-id].supabase.co
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+#### Production Environment
+```bash
 NODE_ENV=production
-PORT=5001
-FRONTEND_URL=https://your-frontend-domain.com
+VITE_APP_ENV=production
+VITE_API_URL=https://api.kafportal.com
+VITE_SUPABASE_URL=your_production_supabase_url
+VITE_SUPABASE_ANON_KEY=your_production_supabase_key
 ```
 
-### 3.4 Build Ayarları
-Railway otomatik olarak TypeScript build'ini yapacaktır. Eğer sorun yaşarsanız:
+## 🚀 Deployment
 
-```json
-// package.json'da build script'i kontrol edin
-{
-  "scripts": {
-    "build": "tsc",
-    "start": "node dist/server.js"
-  }
-}
-```
+### Automatic Deployment
 
----
+1. **Staging**: `develop` branch'e push
+2. **Production**: `main` branch'e push
 
-## 🌐 **Adım 4: Frontend Deployment (Vercel)**
+### Manual Deployment
 
-### 4.1 Vercel Hesabı Oluşturma
-1. [vercel.com](https://vercel.com) adresine gidin
-2. GitHub ile giriş yapın
-3. "New Project" butonuna tıklayın
-
-### 4.2 Repository Bağlama
-1. GitHub repository'nizi seçin
-2. Root directory: `/` (ana dizin) olarak ayarlayın
-3. Build command: `npm run build`
-4. Output directory: `dist`
-5. "Deploy" butonuna tıklayın
-
-### 4.3 Environment Variables Ayarlama
-Vercel Dashboard'da "Settings" > "Environment Variables" sekmesine gidin:
-
-```env
-VITE_PUBLIC_SUPABASE_URL=https://[your-project-id].supabase.co
-VITE_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-VITE_API_URL=https://your-backend-domain.railway.app
-```
-
----
-
-## 🔗 **Adım 5: Domain ve SSL Ayarları**
-
-### 5.1 Custom Domain Satın Alma
-1. Domain sağlayıcısından domain satın alın (örn: kafportal.com)
-2. DNS ayarlarını yapın
-
-### 5.2 Vercel Domain Ayarları
-1. Vercel Dashboard'da "Settings" > "Domains" sekmesine gidin
-2. Custom domain'inizi ekleyin
-3. DNS kayıtlarını güncelleyin
-
-### 5.3 Railway Domain Ayarları
-1. Railway Dashboard'da "Settings" > "Domains" sekmesine gidin
-2. Custom domain'inizi ekleyin (örn: api.kafportal.com)
-3. DNS kayıtlarını güncelleyin
-
----
-
-## 🧪 **Adım 6: Test Etme**
-
-### 6.1 Backend Test
 ```bash
-# Health check
-curl https://api.kafportal.com/health
+# Staging deployment
+./scripts/deploy.sh staging
 
-# API endpoint'leri
-curl https://api.kafportal.com/api/users
-curl https://api.kafportal.com/api/inventory
-curl https://api.kafportal.com/api/tasks
-curl https://api.kafportal.com/api/aid
-curl https://api.kafportal.com/api/finance
+# Production deployment
+./scripts/deploy.sh production
+
+# With tests and performance checks
+./scripts/deploy.sh -t -p production
+
+# With notifications
+./scripts/deploy.sh -t -p -n production
 ```
 
-### 6.2 Frontend Test
-1. Tarayıcıda `https://kafportal.com` adresine gidin
-2. Tüm sayfaları test edin
-3. Form işlemlerini test edin
-4. API bağlantılarını test edin
+### Vercel CLI Deployment
+
+```bash
+# Staging
+vercel
+
+# Production
+vercel --prod
+```
+
+## 📊 Monitoring
+
+### Performance Monitoring
+
+- **Lighthouse CI**: Otomatik performans testleri
+- **Core Web Vitals**: LCP, FID, CLS izleme
+- **Bundle Analysis**: Bundle boyutu analizi
+
+### Security Monitoring
+
+- **Snyk**: Güvenlik açığı taraması
+- **npm audit**: Dependency güvenlik kontrolü
+
+### Error Monitoring
+
+- **Vercel Analytics**: Hata izleme
+- **Sentry**: Detaylı hata raporlama
+
+## 🔍 Quality Gates
+
+### Performance Thresholds
+
+| Metric | Threshold | Action |
+|--------|-----------|--------|
+| Performance Score | > 80 | Warning |
+| Accessibility | > 90 | Error |
+| Best Practices | > 80 | Warning |
+| SEO | > 80 | Warning |
+| LCP | < 2.5s | Warning |
+| FID | < 100ms | Warning |
+| CLS | < 0.1 | Warning |
+
+### Test Coverage
+
+- **Unit Tests**: > 80% coverage
+- **Integration Tests**: > 70% coverage
+- **E2E Tests**: Critical paths
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+#### Build Failures
+
+```bash
+# Clean install
+rm -rf node_modules package-lock.json
+npm install
+
+# Clear cache
+npm run clean
+npm run build
+```
+
+#### Test Failures
+
+```bash
+# Run tests locally
+npm run test:unit
+npm run test:integration
+npm run test:e2e
+
+# Check coverage
+npm run test:coverage
+```
+
+#### Performance Issues
+
+```bash
+# Run Lighthouse locally
+npm run lighthouse
+
+# Bundle analysis
+npm run analyze
+```
+
+### Debug Commands
+
+```bash
+# Check environment
+echo $NODE_ENV
+echo $VITE_APP_ENV
+
+# Check Vercel status
+vercel ls
+
+# Check build output
+ls -la dist/
+```
+
+## 📈 Best Practices
+
+### Code Quality
+
+1. **Pre-commit Hooks**: Otomatik lint ve test
+2. **Code Review**: PR review zorunlu
+3. **TypeScript**: Strict mode aktif
+4. **ESLint**: Kod standartları kontrolü
+
+### Performance
+
+1. **Bundle Splitting**: Code splitting aktif
+2. **Image Optimization**: WebP ve lazy loading
+3. **Caching**: Service Worker ve API caching
+4. **Monitoring**: Real-time performans izleme
+
+### Security
+
+1. **Dependency Updates**: Otomatik güvenlik taraması
+2. **Environment Variables**: Güvenli secret yönetimi
+3. **HTTPS**: Zorunlu HTTPS
+4. **CSP**: Content Security Policy
+
+## 🔄 Rollback
+
+### Emergency Rollback
+
+```bash
+# Vercel rollback
+vercel rollback
+
+# GitHub Actions rollback
+# Previous deployment'e geri dön
+```
+
+### Database Rollback
+
+```bash
+# Supabase rollback
+supabase db reset
+
+# Migration rollback
+supabase migration down
+```
+
+## 📞 Support
+
+### Team Notifications
+
+- **Slack**: Deployment bildirimleri
+- **Email**: Critical error alerts
+- **SMS**: Emergency notifications
+
+### Documentation
+
+- **GitHub Wiki**: Detaylı dokümantasyon
+- **Storybook**: Component dokümantasyonu
+- **API Docs**: Swagger/OpenAPI
+
+## 🎯 Success Metrics
+
+### Deployment Success Rate
+- **Target**: > 95%
+- **Current**: Monitoring
+
+### Performance Metrics
+- **LCP**: < 2.5s
+- **FID**: < 100ms
+- **CLS**: < 0.1
+
+### Error Rate
+- **Target**: < 0.1%
+- **Monitoring**: Vercel Analytics
 
 ---
 
-## 📊 **Adım 7: Monitoring ve Bakım**
-
-### 7.1 Supabase Monitoring
-- Supabase Dashboard'da metrikleri takip edin
-- Database performansını izleyin
-- Log'ları kontrol edin
-
-### 7.2 Application Monitoring
-- Vercel Analytics'i etkinleştirin
-- Railway logs'ları takip edin
-- Error tracking için Sentry ekleyin
-
-### 7.3 Backup ve Güvenlik
-- Supabase'de otomatik backup'ları etkinleştirin
-- Environment variables'ları güvenli tutun
-- Düzenli güvenlik güncellemeleri yapın
-
----
-
-## ✅ **Deployment Kontrol Listesi**
-
-### Supabase
-- [ ] Proje oluşturuldu
-- [ ] Tablolar oluşturuldu
-- [ ] RLS ayarları yapıldı
-- [ ] Güvenlik politikaları eklendi
-
-### Backend (Railway)
-- [ ] Repository bağlandı
-- [ ] Environment variables ayarlandı
-- [ ] Build başarılı
-- [ ] Domain ayarlandı
-- [ ] SSL sertifikası aktif
-
-### Frontend (Vercel)
-- [ ] Repository bağlandı
-- [ ] Environment variables ayarlandı
-- [ ] Build başarılı
-- [ ] Domain ayarlandı
-- [ ] SSL sertifikası aktif
-
-### Test
-- [ ] Backend API'leri test edildi
-- [ ] Frontend sayfaları test edildi
-- [ ] Form işlemleri test edildi
-- [ ] Real-time özellikler test edildi
-
-### Monitoring
-- [ ] Analytics etkinleştirildi
-- [ ] Error tracking kuruldu
-- [ ] Backup sistemi aktif
-- [ ] Güvenlik önlemleri kontrol edildi
-
----
-
-## 🎉 **Tebrikler!**
-
-Projeniz başarıyla production'a deploy edildi. Artık kullanıcılarınız `https://kafportal.com` adresinden uygulamaya erişebilir.
-
-### 📞 **Destek**
-Herhangi bir sorun yaşarsanız:
-- Supabase: [docs.supabase.com](https://docs.supabase.com)
-- Railway: [docs.railway.app](https://docs.railway.app)
-- Vercel: [vercel.com/docs](https://vercel.com/docs)
+**🚀 KAF Portal CI/CD Pipeline başarıyla kuruldu!**
