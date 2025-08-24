@@ -1,6 +1,6 @@
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, Globe } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import i18n, { getCurrentLanguage, getLanguageInfo, getSupportedLanguages } from '../i18n'
 
