@@ -2,7 +2,7 @@
 // VERCEL SERVERLESS FUNCTION - ANALYTICS API
 // =====================================================
 
-import { createClient } from '@supabase/supabase-js';
+const { createClient } = require('@supabase/supabase-js');
 
 // Initialize Supabase client
 const supabaseUrl = process.env.VITE_PUBLIC_SUPABASE_URL;
@@ -16,7 +16,7 @@ const analyticsData = {
   healthReports: []
 };
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');

@@ -2,7 +2,7 @@
 // VERCEL SERVERLESS FUNCTION - HEALTH CHECK
 // =====================================================
 
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -23,4 +23,4 @@ export default function handler(req, res) {
     environment: process.env.VERCEL_ENV || 'development',
     region: process.env.VERCEL_REGION || 'unknown'
   });
-}
+};
