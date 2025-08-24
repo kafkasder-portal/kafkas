@@ -1,38 +1,39 @@
 {
   "version": 2,
-  "name": "kafportal",
-  "buildCommand": "npm run build:production",
-  "outputDirectory": "dist",
-  "installCommand": "npm ci",
-  "framework": "vite",
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs18.x"
+  "name": "kafportal-frontend",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     }
-  },
+  ],
   "routes": [
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
     },
     {
-      "src": "/assets/(.*)",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      }
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
     },
     {
-      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      }
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/sw.js",
+      "dest": "/sw.js"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html",
-      "headers": {
-        "cache-control": "public, max-age=0, must-revalidate"
-      }
+      "dest": "/index.html"
     }
   ],
   "headers": [
@@ -62,6 +63,15 @@
       ]
     },
     {
+      "source": "/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
       "source": "/api/(.*)",
       "headers": [
         {
@@ -74,30 +84,26 @@
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization, X-Requested-With"
+          "value": "Content-Type, Authorization"
         }
       ]
     }
   ],
   "env": {
-    "NODE_ENV": "production"
-  },
-  "build": {
-    "env": {
-      "NODE_ENV": "production"
-    }
+    "VITE_APP_ENVIRONMENT": "production",
+    "VITE_ENABLE_ANALYTICS": "true",
+    "VITE_ENABLE_MONITORING": "true",
+    "VITE_ENABLE_PWA": "true"
   },
   "functions": {
     "api/**/*.js": {
-      "runtime": "nodejs18.x",
       "maxDuration": 30
     }
   },
-  "regions": [
-    "fra1"
-  ],
-  "public": true,
-  "github": {
-    "silent": true
+  "regions": ["fra1"],
+  "build": {
+    "env": {
+      "VITE_APP_ENVIRONMENT": "production"
+    }
   }
 }

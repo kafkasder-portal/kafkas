@@ -13,6 +13,7 @@ import inventoryRoutes from './routes/inventory'
 import taskRoutes from './routes/tasks'
 import aidRoutes from './routes/aid'
 import financeRoutes from './routes/finance'
+import analyticsRoutes from './routes/analytics'
 
 // Load environment variables
 dotenv.config()
@@ -57,6 +58,7 @@ app.use('/api/inventory', inventoryRoutes)
 app.use('/api/tasks', taskRoutes)
 app.use('/api/aid', aidRoutes)
 app.use('/api/finance', financeRoutes)
+app.use('/api/analytics', analyticsRoutes)
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
