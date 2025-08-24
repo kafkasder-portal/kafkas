@@ -1,0 +1,252 @@
+{
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "add": "Добавить",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "export": "Экспорт",
+    "import": "Импорт",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успешно",
+    "warning": "Предупреждение",
+    "info": "Информация",
+    "yes": "Да",
+    "no": "Нет",
+    "close": "Закрыть",
+    "view": "Просмотр",
+    "details": "Подробности",
+    "settings": "Настройки"
+  },
+  "navigation": {
+    "dashboard": "Панель управления",
+    "donations": "Управление пожертвованиями",
+    "donationList": "Список пожертвований",
+    "donationVault": "Касса пожертвований",
+    "institutions": "Учреждения",
+    "piggyBankTracking": "Отслеживание копилок",
+    "meetings": "Встречи",
+    "allMeetings": "Все встречи",
+    "scheduleMeeting": "Запланировать встречу",
+    "meetingCalendar": "Календарь встреч",
+    "aid": "Управление помощью",
+    "aidManagement": "Управление помощью",
+    "beneficiaries": "Получатели помощи",
+    "aidApplications": "Заявки на помощь",
+    "finance": "Финансовое управление",
+    "financeManagement": "Финансовое управление",
+    "accounting": "Бухгалтерия",
+    "bankOperations": "Банковские операции",
+    "financialReports": "Финансовые отчеты",
+    "volunteers": "Управление волонтерами",
+    "volunteerManagement": "Управление волонтерами",
+    "volunteerList": "Список волонтеров",
+    "addVolunteer": "Добавить волонтера",
+    "volunteerReports": "Отчеты о волонтерах",
+    "tasks": "Управление задачами",
+    "taskManagement": "Управление задачами",
+    "taskList": "Список задач",
+    "createTask": "Создать задачу",
+    "taskCalendar": "Календарь задач",
+    "messages": "Сообщения",
+    "messaging": "Сообщения",
+    "messageList": "Список сообщений",
+    "sendSMS": "Отправить SMS",
+    "whatsapp": "WhatsApp",
+    "email": "Электронная почта",
+    "inventory": "Инвентарь",
+    "stockList": "Список товаров",
+    "stockIn": "Поступление товара",
+    "stockOut": "Расход товара",
+    "inventoryReports": "Отчеты по инвентарю",
+    "donorManagement": "Управление донорами",
+    "donorList": "Список доноров",
+    "crmManagement": "CRM управление",
+    "donorReports": "Отчеты о донорах",
+    "scholarshipManagement": "Управление стипендиями",
+    "scholarshipPrograms": "Программы стипендий",
+    "scholarshipApplications": "Заявки на стипендии",
+    "fundManagement": "Управление фондами",
+    "fundList": "Список фондов",
+    "workAreas": "Области работы",
+    "systemManagement": "Систем��ое управление",
+    "userManagement": "Управление пользователями",
+    "ipBlocking": "Блокировка IP",
+    "systemSettings": "Системные настройки"
+  },
+  "dashboard": {
+    "title": "Панель управления",
+    "subtitle": "Обзор системы управления НКО",
+    "stats": {
+      "totalDonations": "Общие пожертвования",
+      "activeVolunteers": "Активные волонтеры",
+      "monthlyAid": "Помощь за месяц",
+      "totalProjects": "Общие проекты",
+      "comparedToLastMonth": "по сравнению с прошлым месяцем"
+    },
+    "recentActivities": {
+      "title": "Последние действия",
+      "newDonation": "Получено новое пожертвование",
+      "newVolunteer": "Регистрация нового волонтера",
+      "meetingReminder": "Напоминание о встрече",
+      "taskCompleted": "Задача выполнена",
+      "donationReceived": "Пожертвование {{amount}} от {{donor}}",
+      "volunteerJoined": "{{name}} присоединился к системе",
+      "meetingTomorrow": "Завтра в {{time}} заседание правления",
+      "aidDistributed": "Распределение {{aid}} завершено"
+    },
+    "upcomingTasks": {
+      "title": "Предстоящие задачи",
+      "today": "Сегодня {{time}}",
+      "tomorrow": "Завтра {{time}}",
+      "inDays": "через {{days}} дней",
+      "high": "ВЫСОКИЙ",
+      "medium": "СРЕДНИЙ",
+      "low": "НИЗКИЙ"
+    },
+    "timeAgo": {
+      "now": "Сейчас",
+      "minutesAgo": "{{minutes}} мин назад",
+      "hoursAgo": "{{hours}} ч назад",
+      "daysAgo": "{{days}} дн назад"
+    }
+  },
+  "notifications": {
+    "title": "Уведомления",
+    "unreadCount": "{{count}} непрочитанных уведомлений",
+    "markAllRead": "Отметить все как прочитанные",
+    "settings": "Настройки",
+    "clearAll": "Очистить все",
+    "noNotifications": "Уведомлений пока нет",
+    "markAsRead": "Отметить как прочитанное",
+    "deleteNotification": "Удалить уведомление",
+    "notificationSettings": {
+      "title": "Нас��ройки уведомлений",
+      "soundNotifications": "Звуковые уведомления",
+      "desktopNotifications": "Уведомления рабочего стола",
+      "autoMarkRead": "Автоматически отмечать как прочитанные"
+    },
+    "types": {
+      "donation": {
+        "title": "Получено новое пожертвование",
+        "message": "Пожертвование {{amount}} получено от {{donor}}"
+      },
+      "volunteer": {
+        "title": "Новый волонтер",
+        "message": "{{name}} зарегистрировался как волонтер в системе"
+      },
+      "meeting": {
+        "title": "Напоминание о встрече",
+        "message": "Завтра запланирована {{meeting}}"
+      },
+      "taskDeadline": {
+        "title": "Предупреждение о сроке задачи",
+        "message": "Срок сдачи задачи \"{{task}}\" скоро истечет!",
+        "criticalTitle": "Критическое предупреждение о задаче",
+        "criticalMessage": "Задача \"{{task}}\" должна быть сдана в течение {{hours}} часов!",
+        "overdueTitle": "Срок задачи истек",
+        "overdueMessage": "Срок сдачи задачи \"{{task}}\" истек!"
+      },
+      "system": {
+        "title": "Системное уведомление",
+        "update": "Обновление системы",
+        "performance": "Оптимизация производительности системы завершена",
+        "security": "Применено новое обновление безопасности",
+        "backup": "Резервное копирование базы данных успешно завершено",
+        "reporting": "Система автоматической отчетности работает",
+        "session": "Время пользовательских сессий обновлено"
+      },
+      "userActivity": {
+        "title": "Активность пользователя"
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Войти",
+      "subtitle": "Система управления НКО",
+      "username": "Имя пользователя",
+      "password": "Пароль",
+      "loginButton": "Войти",
+      "invalidCredentials": "Неверное имя пользователя или пароль!",
+      "loginSuccess": "Успешный вход в систему",
+      "forgotPassword": "Забыли пароль"
+    },
+    "logout": "Выйти",
+    "profile": "Профиль"
+  },
+  "roles": {
+    "admin": "Системный администратор",
+    "manager": "Менеджер",
+    "coordinator": "Координатор",
+    "volunteer": "Волонтер",
+    "viewer": "Наблюдатель"
+  },
+  "status": {
+    "active": "Активный",
+    "inactive": "Неактивный",
+    "pending": "В ожидании",
+    "completed": "Завершено",
+    "cancelled": "Отменено",
+    "draft": "Черновик",
+    "published": "Опубликовано"
+  },
+  "priority": {
+    "urgent": "СРОЧНО",
+    "high": "ВЫСОКИЙ",
+    "medium": "СРЕДНИЙ",
+    "low": "НИЗКИЙ"
+  },
+  "forms": {
+    "required": "Это поле обязательно",
+    "invalidEmail": "Неверный адрес электронной почты",
+    "invalidPhone": "Неверный номер телефона",
+    "passwordTooShort": "Пароль должен содержать не менее {{min}} символов",
+    "confirmPassword": "Пароли не совпадают",
+    "selectOption": "Выберите опцию",
+    "invalidDate": "Неверная дата",
+    "maxLength": "Максимум {{max}} символов",
+    "minLength": "Минимум {{min}} символов"
+  },
+  "errors": {
+    "networkError": "Ошибка сетевого подключения",
+    "serverError": "Ошибка сервера",
+    "notFound": "Не найдено",
+    "unauthorized": "Неавторизованный доступ",
+    "forbidden": "Доступ запрещен",
+    "badRequest": "Неверный запрос",
+    "genericError": "Произошла ошибка",
+    "tryAgain": "Попробуйте снова"
+  },
+  "language": {
+    "selectLanguage": "Выберите язык",
+    "turkish": "Türkçe",
+    "russian": "Русский"
+  },
+  "pagination": {
+    "previous": "Предыдущая",
+    "next": "Следующая",
+    "page": "Страница",
+    "of": "из",
+    "itemsPerPage": "Элементов на странице",
+    "showing": "Показано",
+    "to": "до",
+    "entries": "записе��"
+  },
+  "search": {
+    "placeholder": "Поиск...",
+    "noResults": "Результаты не найдены",
+    "searchResults": "Результаты поиска",
+    "clearSearch": "Очистить поиск"
+  },
+  "table": {
+    "sortBy": "Сортировать по",
+    "ascending": "По возрастанию",
+    "descending": "По убыванию",
+    "noData": "Данные не найдены",
+    "actions": "Действия"
+  }
+}

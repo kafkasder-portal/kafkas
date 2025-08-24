@@ -1,0 +1,126 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production builds
+build/
+dist/
+out/
+
+# Generated files
+.next/
+.nuxt/
+.vuepress/dist
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Cache
+.cache/
+.parcel-cache/
+
+# Package manager
+package-lock.json
+yarn.lock
+
+# Generated API docs
+docs/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Database
+*.sqlite
+*.db
+
+# Compiled source
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Compressed files
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Large assets
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.pdf
+
+# Cypress
+cypress/videos/
+cypress/screenshots/
+
+# Storybook
+storybook-static/
+
+# Build tools
+.rollup.cache/
+.vite/
+
+# Test coverage
+.nyc_output/
+
+# Auto-generated files
+*.generated.*
+*.auto.*
+
+# Migrations and seed files (usually don't format these)
+**/migrations/**
+**/seeds/**
+
+# Configuration files that shouldn't be formatted
+.browserslistrc
+.nvmrc
+.yarnrc
+.gitignore
+.dockerignore

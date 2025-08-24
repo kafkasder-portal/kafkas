@@ -1,0 +1,252 @@
+{
+  "common": {
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "add": "Ekle",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "export": "Dışa Aktar",
+    "import": "İçe Aktar",
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "success": "Başarılı",
+    "warning": "Uyarı",
+    "info": "Bilgi",
+    "yes": "Evet",
+    "no": "Hayır",
+    "close": "Kapat",
+    "view": "Görüntüle",
+    "details": "Detaylar",
+    "settings": "Ayarlar"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "donations": "Bağış Yönetimi",
+    "donationList": "Bağış Listesi",
+    "donationVault": "Bağış Veznesi",
+    "institutions": "Kurumlar",
+    "piggyBankTracking": "Kumbara Takibi",
+    "meetings": "Toplantılar",
+    "allMeetings": "Tüm Toplantılar",
+    "scheduleMeeting": "Toplantı Planla",
+    "meetingCalendar": "Toplantı Takvimi",
+    "aid": "Yardım Yönetimi",
+    "aidManagement": "Yardım Yönetimi",
+    "beneficiaries": "İhtiyaç Sahipleri",
+    "aidApplications": "Yardım Başvuruları",
+    "finance": "Mali Yönetim",
+    "financeManagement": "Mali Yönetim",
+    "accounting": "Muhasebe",
+    "bankOperations": "Banka İşlemleri",
+    "financialReports": "Finansal Raporlar",
+    "volunteers": "Gönüllü Yönetimi",
+    "volunteerManagement": "Gönüllü Yönetimi",
+    "volunteerList": "Gönüllü Listesi",
+    "addVolunteer": "Gönüllü Ekle",
+    "volunteerReports": "Gönüllü Raporları",
+    "tasks": "Görev Yönetimi",
+    "taskManagement": "Görev Yönetimi",
+    "taskList": "Görev Listesi",
+    "createTask": "Görev Oluştur",
+    "taskCalendar": "Görev Takvimi",
+    "messages": "Mesajlaşma",
+    "messaging": "Mesajlaşma",
+    "messageList": "Mesaj Listesi",
+    "sendSMS": "SMS Gönder",
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "inventory": "Envanter",
+    "stockList": "Stok Listesi",
+    "stockIn": "Stok Girişi",
+    "stockOut": "Stok Çıkışı",
+    "inventoryReports": "Envanter Raporları",
+    "donorManagement": "Bağışçı Yönetimi",
+    "donorList": "Bağışçı Listesi",
+    "crmManagement": "CRM Yönetimi",
+    "donorReports": "Bağışçı Raporları",
+    "scholarshipManagement": "Burs Yönetimi",
+    "scholarshipPrograms": "Burs Programları",
+    "scholarshipApplications": "Burs Başvuruları",
+    "fundManagement": "Fon Yönetimi",
+    "fundList": "Fon Listesi",
+    "workAreas": "Çalışma Alanları",
+    "systemManagement": "Sistem Yönetimi",
+    "userManagement": "Kullanıcı Yönetimi",
+    "ipBlocking": "IP Engelleme",
+    "systemSettings": "Sistem Ayarları"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "NGO Yönetim Sistemi Genel Bakış",
+    "stats": {
+      "totalDonations": "Toplam Bağış",
+      "activeVolunteers": "Aktif Gönüllüler",
+      "monthlyAid": "Bu Ay Yardım",
+      "totalProjects": "Toplam Proje",
+      "comparedToLastMonth": "geçen aya göre"
+    },
+    "recentActivities": {
+      "title": "Son Aktiviteler",
+      "newDonation": "Yeni bağış alındı",
+      "newVolunteer": "Yeni gönüllü kaydı",
+      "meetingReminder": "Toplantı hatırlatması",
+      "taskCompleted": "Görev tamamlandı",
+      "donationReceived": "{{donor}} tarafından {{amount}} bağış",
+      "volunteerJoined": "{{name}} sisteme katıldı",
+      "meetingTomorrow": "Yarın saat {{time}} yönetim kurulu toplantısı",
+      "aidDistributed": "{{aid}} dağıtımı tamamlandı"
+    },
+    "upcomingTasks": {
+      "title": "Yaklaşan Görevler",
+      "today": "Bugün {{time}}",
+      "tomorrow": "Yarın {{time}}",
+      "inDays": "{{days}} gün sonra",
+      "high": "YÜKSEK",
+      "medium": "ORTA",
+      "low": "DÜŞÜK"
+    },
+    "timeAgo": {
+      "now": "Şimdi",
+      "minutesAgo": "{{minutes}} dk önce",
+      "hoursAgo": "{{hours}} saat önce",
+      "daysAgo": "{{days}} gün önce"
+    }
+  },
+  "notifications": {
+    "title": "Bildirimler",
+    "unreadCount": "{{count}} okunmamış bildirim",
+    "markAllRead": "Tümünü okundu olarak işaretle",
+    "settings": "Ayarlar",
+    "clearAll": "Tümünü Temizle",
+    "noNotifications": "Henüz bildirim yok",
+    "markAsRead": "Okundu olarak işaretle",
+    "deleteNotification": "Bildirimi sil",
+    "notificationSettings": {
+      "title": "Bildirim Ayarları",
+      "soundNotifications": "Ses bildirimleri",
+      "desktopNotifications": "Masaüstü bildirimleri",
+      "autoMarkRead": "Otomatik okundu işaretle"
+    },
+    "types": {
+      "donation": {
+        "title": "Yeni Bağış Alındı",
+        "message": "{{donor}} tarafından {{amount}} bağış alındı"
+      },
+      "volunteer": {
+        "title": "Yeni Gönüllü",
+        "message": "{{name}} sisteme gönüllü olarak kaydoldu"
+      },
+      "meeting": {
+        "title": "Toplantı Hatırlatması",
+        "message": "Yarın {{meeting}} planlanmıştır"
+      },
+      "taskDeadline": {
+        "title": "Görev Deadline Uyarısı",
+        "message": "\"{{task}}\" görevi yakında teslim tarihi geçecek!",
+        "criticalTitle": "Kritik Görev Uyarısı",
+        "criticalMessage": "\"{{task}}\" görevi {{hours}} saat içinde teslim edilmeli!",
+        "overdueTitle": "Görev Deadline Geçti",
+        "overdueMessage": "\"{{task}}\" görevi teslim tarihi geçti!"
+      },
+      "system": {
+        "title": "Sistem Bildirimi",
+        "update": "Sistem Güncellemesi",
+        "performance": "Sistem performansı optimizasyonu tamamlandı",
+        "security": "Yeni güvenlik güncellemesi uygulandı",
+        "backup": "Veritabanı yedeklemesi başarıyla tamamlandı",
+        "reporting": "Otomatik raporlama sistemi çalışıyor",
+        "session": "Kullanıcı oturum süreleri güncellendi"
+      },
+      "userActivity": {
+        "title": "Kullanıcı Aktivitesi"
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Giriş Yap",
+      "subtitle": "NGO Yönetim Sistemi",
+      "username": "Kullanıcı Adı",
+      "password": "Şifre",
+      "loginButton": "Giriş Yap",
+      "invalidCredentials": "Kullanıcı adı veya şifre hatalı!",
+      "loginSuccess": "Başarıyla giriş yapıldı",
+      "forgotPassword": "Şifremi Unuttum"
+    },
+    "logout": "Çıkış Yap",
+    "profile": "Profil"
+  },
+  "roles": {
+    "admin": "Sistem Yöneticisi",
+    "manager": "Yönetici",
+    "coordinator": "Koordinatör",
+    "volunteer": "Gönüllü",
+    "viewer": "Görüntüleyici"
+  },
+  "status": {
+    "active": "Aktif",
+    "inactive": "Pasif",
+    "pending": "Beklemede",
+    "completed": "Tamamlandı",
+    "cancelled": "İptal Edildi",
+    "draft": "Taslak",
+    "published": "Yayında"
+  },
+  "priority": {
+    "urgent": "ACİL",
+    "high": "YÜKSEK",
+    "medium": "ORTA",
+    "low": "DÜŞÜK"
+  },
+  "forms": {
+    "required": "Bu alan zorunludur",
+    "invalidEmail": "Geçersiz email adresi",
+    "invalidPhone": "Geçersiz telefon numarası",
+    "passwordTooShort": "Şifre en az {{min}} karakter olmalıdır",
+    "confirmPassword": "Şifreler eşleşmiyor",
+    "selectOption": "Bir seçenek seçin",
+    "invalidDate": "Geçersiz tarih",
+    "maxLength": "Maksimum {{max}} karakter olmalıdır",
+    "minLength": "Minimum {{min}} karakter olmalıdır"
+  },
+  "errors": {
+    "networkError": "Ağ bağlantı hatası",
+    "serverError": "Sunucu hatası",
+    "notFound": "Bulunamadı",
+    "unauthorized": "Yetkisiz erişim",
+    "forbidden": "Erişim engellendi",
+    "badRequest": "Geçersiz istek",
+    "genericError": "Bir hata oluştu",
+    "tryAgain": "Tekrar deneyin"
+  },
+  "language": {
+    "selectLanguage": "Dil Seçin",
+    "turkish": "Türkçe",
+    "russian": "Русский"
+  },
+  "pagination": {
+    "previous": "Önceki",
+    "next": "Sonraki",
+    "page": "Sayfa",
+    "of": "of",
+    "itemsPerPage": "Sayfa başına öğe",
+    "showing": "Gösterilen",
+    "to": "ile",
+    "entries": "giriş"
+  },
+  "search": {
+    "placeholder": "Arama...",
+    "noResults": "Sonuç bulunamadı",
+    "searchResults": "Arama Sonuçları",
+    "clearSearch": "Aramayı Temizle"
+  },
+  "table": {
+    "sortBy": "Sırala",
+    "ascending": "Artan",
+    "descending": "Azalan",
+    "noData": "Veri bulunamadı",
+    "actions": "İşlemler"
+  }
+}
