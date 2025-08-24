@@ -52,15 +52,9 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: process.env.NODE_ENV === 'development',
     // Production build optimizations
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
-      },
-    },
+    minify: 'esbuild',
     rollupOptions: {
+      external: [],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
@@ -88,7 +82,7 @@ export default defineConfig({
       },
     },
     // Build performance optimizations
-    target: 'es2015',
+    target: 'es2020',
     cssTarget: 'chrome80',
     // Asset optimization
     assetsInlineLimit: 4096,

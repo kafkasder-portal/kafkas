@@ -1,542 +1,647 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import {
-  Activity,
-  Zap,
-  HardDrive,
-  Wifi,
-  AlertTriangle,
-  CheckCircle,
-  TrendingUp,
-  TrendingDown,
-  RefreshCw,
-  Download,
-  Upload,
-  Clock,
-  Gauge,
-} from 'lucide-react';
-import { toast } from 'sonner';
-import usePerformance, {
-  useBundleAnalyzer,
-  useNetworkPerformance,
-  useResourcePerformance,
-} from '../hooks/usePerformance';
-import OptimizedImage from '../components/OptimizedImage';
-import VirtualList from '../components/VirtualList';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import usePerformance from '../hooks/usePerformance.js';
+import useApiCache from '../hooks/useApiCache.js';
 
-const PerformanceDashboard = () => {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [isRealTime, setIsRealTime] = useState(true);
+/**
+ * PerformanceDashboard Component
+ * @description Real-time performance monitoring dashboard
+ * @param {Object} props - Component props
+ * @param {boolean} props.showDetails - Show detailed metrics
+ * @param {boolean} props.autoRefresh - Auto refresh metrics
+ * @param {number} props.refreshInterval - Refresh interval in milliseconds
+ * @returns {JSX.Element} Performance dashboard
+ */
+const PerformanceDashboard = ({
+  showDetails = false,
+  autoRefresh = true,
+  refreshInterval = 5000,
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [selectedMetric, setSelectedMetric] = useState(null);
+  
+  const {
+    metrics,
+    isMonitoring,
+    getPerformanceScore,
+    getRecommendations,
+  } = usePerformance();
 
-  // Performance hooks
-  const performance = usePerformance('PerformanceDashboard');
-  const { bundleInfo, analyzeBundle } = useBundleAnalyzer();
-  const { networkMetrics, measureNetworkPerformance } = useNetworkPerformance();
-  const { resourceMetrics, measureResourcePerformance } =
-    useResourcePerformance();
-
-  // Mock data for demonstration
-  const [performanceHistory, setPerformanceHistory] = useState([]);
-  const [largeListData] = useState(
-    Array.from({ length: 10000 }, (_, i) => ({
-      id: i,
-      name: `Item ${i}`,
-      description: `Description for item ${i}`,
-      status: i % 3 === 0 ? 'active' : i % 3 === 1 ? 'pending' : 'completed',
-    }))
+  // Cache performance data
+  const { data: cacheInfo } = useApiCache(
+    'performance-metrics',
+    () => Promise.resolve(metrics),
+    30000, // 30 seconds TTL
+    true
   );
 
-  // Update performance history
+  const performanceScore = getPerformanceScore();
+  const recommendations = getRecommendations();
+
+  // Auto refresh
   useEffect(() => {
-    if (isRealTime) {
-      const interval = setInterval(() => {
-        setPerformanceHistory(prev => [
-          ...prev.slice(-29), // Keep last 30 entries
-          {
-            timestamp: Date.now(),
-            renderTime: performance.metrics.renderTime,
-            memoryUsage: performance.metrics.memoryUsage,
-            fps: performance.metrics.fps,
-          },
-        ]);
-      }, 1000);
+    if (!autoRefresh) return;
 
-      return () => clearInterval(interval);
-    }
-  }, [isRealTime, performance.metrics]);
+    const interval = setInterval(() => {
+      // Force re-render to update metrics
+      window.dispatchEvent(new Event('resize'));
+    }, refreshInterval);
 
-  // Performance status indicators
-  const getPerformanceStatus = (metric, threshold, type = 'lower') => {
-    const isGood = type === 'lower' ? metric <= threshold : metric >= threshold;
-    return {
-      status: isGood ? 'good' : 'warning',
-      icon: isGood ? CheckCircle : AlertTriangle,
-      color: isGood ? 'text-green-600' : 'text-yellow-600',
-    };
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval]);
+
+  // Get metric status
+  const getMetricStatus = (value, thresholds) => {
+    if (value === null || value === undefined) return 'unknown';
+    if (value <= thresholds.good) return 'good';
+    if (value <= thresholds.warning) return 'warning';
+    return 'poor';
   };
 
-  const renderTimeStatus = getPerformanceStatus(
-    performance.metrics.renderTime,
-    16,
-    'lower'
-  );
-  const memoryStatus = getPerformanceStatus(
-    performance.metrics.memoryUsage,
-    80,
-    'lower'
-  );
-  const fpsStatus = getPerformanceStatus(performance.metrics.fps, 30, 'higher');
+  // Get metric color
+  const getMetricColor = (status) => {
+    switch (status) {
+      case 'good': return '#10b981';
+      case 'warning': return '#f59e0b';
+      case 'poor': return '#ef4444';
+      default: return '#6b7280';
+    }
+  };
 
-  // Render virtual list item
-  const renderListItem = (item, index) => (
-    <div className='flex items-center justify-between p-4 border-b border-gray-200 hover:bg-gray-50'>
-      <div className='flex items-center space-x-3'>
-        <div className='w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center'>
-          <span className='text-sm font-medium text-blue-600'>{item.id}</span>
-        </div>
-        <div>
-          <h4 className='font-medium text-gray-900'>{item.name}</h4>
-          <p className='text-sm text-gray-500'>{item.description}</p>
-        </div>
-      </div>
-      <span
-        className={`px-2 py-1 text-xs font-medium rounded-full ${
-          item.status === 'active'
-            ? 'bg-green-100 text-green-800'
-            : item.status === 'pending'
-              ? 'bg-yellow-100 text-yellow-800'
-              : 'bg-gray-100 text-gray-800'
-        }`}
-      >
-        {item.status}
-      </span>
-    </div>
-  );
+  // Format metric value
+  const formatMetric = (value, type) => {
+    if (value === null || value === undefined) return 'N/A';
+    
+    switch (type) {
+      case 'time':
+        return `${value.toFixed(0)}ms`;
+      case 'size':
+        return `${value.toFixed(1)}KB`;
+      case 'score':
+        return `${value.toFixed(1)}%`;
+      case 'ratio':
+        return value.toFixed(3);
+      default:
+        return value.toString();
+    }
+  };
+
+  const coreWebVitals = [
+    {
+      name: 'LCP',
+      value: metrics.lcp,
+      type: 'time',
+      description: 'Largest Contentful Paint',
+      thresholds: { good: 2500, warning: 4000 },
+      target: '< 2.5s',
+    },
+    {
+      name: 'FID',
+      value: metrics.fid,
+      type: 'time',
+      description: 'First Input Delay',
+      thresholds: { good: 100, warning: 300 },
+      target: '< 100ms',
+    },
+    {
+      name: 'CLS',
+      value: metrics.cls,
+      type: 'ratio',
+      description: 'Cumulative Layout Shift',
+      thresholds: { good: 0.1, warning: 0.25 },
+      target: '< 0.1',
+    },
+    {
+      name: 'FCP',
+      value: metrics.fcp,
+      type: 'time',
+      description: 'First Contentful Paint',
+      thresholds: { good: 2000, warning: 4000 },
+      target: '< 2s',
+    },
+    {
+      name: 'TTFB',
+      value: metrics.ttfb,
+      type: 'time',
+      description: 'Time to First Byte',
+      thresholds: { good: 800, warning: 1800 },
+      target: '< 800ms',
+    },
+  ];
+
+  const performanceMetrics = [
+    {
+      name: 'Bundle Size',
+      value: metrics.bundleSize,
+      type: 'size',
+      description: 'JavaScript bundle size',
+      thresholds: { good: 500, warning: 1000 },
+      target: '< 500KB',
+    },
+    {
+      name: 'Load Time',
+      value: metrics.loadTime,
+      type: 'time',
+      description: 'Page load time',
+      thresholds: { good: 3000, warning: 5000 },
+      target: '< 3s',
+    },
+  ];
 
   return (
-    <div className='p-6 space-y-6'>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className='bg-white rounded-lg shadow-sm border p-6'
-      >
-        <div className='flex items-center justify-between mb-6'>
-          <div className='flex items-center space-x-3'>
-            <Activity className='h-8 w-8 text-blue-600' />
-            <h1 className='text-2xl font-bold text-gray-900'>
-              Performance Dashboard
-            </h1>
+    <div className="performance-dashboard">
+      {/* Header */}
+      <div className="dashboard-header">
+        <h2>🚀 Performance Dashboard</h2>
+        <div className="header-controls">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="expand-button"
+          >
+            {isExpanded ? '📉' : '📈'}
+          </button>
+          <span className={`monitoring-status ${isMonitoring ? 'active' : 'inactive'}`}>
+            {isMonitoring ? '🟢 Monitoring' : '🔴 Stopped'}
+          </span>
+        </div>
+      </div>
+
+      {/* Performance Score */}
+      <div className="performance-score">
+        <div className="score-circle">
+          <div
+            className="score-progress"
+            style={{
+              background: `conic-gradient(${getMetricColor(getMetricStatus(performanceScore, { good: 80, warning: 60 }))} ${performanceScore * 3.6}deg, #e5e7eb 0deg)`,
+            }}
+          />
+          <div className="score-value">
+            {formatMetric(performanceScore, 'score')}
           </div>
-          <div className='flex items-center space-x-4'>
-            <button
-              onClick={() => setIsRealTime(!isRealTime)}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isRealTime
-                  ? 'bg-green-100 text-green-700'
-                  : 'bg-gray-100 text-gray-700'
-              }`}
-            >
+        </div>
+        <div className="score-info">
+          <h3>Performance Score</h3>
+          <p>Overall application performance rating</p>
+        </div>
+      </div>
+
+      {/* Core Web Vitals */}
+      <div className="metrics-section">
+        <h3>📊 Core Web Vitals</h3>
+        <div className="metrics-grid">
+          {coreWebVitals.map((metric) => {
+            const status = getMetricStatus(metric.value, metric.thresholds);
+            return (
               <div
-                className={`w-2 h-2 rounded-full ${isRealTime ? 'bg-green-500' : 'bg-gray-400'}`}
-              />
-              <span>{isRealTime ? 'Real-time' : 'Static'}</span>
-            </button>
-            <button
-              onClick={performance.logPerformance}
-              className='flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
-            >
-              <RefreshCw className='h-4 w-4' />
-              <span>Refresh</span>
-            </button>
+                key={metric.name}
+                className={`metric-card ${status}`}
+                onClick={() => setSelectedMetric(metric)}
+              >
+                <div className="metric-header">
+                  <span className="metric-name">{metric.name}</span>
+                  <span className="metric-status">{status}</span>
+                </div>
+                <div className="metric-value">
+                  {formatMetric(metric.value, metric.type)}
+                </div>
+                <div className="metric-target">
+                  Target: {metric.target}
+                </div>
+                <div className="metric-description">
+                  {metric.description}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Performance Metrics */}
+      <div className="metrics-section">
+        <h3>⚡ Performance Metrics</h3>
+        <div className="metrics-grid">
+          {performanceMetrics.map((metric) => {
+            const status = getMetricStatus(metric.value, metric.thresholds);
+            return (
+              <div
+                key={metric.name}
+                className={`metric-card ${status}`}
+                onClick={() => setSelectedMetric(metric)}
+              >
+                <div className="metric-header">
+                  <span className="metric-name">{metric.name}</span>
+                  <span className="metric-status">{status}</span>
+                </div>
+                <div className="metric-value">
+                  {formatMetric(metric.value, metric.type)}
+                </div>
+                <div className="metric-target">
+                  Target: {metric.target}
+                </div>
+                <div className="metric-description">
+                  {metric.description}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Recommendations */}
+      {recommendations.length > 0 && (
+        <div className="recommendations-section">
+          <h3>💡 Recommendations</h3>
+          <div className="recommendations-list">
+            {recommendations.map((recommendation, index) => (
+              <div key={index} className="recommendation-item">
+                <span className="recommendation-icon">💡</span>
+                <span className="recommendation-text">{recommendation}</span>
+              </div>
+            ))}
           </div>
         </div>
+      )}
 
-        {/* Tabs */}
-        <div className='flex space-x-1 mb-6'>
-          {['overview', 'metrics', 'optimization', 'testing'].map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                activeTab === tab
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
-          ))}
+      {/* Detailed Metrics */}
+      {showDetails && isExpanded && (
+        <div className="detailed-metrics">
+          <h3>🔍 Detailed Metrics</h3>
+          <pre className="metrics-json">
+            {JSON.stringify(metrics, null, 2)}
+          </pre>
         </div>
+      )}
 
-        {/* Overview Tab */}
-        {activeTab === 'overview' && (
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-            {/* Render Time */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className='bg-white border border-gray-200 rounded-lg p-4'
-            >
-              <div className='flex items-center justify-between'>
-                <div>
-                  <p className='text-sm font-medium text-gray-600'>
-                    Render Time
-                  </p>
-                  <p className='text-2xl font-bold text-gray-900'>
-                    {performance.metrics.renderTime.toFixed(2)}ms
-                  </p>
-                </div>
-                <div
-                  className={`p-2 rounded-full ${renderTimeStatus.color.replace('text-', 'bg-')} bg-opacity-10`}
-                >
-                  <renderTimeStatus.icon className='h-6 w-6' />
-                </div>
+      {/* Metric Details Modal */}
+      {selectedMetric && (
+        <div className="metric-modal" onClick={() => setSelectedMetric(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>{selectedMetric.name}</h3>
+            <p>{selectedMetric.description}</p>
+            <div className="metric-details">
+              <div className="detail-item">
+                <strong>Current Value:</strong> {formatMetric(selectedMetric.value, selectedMetric.type)}
               </div>
-              <div className='mt-2'>
-                <span
-                  className={`text-xs font-medium ${
-                    performance.metrics.renderTime <= 16
-                      ? 'text-green-600'
-                      : 'text-yellow-600'
-                  }`}
-                >
-                  {performance.metrics.renderTime <= 16
-                    ? 'Optimal'
-                    : 'Needs optimization'}
-                </span>
+              <div className="detail-item">
+                <strong>Target:</strong> {selectedMetric.target}
               </div>
-            </motion.div>
-
-            {/* Memory Usage */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.1 }}
-              className='bg-white border border-gray-200 rounded-lg p-4'
-            >
-              <div className='flex items-center justify-between'>
-                <div>
-                  <p className='text-sm font-medium text-gray-600'>
-                    Memory Usage
-                  </p>
-                  <p className='text-2xl font-bold text-gray-900'>
-                    {performance.metrics.memoryUsage.toFixed(1)}%
-                  </p>
-                </div>
-                <div
-                  className={`p-2 rounded-full ${memoryStatus.color.replace('text-', 'bg-')} bg-opacity-10`}
-                >
-                  <memoryStatus.icon className='h-6 w-6' />
-                </div>
+              <div className="detail-item">
+                <strong>Status:</strong> {getMetricStatus(selectedMetric.value, selectedMetric.thresholds)}
               </div>
-              <div className='mt-2'>
-                <div className='w-full bg-gray-200 rounded-full h-2'>
-                  <div
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      performance.metrics.memoryUsage > 80
-                        ? 'bg-yellow-500'
-                        : 'bg-green-500'
-                    }`}
-                    style={{
-                      width: `${Math.min(performance.metrics.memoryUsage, 100)}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            </motion.div>
-
-            {/* FPS */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className='bg-white border border-gray-200 rounded-lg p-4'
-            >
-              <div className='flex items-center justify-between'>
-                <div>
-                  <p className='text-sm font-medium text-gray-600'>FPS</p>
-                  <p className='text-2xl font-bold text-gray-900'>
-                    {performance.metrics.fps}
-                  </p>
-                </div>
-                <div
-                  className={`p-2 rounded-full ${fpsStatus.color.replace('text-', 'bg-')} bg-opacity-10`}
-                >
-                  <fpsStatus.icon className='h-6 w-6' />
-                </div>
-              </div>
-              <div className='mt-2'>
-                <span
-                  className={`text-xs font-medium ${
-                    performance.metrics.fps >= 30
-                      ? 'text-green-600'
-                      : 'text-yellow-600'
-                  }`}
-                >
-                  {performance.metrics.fps >= 30 ? 'Smooth' : 'Low performance'}
-                </span>
-              </div>
-            </motion.div>
-
-            {/* Network Latency */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              className='bg-white border border-gray-200 rounded-lg p-4'
-            >
-              <div className='flex items-center justify-between'>
-                <div>
-                  <p className='text-sm font-medium text-gray-600'>
-                    Network Latency
-                  </p>
-                  <p className='text-2xl font-bold text-gray-900'>
-                    {networkMetrics.latency.toFixed(0)}ms
-                  </p>
-                </div>
-                <Wifi className='h-6 w-6 text-blue-600' />
-              </div>
-              <div className='mt-2'>
-                <span className='text-xs text-gray-500'>
-                  {networkMetrics.connectionType}
-                </span>
-              </div>
-            </motion.div>
+            </div>
+            <button onClick={() => setSelectedMetric(null)}>Close</button>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Metrics Tab */}
-        {activeTab === 'metrics' && (
-          <div className='space-y-6'>
-            {/* Performance History Chart */}
-            <div className='bg-white border border-gray-200 rounded-lg p-6'>
-              <h3 className='text-lg font-semibold text-gray-900 mb-4'>
-                Performance History
-              </h3>
-              <div className='h-64 flex items-end space-x-1'>
-                {performanceHistory.slice(-30).map((entry, index) => (
-                  <div
-                    key={index}
-                    className='flex-1 bg-blue-500 rounded-t'
-                    style={{
-                      height: `${(entry.renderTime / 50) * 100}%`,
-                      minHeight: '2px',
-                    }}
-                    title={`Render: ${entry.renderTime.toFixed(2)}ms, FPS: ${entry.fps}`}
-                  />
-                ))}
-              </div>
-              <div className='mt-2 text-xs text-gray-500'>
-                Last 30 seconds - Render time (ms)
-              </div>
-            </div>
+      <style jsx>{`
+        .performance-dashboard {
+          background: #ffffff;
+          border-radius: 12px;
+          padding: 24px;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
 
-            {/* Resource Metrics */}
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-              <div className='bg-white border border-gray-200 rounded-lg p-6'>
-                <h3 className='text-lg font-semibold text-gray-900 mb-4'>
-                  Resource Loading
-                </h3>
-                <div className='space-y-3'>
-                  <div className='flex justify-between'>
-                    <span className='text-sm text-gray-600'>
-                      Total Resources:
-                    </span>
-                    <span className='font-medium'>
-                      {resourceMetrics.totalResources}
-                    </span>
-                  </div>
-                  <div className='flex justify-between'>
-                    <span className='text-sm text-gray-600'>Loaded:</span>
-                    <span className='font-medium text-green-600'>
-                      {resourceMetrics.loadedResources}
-                    </span>
-                  </div>
-                  <div className='flex justify-between'>
-                    <span className='text-sm text-gray-600'>Failed:</span>
-                    <span className='font-medium text-red-600'>
-                      {resourceMetrics.failedResources}
-                    </span>
-                  </div>
-                  <div className='flex justify-between'>
-                    <span className='text-sm text-gray-600'>Total Size:</span>
-                    <span className='font-medium'>
-                      {(resourceMetrics.totalSize / 1024 / 1024).toFixed(2)} MB
-                    </span>
-                  </div>
-                </div>
-              </div>
+        .dashboard-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 24px;
+        }
 
-              <div className='bg-white border border-gray-200 rounded-lg p-6'>
-                <h3 className='text-lg font-semibold text-gray-900 mb-4'>
-                  Network Performance
-                </h3>
-                <div className='space-y-3'>
-                  <div className='flex justify-between'>
-                    <span className='text-sm text-gray-600'>Latency:</span>
-                    <span className='font-medium'>
-                      {networkMetrics.latency.toFixed(0)}ms
-                    </span>
-                  </div>
-                  <div className='flex justify-between'>
-                    <span className='text-sm text-gray-600'>Bandwidth:</span>
-                    <span className='font-medium'>
-                      {networkMetrics.bandwidth.toFixed(1)} Mbps
-                    </span>
-                  </div>
-                  <div className='flex justify-between'>
-                    <span className='text-sm text-gray-600'>Connection:</span>
-                    <span className='font-medium capitalize'>
-                      {networkMetrics.connectionType}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        .dashboard-header h2 {
+          margin: 0;
+          color: #1f2937;
+          font-size: 24px;
+          font-weight: 600;
+        }
 
-        {/* Optimization Tab */}
-        {activeTab === 'optimization' && (
-          <div className='space-y-6'>
-            {/* Optimization Suggestions */}
-            <div className='bg-white border border-gray-200 rounded-lg p-6'>
-              <h3 className='text-lg font-semibold text-gray-900 mb-4'>
-                Optimization Suggestions
-              </h3>
-              <div className='space-y-3'>
-                {performance
-                  .getOptimizationSuggestions()
-                  .map((suggestion, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className={`p-4 rounded-lg border-l-4 ${
-                        suggestion.priority === 'high'
-                          ? 'border-red-500 bg-red-50'
-                          : 'border-yellow-500 bg-yellow-50'
-                      }`}
-                    >
-                      <div className='flex items-start space-x-3'>
-                        <AlertTriangle
-                          className={`h-5 w-5 mt-0.5 ${
-                            suggestion.priority === 'high'
-                              ? 'text-red-500'
-                              : 'text-yellow-500'
-                          }`}
-                        />
-                        <div>
-                          <h4 className='font-medium text-gray-900'>
-                            {suggestion.action}
-                          </h4>
-                          <p className='text-sm text-gray-600 mt-1'>
-                            {suggestion.message}
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-              </div>
-            </div>
+        .header-controls {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
 
-            {/* Performance Warnings */}
-            <div className='bg-white border border-gray-200 rounded-lg p-6'>
-              <h3 className='text-lg font-semibold text-gray-900 mb-4'>
-                Performance Warnings
-              </h3>
-              <div className='space-y-2'>
-                {performance.getPerformanceWarnings().map((warning, index) => (
-                  <div
-                    key={index}
-                    className='flex items-center space-x-2 text-sm text-yellow-700'
-                  >
-                    <AlertTriangle className='h-4 w-4' />
-                    <span>{warning}</span>
-                  </div>
-                ))}
-                {performance.getPerformanceWarnings().length === 0 && (
-                  <div className='flex items-center space-x-2 text-sm text-green-700'>
-                    <CheckCircle className='h-4 w-4' />
-                    <span>No performance warnings</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
+        .expand-button {
+          background: none;
+          border: none;
+          font-size: 20px;
+          cursor: pointer;
+          padding: 8px;
+          border-radius: 6px;
+          transition: background-color 0.2s;
+        }
 
-        {/* Testing Tab */}
-        {activeTab === 'testing' && (
-          <div className='space-y-6'>
-            {/* Virtual Scrolling Test */}
-            <div className='bg-white border border-gray-200 rounded-lg p-6'>
-              <h3 className='text-lg font-semibold text-gray-900 mb-4'>
-                Virtual Scrolling Test (10,000 items)
-              </h3>
-              <VirtualList
-                items={largeListData}
-                itemHeight={80}
-                containerHeight={400}
-                renderItem={renderListItem}
-                className='border border-gray-200 rounded-lg'
-              />
-            </div>
+        .expand-button:hover {
+          background-color: #f3f4f6;
+        }
 
-            {/* Image Optimization Test */}
-            <div className='bg-white border border-gray-200 rounded-lg p-6'>
-              <h3 className='text-lg font-semibold text-gray-900 mb-4'>
-                Image Optimization Test
-              </h3>
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-                <div>
-                  <h4 className='text-sm font-medium text-gray-700 mb-2'>
-                    Original
-                  </h4>
-                  <OptimizedImage
-                    src='https://picsum.photos/300/200'
-                    alt='Original image'
-                    width={300}
-                    height={200}
-                    lazy={false}
-                    className='rounded-lg'
-                  />
-                </div>
-                <div>
-                  <h4 className='text-sm font-medium text-gray-700 mb-2'>
-                    Optimized
-                  </h4>
-                  <OptimizedImage
-                    src='https://picsum.photos/300/200'
-                    alt='Optimized image'
-                    width={300}
-                    height={200}
-                    quality={75}
-                    format='webp'
-                    className='rounded-lg'
-                  />
-                </div>
-                <div>
-                  <h4 className='text-sm font-medium text-gray-700 mb-2'>
-                    Lazy Loaded
-                  </h4>
-                  <OptimizedImage
-                    src='https://picsum.photos/300/200'
-                    alt='Lazy loaded image'
-                    width={300}
-                    height={200}
-                    lazy={true}
-                    className='rounded-lg'
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </motion.div>
+        .monitoring-status {
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          font-weight: 500;
+        }
+
+        .monitoring-status.active {
+          background-color: #d1fae5;
+          color: #065f46;
+        }
+
+        .monitoring-status.inactive {
+          background-color: #fee2e2;
+          color: #991b1b;
+        }
+
+        .performance-score {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 32px;
+          padding: 20px;
+          background: #f9fafb;
+          border-radius: 8px;
+        }
+
+        .score-circle {
+          position: relative;
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .score-progress {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          transform: rotate(-90deg);
+        }
+
+        .score-value {
+          font-size: 18px;
+          font-weight: 600;
+          color: #1f2937;
+          z-index: 1;
+        }
+
+        .score-info h3 {
+          margin: 0 0 4px 0;
+          color: #1f2937;
+          font-size: 18px;
+          font-weight: 600;
+        }
+
+        .score-info p {
+          margin: 0;
+          color: #6b7280;
+          font-size: 14px;
+        }
+
+        .metrics-section {
+          margin-bottom: 32px;
+        }
+
+        .metrics-section h3 {
+          margin: 0 0 16px 0;
+          color: #1f2937;
+          font-size: 18px;
+          font-weight: 600;
+        }
+
+        .metrics-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 16px;
+        }
+
+        .metric-card {
+          padding: 16px;
+          border-radius: 8px;
+          border: 1px solid #e5e7eb;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .metric-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric-card.good {
+          border-color: #10b981;
+          background-color: #f0fdf4;
+        }
+
+        .metric-card.warning {
+          border-color: #f59e0b;
+          background-color: #fffbeb;
+        }
+
+        .metric-card.poor {
+          border-color: #ef4444;
+          background-color: #fef2f2;
+        }
+
+        .metric-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 8px;
+        }
+
+        .metric-name {
+          font-weight: 600;
+          color: #1f2937;
+        }
+
+        .metric-status {
+          font-size: 12px;
+          font-weight: 500;
+          padding: 2px 6px;
+          border-radius: 4px;
+          text-transform: uppercase;
+        }
+
+        .metric-card.good .metric-status {
+          background-color: #10b981;
+          color: white;
+        }
+
+        .metric-card.warning .metric-status {
+          background-color: #f59e0b;
+          color: white;
+        }
+
+        .metric-card.poor .metric-status {
+          background-color: #ef4444;
+          color: white;
+        }
+
+        .metric-value {
+          font-size: 24px;
+          font-weight: 700;
+          color: #1f2937;
+          margin-bottom: 4px;
+        }
+
+        .metric-target {
+          font-size: 12px;
+          color: #6b7280;
+          margin-bottom: 8px;
+        }
+
+        .metric-description {
+          font-size: 14px;
+          color: #4b5563;
+        }
+
+        .recommendations-section {
+          margin-bottom: 32px;
+        }
+
+        .recommendations-section h3 {
+          margin: 0 0 16px 0;
+          color: #1f2937;
+          font-size: 18px;
+          font-weight: 600;
+        }
+
+        .recommendations-list {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .recommendation-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px;
+          background-color: #fef3c7;
+          border-radius: 6px;
+          border-left: 4px solid #f59e0b;
+        }
+
+        .recommendation-icon {
+          font-size: 16px;
+        }
+
+        .recommendation-text {
+          color: #92400e;
+          font-size: 14px;
+        }
+
+        .detailed-metrics {
+          margin-top: 32px;
+        }
+
+        .detailed-metrics h3 {
+          margin: 0 0 16px 0;
+          color: #1f2937;
+          font-size: 18px;
+          font-weight: 600;
+        }
+
+        .metrics-json {
+          background-color: #f9fafb;
+          padding: 16px;
+          border-radius: 6px;
+          font-family: 'Monaco', 'Menlo', monospace;
+          font-size: 12px;
+          overflow-x: auto;
+          white-space: pre-wrap;
+        }
+
+        .metric-modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+        }
+
+        .modal-content {
+          background-color: white;
+          padding: 24px;
+          border-radius: 8px;
+          max-width: 500px;
+          width: 90%;
+        }
+
+        .modal-content h3 {
+          margin: 0 0 16px 0;
+          color: #1f2937;
+        }
+
+        .modal-content p {
+          margin: 0 0 16px 0;
+          color: #6b7280;
+        }
+
+        .metric-details {
+          margin-bottom: 16px;
+        }
+
+        .detail-item {
+          margin-bottom: 8px;
+          color: #4b5563;
+        }
+
+        .modal-content button {
+          background-color: #3b82f6;
+          color: white;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+        }
+
+        .modal-content button:hover {
+          background-color: #2563eb;
+        }
+
+        @media (max-width: 768px) {
+          .performance-dashboard {
+            padding: 16px;
+          }
+
+          .dashboard-header {
+            flex-direction: column;
+            gap: 12px;
+            align-items: flex-start;
+          }
+
+          .metrics-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .performance-score {
+            flex-direction: column;
+            text-align: center;
+          }
+        }
+      `}</style>
     </div>
   );
+};
+
+PerformanceDashboard.propTypes = {
+  showDetails: PropTypes.bool,
+  autoRefresh: PropTypes.bool,
+  refreshInterval: PropTypes.number,
 };
 
 export default PerformanceDashboard;
