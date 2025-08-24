@@ -246,6 +246,53 @@ vi.mock('react-i18next', () => ({
   Trans: ({ children }) => children,
 }));
 
+// Mock lucide-react
+vi.mock('lucide-react', () => ({
+  Mail: () => <div data-testid="icon-mail" />,
+  Lock: () => <div data-testid="icon-lock" />,
+  Eye: () => <div data-testid="icon-eye" />,
+  EyeOff: () => <div data-testid="icon-eye-off" />,
+  AlertCircle: () => <div data-testid="icon-alert" />,
+  Shield: () => <div data-testid="icon-shield" />,
+  Users: () => <div data-testid="icon-users" />,
+  Check: () => <div data-testid="icon-check" />,
+  CheckSquare: () => <div data-testid="icon-check-square" />,
+  AlertTriangle: () => <div data-testid="icon-alert-triangle" />,
+  Home: () => <div data-testid="icon-home" />,
+  User: () => <div data-testid="icon-user" />,
+  Settings: () => <div data-testid="icon-settings" />,
+  LogOut: () => <div data-testid="icon-logout" />,
+  Menu: () => <div data-testid="icon-menu" />,
+  X: () => <div data-testid="icon-x" />,
+  Plus: () => <div data-testid="icon-plus" />,
+  Edit: () => <div data-testid="icon-edit" />,
+  Trash: () => <div data-testid="icon-trash" />,
+  Search: () => <div data-testid="icon-search" />,
+  Filter: () => <div data-testid="icon-filter" />,
+  Download: () => <div data-testid="icon-download" />,
+  Upload: () => <div data-testid="icon-upload" />,
+  Calendar: () => <div data-testid="icon-calendar" />,
+  Clock: () => <div data-testid="icon-clock" />,
+  MapPin: () => <div data-testid="icon-map-pin" />,
+  Phone: () => <div data-testid="icon-phone" />,
+  Globe: () => <div data-testid="icon-globe" />,
+  Star: () => <div data-testid="icon-star" />,
+  Heart: () => <div data-testid="icon-heart" />,
+  ThumbsUp: () => <div data-testid="icon-thumbs-up" />,
+  ThumbsDown: () => <div data-testid="icon-thumbs-down" />,
+  MessageCircle: () => <div data-testid="icon-message-circle" />,
+  Bell: () => <div data-testid="icon-bell" />,
+  Info: () => <div data-testid="icon-info" />,
+  HelpCircle: () => <div data-testid="icon-help-circle" />,
+  ExternalLink: () => <div data-testid="icon-external-link" />,
+  ArrowRight: () => <div data-testid="icon-arrow-right" />,
+  ArrowLeft: () => <div data-testid="icon-arrow-left" />,
+  ChevronDown: () => <div data-testid="icon-chevron-down" />,
+  ChevronUp: () => <div data-testid="icon-chevron-up" />,
+  ChevronRight: () => <div data-testid="icon-chevron-right" />,
+  ChevronLeft: () => <div data-testid="icon-chevron-left" />,
+}));
+
 // Socket.io-client removed from project
 
 // Mock sonner
