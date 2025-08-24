@@ -4,6 +4,7 @@ import {
   CheckSquare,
   Coins,
   Home,
+  LogOut,
   Menu,
   MessageSquare,
   Package,

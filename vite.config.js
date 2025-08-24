@@ -18,24 +18,27 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5173,
+    port: 5174,
     host: true,
     // Development server optimizations
     hmr: {
       overlay: true,
-      port: 5173,
+      port: 24678,
       host: 'localhost',
-      clientPort: 5173,
     },
     // Proxy configuration for API
     proxy: {
       '/api': {
         target: 'http://localhost:5001',
         changeOrigin: true,
+        secure: false,
+        ws: true,
       },
     },
     // Force dependency pre-bundling
     force: true,
+    // WebSocket configuration
+    ws: true,
   },
   build: {
     outDir: 'dist',
