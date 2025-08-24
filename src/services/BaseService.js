@@ -87,6 +87,77 @@ const MOCK_DATA = {
     stats: { total: 25, active: 20, thisMonth: 3 },
     data: [],
   },
+  '/messages': {
+    stats: { 
+      total: 156, 
+      unread: 23, 
+      activeChats: 12,
+      thisMonth: 45,
+      monthlyTrend: [120, 135, 142, 156, 148, 156]
+    },
+    data: [
+      {
+        id: 1,
+        sender: 'Ahmet Yılmaz',
+        recipient: 'Fatma Demir',
+        subject: 'Yardım paketi dağıtımı hakkında',
+        content: 'Merhaba, yarın yapılacak yardım paketi dağıtımı için gönüllü sayısını artırmamız gerekiyor. Acil yardım edebilir misiniz?',
+        type: 'internal',
+        priority: 'high',
+        unread: true,
+        time: '2 saat önce',
+        date: '2024-01-20T10:30:00Z'
+      },
+      {
+        id: 2,
+        sender: 'Mehmet Kaya',
+        recipient: 'Tüm Gönüllüler',
+        subject: 'Haftalık toplantı hatırlatması',
+        content: 'Bu hafta Cuma günü saat 14:00\'te haftalık değerlendirme toplantımız var. Katılımınızı bekliyoruz.',
+        type: 'announcement',
+        priority: 'medium',
+        unread: false,
+        time: '1 gün önce',
+        date: '2024-01-19T15:45:00Z'
+      },
+      {
+        id: 3,
+        sender: 'Ayşe Özkan',
+        recipient: 'Yönetim Kurulu',
+        subject: 'Finansal rapor - Ocak 2024',
+        content: 'Ocak ayı finansal raporu hazırlandı. Toplam bağış miktarı 125.000₺ olarak gerçekleşti. Detayları ekte bulabilirsiniz.',
+        type: 'report',
+        priority: 'low',
+        unread: true,
+        time: '3 gün önce',
+        date: '2024-01-17T09:15:00Z'
+      },
+      {
+        id: 4,
+        sender: 'Hasan Yıldız',
+        recipient: 'Envanter Sorumlusu',
+        subject: 'Stok durumu kontrolü',
+        content: 'Yardım paketlerindeki malzeme stoklarını kontrol etmemiz gerekiyor. Acil ihtiyaç listesi hazırlayabilir misiniz?',
+        type: 'internal',
+        priority: 'low',
+        unread: false,
+        time: '4 gün önce',
+        date: '2024-01-16T11:20:00Z'
+      },
+      {
+        id: 5,
+        sender: 'Zeynep Arslan',
+        recipient: 'Tüm Personel',
+        subject: 'Yeni gönüllü eğitim programı',
+        content: 'Yeni gönüllülerimiz için temel eğitim programı hazırlandı. Program detayları ve kayıt formu ekte yer almaktadır.',
+        type: 'announcement',
+        priority: 'medium',
+        unread: true,
+        time: '5 gün önce',
+        date: '2024-01-15T14:30:00Z'
+      }
+    ],
+  },
   '/finance': {
     stats: { 
       total: 125000, 
