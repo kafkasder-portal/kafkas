@@ -385,7 +385,7 @@ const SecureForm = ({
 
       {/* Form Fields */}
       <div className="space-y-4">
-        {fields.map(renderField)}
+        {fields.map((field) => renderField(field))}
       </div>
 
       {/* Custom Children */}
