@@ -333,3 +333,4 @@ INSERT INTO budgets (name, year, total_budget, category, description, status) VA
 ('2024 Sağlık Bütçesi', 2024, 750000, 'health', '2024 yılı sağlık projeleri için ayrılan bütçe', 'active'),
 ('2024 Acil Yardım Bütçesi', 2024, 500000, 'emergency', '2024 yılı acil yardım projeleri için ayrılan bütçe', 'draft');
 
+
