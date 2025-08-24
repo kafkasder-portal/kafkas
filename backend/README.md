@@ -1,12 +1,12 @@
 # Kafkas Derneği Portal - Backend API
 
-Node.js + Express.js + TypeScript + PostgreSQL tabanlı backend API servisi.
+Node.js + Express.js + TypeScript + Supabase tabanlı backend API servisi.
 
 ## 🚀 Kurulum
 
 ### Gereksinimler
 - Node.js (v18 veya üzeri)
-- PostgreSQL (v12 veya üzeri)
+- Supabase hesabı ve projesi
 - npm veya pnpm
 
 ### 1. Bağımlılıkları Yükleyin
@@ -23,12 +23,9 @@ pnpm install
 PORT=5000
 NODE_ENV=development
 
-# Database Configuration
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=kafkasder_portal
-DB_USER=postgres
-DB_PASSWORD=your_password
+# Supabase Configuration
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
 # Email Configuration (isteğe bağlı)
 EMAIL_HOST=smtp.gmail.com
@@ -37,27 +34,11 @@ EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_app_password
 ```
 
-### 3. PostgreSQL Veritabanını Hazırlayın
-```bash
-# PostgreSQL'e bağlanın
-psql -U postgres
-
-# Veritabanını oluşturun
-CREATE DATABASE kafkasder_portal;
-
-# Çıkış yapın
-\q
-```
-
-### 4. Veritabanı Şemasını Oluşturun
-```bash
-npm run db:setup
-```
-
-### 5. Örnek Verileri Yükleyin (İsteğe Bağlı)
-```bash
-npm run db:seed
-```
+### 3. Supabase Projesini Hazırlayın
+1. [Supabase](https://supabase.com) hesabı oluşturun
+2. Yeni proje oluşturun
+3. Proje URL'sini ve Service Role Key'i `.env` dosyasına ekleyin
+4. Gerekli tabloları Supabase Dashboard'dan oluşturun
 
 ## 🏃‍♂️ Çalıştırma
 
@@ -75,7 +56,6 @@ npm start
 
 ## 📚 API Endpoints
 
-
 ### Kullanıcı Yönetimi
 - `GET /api/users` - Tüm kullanıcıları listele
 - `GET /api/users/:id` - Kullanıcı detayı
@@ -83,28 +63,26 @@ npm start
 - `PUT /api/users/:id` - Kullanıcı güncelle
 - `DELETE /api/users/:id` - Kullanıcı sil (soft delete)
 
-### Bağış Yönetimi
-- `GET /api/donations` - Bağışları listele
-- `GET /api/donations/:id` - Bağış detayı
-- `POST /api/donations` - Yeni bağış oluştur
-- `PUT /api/donations/:id` - Bağış güncelle
-- `DELETE /api/donations/:id` - Bağış iptal et
+### Envanter Yönetimi
+- `GET /api/inventory` - Envanter öğelerini listele
+- `GET /api/inventory/:id` - Envanter öğesi detayı
+- `POST /api/inventory` - Yeni envanter öğesi oluştur
+- `PUT /api/inventory/:id` - Envanter öğesi güncelle
+- `DELETE /api/inventory/:id` - Envanter öğesi sil
 
-### Yararlanıcı Yönetimi
-- `GET /api/beneficiaries` - Yararlanıcıları listele
-- `GET /api/beneficiaries/:id` - Yararlanıcı detayı
-- `POST /api/beneficiaries` - Yeni yararlanıcı oluştur
-- `PUT /api/beneficiaries/:id` - Yararlanıcı güncelle
-- `DELETE /api/beneficiaries/:id` - Yararlanıcı deaktive et
-- `POST /api/beneficiaries/:id/aid` - Yardım kaydı ekle
+### Görev Yönetimi
+- `GET /api/tasks` - Görevleri listele
+- `GET /api/tasks/:id` - Görev detayı
+- `POST /api/tasks` - Yeni görev oluştur
+- `PUT /api/tasks/:id` - Görev güncelle
+- `DELETE /api/tasks/:id` - Görev sil
 
-### Hastane Sevk Yönetimi
-- `GET /api/hospital-referrals` - Sevkleri listele
-- `GET /api/hospital-referrals/:id` - Sevk detayı
-- `POST /api/hospital-referrals` - Yeni sevk oluştur
-- `PUT /api/hospital-referrals/:id` - Sevk güncelle
-- `DELETE /api/hospital-referrals/:id` - Sevk iptal et
-
+### Yardım Yönetimi
+- `GET /api/aid` - Yardım kayıtlarını listele
+- `GET /api/aid/:id` - Yardım kaydı detayı
+- `POST /api/aid` - Yeni yardım kaydı oluştur
+- `PUT /api/aid/:id` - Yardım kaydı güncelle
+- `DELETE /api/aid/:id` - Yardım kaydı sil
 
 ## 🛡️ Güvenlik
 
@@ -112,7 +90,7 @@ npm start
 - Helmet.js güvenlik başlıkları
 - Rate limiting
 - Input validation
-- SQL injection koruması
+- Supabase Row Level Security (RLS)
 - XSS koruması
 
 ## 📁 Proje Yapısı
@@ -121,21 +99,13 @@ npm start
 backend/
 ├── src/
 │   ├── config/
-│   │   └── database.ts      # Veritabanı bağlantısı
-│   ├── controllers/         # İş mantığı kontrolcüleri
-│   ├── middleware/
-│   ├── models/              # Veri modelleri
+│   │   └── database.ts      # Supabase bağlantısı
 │   ├── routes/
 │   │   ├── users.ts         # Kullanıcı rotaları
-│   │   ├── donations.ts     # Bağış rotaları
-│   │   ├── beneficiaries.ts # Yararlanıcı rotaları
-│   │   └── hospitalReferrals.ts # Hastane sevk rotaları
-│   ├── services/            # İş mantığı servisleri
-│   ├── utils/               # Yardımcı fonksiyonlar
+│   │   ├── inventory.ts     # Envanter rotaları
+│   │   ├── tasks.ts         # Görev rotaları
+│   │   └── aid.ts           # Yardım rotaları
 │   └── server.ts            # Ana sunucu dosyası
-├── database/
-│   ├── schema.sql           # Veritabanı şeması
-│   └── seed.ts              # Örnek veriler
 ├── .env                     # Ortam değişkenleri
 ├── package.json
 ├── tsconfig.json
@@ -152,7 +122,7 @@ npm test
 
 - TypeScript strict mode aktif
 - ESLint ve Prettier yapılandırması önerilir
-- Veritabanı migration sistemi gelecekte eklenebilir
+- Supabase real-time özellikleri kullanılabilir
 - API dokümantasyonu için Swagger entegrasyonu planlanıyor
 
 ## 🤝 Katkıda Bulunma

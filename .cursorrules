@@ -5,7 +5,7 @@
 - Bu proje bir KAF (Kardeşlik ve Yardımlaşma) portalı
 - Frontend: React + Vite
 - Backend: Node.js + Express + TypeScript
-- Database: PostgreSQL
+- Database: Supabase (PostgreSQL-based)
 - Real-time: WebSocket bağlantıları
 - Multi-language: Türkçe, İngilizce, Rusça
 

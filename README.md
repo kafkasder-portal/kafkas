@@ -67,7 +67,7 @@ Kafkas Derneği Portal, sivil toplum kuruluşları için geliştirilmiş kapsaml
 - **Node.js** - Server runtime
 - **Express** - Web framework
 - **TypeScript** - Type safety
-- **PostgreSQL** - Database
+- **Supabase** - Database (PostgreSQL-based)
 - **Socket.IO** - Real-time communication
 
 ### **Development Tools**
@@ -83,7 +83,7 @@ Kafkas Derneği Portal, sivil toplum kuruluşları için geliştirilmiş kapsaml
 - Node.js 18+
 - npm veya yarn
 - Git
-- PostgreSQL (opsiyonel - Supabase kullanılabilir)
+- Supabase (PostgreSQL-based cloud database)
 
 ### Projeyi Klonlayın
 
