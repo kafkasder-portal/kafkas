@@ -37,6 +37,48 @@ const MOCK_DATA = {
     },
     data: [],
   },
+  '/tasks': {
+    stats: { 
+      total: 156, 
+      active: 42, 
+      completed: 98, 
+      overdue: 16,
+      thisMonth: 12,
+      monthlyTrend: [120, 135, 142, 156, 148, 156]
+    },
+    data: [
+      {
+        id: 1,
+        title: 'Yardım paketi dağıtımı',
+        description: 'Acil yardım paketlerinin ihtiyaç sahiplerine dağıtılması',
+        status: 'Devam Ediyor',
+        priority: 'Yüksek',
+        assignee: 'Ahmet Yılmaz',
+        dueDate: '2024-01-25',
+        createdAt: '2024-01-15'
+      },
+      {
+        id: 2,
+        title: 'Gönüllü eğitimi',
+        description: 'Yeni gönüllüler için temel eğitim programı',
+        status: 'Tamamlandı',
+        priority: 'Orta',
+        assignee: 'Fatma Demir',
+        dueDate: '2024-01-20',
+        createdAt: '2024-01-10'
+      },
+      {
+        id: 3,
+        title: 'Rapor hazırlama',
+        description: 'Aylık faaliyet raporunun hazırlanması',
+        status: 'Beklemede',
+        priority: 'Düşük',
+        assignee: 'Mehmet Kaya',
+        dueDate: '2024-01-30',
+        createdAt: '2024-01-18'
+      }
+    ],
+  },
   '/aid': {
     stats: { programs: 12, active: 8, beneficiaries: 150 },
     data: [],

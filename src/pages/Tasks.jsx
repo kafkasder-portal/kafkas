@@ -55,6 +55,11 @@ const Tasks = () => {
 
   // Arama ve filtreleme
   useEffect(() => {
+    if (!Array.isArray(tasks)) {
+      setFilteredTasks([])
+      return
+    }
+    
     const filtered = tasks.filter(task =>
       task.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       task.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
