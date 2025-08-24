@@ -32,9 +32,9 @@
     "clean": "rimraf dist coverage .nyc_output",
     "prebuild": "npm run clean",
     "start": "vite preview --port 4173 --host",
-    "prepare": "husky install",
+    "prepare": "husky install || true",
     "pre-commit": "lint-staged",
-    "postinstall": "husky install"
+    "postinstall": "husky install || true"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.56.0",
