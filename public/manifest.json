@@ -1,19 +1,13 @@
 {
-  "name": "Kafkas Derneği Portal",
-  "short_name": "Kafkas Portal",
-  "description": "Kafkas Derneği Yönetim Portalı - Bağış, Gönüllü ve Yardım Yönetimi",
+  "name": "KAF Portal",
+  "short_name": "KAF Portal",
+  "description": "Kafkas Derneği Yönetim Portalı",
   "start_url": "/",
-  "display": "browser",
+  "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#3b82f6",
-  "orientation": "portrait-primary",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
   "scope": "/",
-  "lang": "tr",
-  "categories": [
-    "business",
-    "productivity",
-    "social"
-  ],
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
@@ -22,14 +16,14 @@
       "purpose": "maskable any"
     },
     {
-      "src": "/icons/icon-96x96.png",
+      "src": "/icons/icon-96x96.png", 
       "sizes": "96x96",
       "type": "image/png",
       "purpose": "maskable any"
     },
     {
       "src": "/icons/icon-128x128.png",
-      "sizes": "128x128",
+      "sizes": "128x128", 
       "type": "image/png",
       "purpose": "maskable any"
     },
@@ -64,63 +58,7 @@
       "purpose": "maskable any"
     }
   ],
-  "shortcuts": [
-    {
-      "name": "Bağış Yönetimi",
-      "short_name": "Bağışlar",
-      "description": "Bağış işlemlerini yönet",
-      "url": "/donations",
-      "icons": [
-        {
-          "src": "/icons/donation-96x96.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "Gönüllü Yönetimi",
-      "short_name": "Gönüllüler",
-      "description": "Gönüllü işlemlerini yönet",
-      "url": "/volunteers",
-      "icons": [
-        {
-          "src": "/icons/volunteer-96x96.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "Yardım Yönetimi",
-      "short_name": "Yardım",
-      "description": "Yardım işlemlerini yönet",
-      "url": "/aid",
-      "icons": [
-        {
-          "src": "/icons/aid-96x96.png",
-          "sizes": "96x96"
-        }
-      ]
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/screenshots/desktop-1.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Ana Dashboard"
-    },
-    {
-      "src": "/screenshots/mobile-1.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Mobil Dashboard"
-    }
-  ],
-  "related_applications": [],
-  "prefer_related_applications": false,
-  "edge_side_panel": {
-    "preferred_width": 400
-  }
+  "categories": ["business", "productivity", "social"],
+  "lang": "tr",
+  "dir": "ltr"
 }
