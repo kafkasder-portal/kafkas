@@ -1,66 +1,37 @@
-import { Pool } from 'pg'
+import { createClient } from '@supabase/supabase-js'
 import dotenv from 'dotenv'
 
 dotenv.config()
 
-const databaseUrl = process.env.DATABASE_URL
+const supabaseUrl = process.env.SUPABASE_URL || 'https://fagblbogumttcrsbletc.supabase.co'
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ2JsYm9ndW10dGNyc2JsZXRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4NDg4OTksImV4cCI6MjA3MTQyNDg5OX0.PNQpiOsctCqIrH20BdylDtzVVKOJW4KmBo79w2izioo'
 
-if (!databaseUrl) {
-  console.warn('⚠️ DATABASE_URL environment variable is not set')
-  console.log('✅ Application will continue without database connection')
-}
-
-// Create PostgreSQL connection pool
-const pool = new Pool({
-  connectionString: databaseUrl,
-  ssl: databaseUrl?.includes('supabase.co')
-    ? {
-        rejectUnauthorized: false,
-      }
-    : false,
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
+// Create Supabase client
+const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
+  },
 })
 
 // Initialize database connection
 export const initializeDatabase = async () => {
   try {
-    if (!databaseUrl) {
-      console.log('⚠️ No database URL provided, skipping database initialization')
-      return
+    console.log('✅ Connecting to Supabase...')
+
+    // Test Supabase connection
+    const { data, error } = await supabase.from('users').select('count').limit(1)
+    if (error && error.code !== 'PGRST116') {
+      // PGRST116 is "table not found" which is ok for now
+      console.log('⚠️ Supabase table test failed (table might not exist yet):', error.message)
+    } else {
+      console.log('✅ Supabase connection successful')
     }
-
-    console.log('✅ Connecting to database...')
-
-    // Test PostgreSQL connection
-    const result = await pool.query('SELECT NOW() as current_time')
-    console.log('✅ Database connection successful:', result.rows[0].current_time)
   } catch (error) {
     console.error('❌ Database initialization failed:', error)
-    console.log('⚠️ Application will continue without database connection')
+    console.log('⚠️ Application will continue with Supabase client only')
   }
 }
 
-// Simple query function using PostgreSQL
-export const query = async (text: string, params?: any[]) => {
-  try {
-    if (!databaseUrl) {
-      throw new Error('Database connection not available')
-    }
-
-    console.log('🔍 Executing query:', text.substring(0, 100) + '...')
-
-    const result = await pool.query(text, params)
-    return result
-  } catch (error) {
-    console.error('❌ Query execution failed:', {
-      query: text.substring(0, 50) + '...',
-      error: error instanceof Error ? error.message : 'Unknown error',
-    })
-    throw error
-  }
-}
-
-// Export pool for direct access if needed
-export { pool }
+// Export supabase client for use in routes
+export { supabase }

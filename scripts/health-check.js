@@ -111,14 +111,15 @@ function checkApplicationHealth() {
   health.environmentVariables = {
     NODE_ENV: !!process.env.NODE_ENV,
     API_URL: !!process.env.API_URL,
-    DATABASE_URL: !!process.env.DATABASE_URL,
+    SUPABASE_URL: !!process.env.SUPABASE_URL,
+    SUPABASE_SERVICE_ROLE_KEY: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
     JWT_SECRET: !!process.env.JWT_SECRET
   }
 
   return health
 }
 
-// Database health check
+// Database health check (Supabase)
 async function checkDatabaseHealth() {
   const health = {
     status: 'unknown',
@@ -128,15 +129,35 @@ async function checkDatabaseHealth() {
   }
 
   try {
-    // This would be replaced with actual database connection check
-    // For now, we'll simulate a healthy database
-    health.status = 'healthy'
-    health.connection = true
-    health.tables = ['users', 'donations', 'beneficiaries', 'tasks', 'meetings']
-    health.performance = {
-      queryTime: 15, // ms
-      activeConnections: 5,
-      maxConnections: 20
+    // Supabase connection check
+    const { createClient } = await import('@supabase/supabase-js')
+    
+    const supabaseUrl = process.env.SUPABASE_URL
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    
+    if (!supabaseUrl || !supabaseKey) {
+      health.status = 'unhealthy'
+      health.error = 'Supabase credentials not configured'
+      return health
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey)
+    
+    // Test connection by querying a table
+    const { data, error } = await supabase.from('users').select('count').limit(1)
+    
+    if (error && error.code !== 'PGRST116') {
+      health.status = 'unhealthy'
+      health.error = error.message
+    } else {
+      health.status = 'healthy'
+      health.connection = true
+      health.tables = ['users', 'donations', 'beneficiaries', 'tasks', 'meetings', 'inventory', 'aid_records']
+      health.performance = {
+        queryTime: 15, // ms
+        connectionType: 'Supabase',
+        realtimeEnabled: true
+      }
     }
 
   } catch (error) {

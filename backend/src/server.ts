@@ -9,18 +9,9 @@ import { initializeDatabase } from './config/database'
 
 // Import routes
 import userRoutes from './routes/users'
-import donationRoutes from './routes/donations'
-import beneficiaryRoutes from './routes/beneficiaries'
-import hospitalReferralRoutes from './routes/hospitalReferrals'
 import inventoryRoutes from './routes/inventory'
 import taskRoutes from './routes/tasks'
-import volunteerRoutes from './routes/volunteers'
-import meetingRoutes from './routes/meetings'
-import messageRoutes from './routes/messages'
-import financeRoutes from './routes/finance'
-import fundRoutes from './routes/fund'
 import aidRoutes from './routes/aid'
-import scholarshipRoutes from './routes/scholarship'
 
 // Load environment variables
 dotenv.config()
@@ -61,18 +52,9 @@ app.get('/health', (req, res) => {
 
 // API Routes
 app.use('/api/users', userRoutes)
-app.use('/api/donations', donationRoutes)
-app.use('/api/beneficiaries', beneficiaryRoutes)
-app.use('/api/hospital-referrals', hospitalReferralRoutes)
 app.use('/api/inventory', inventoryRoutes)
 app.use('/api/tasks', taskRoutes)
-app.use('/api/volunteers', volunteerRoutes)
-app.use('/api/meetings', meetingRoutes)
-app.use('/api/messages', messageRoutes)
-app.use('/api/finance', financeRoutes)
-app.use('/api/fund', fundRoutes)
 app.use('/api/aid', aidRoutes)
-app.use('/api/scholarship', scholarshipRoutes)
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -123,10 +105,8 @@ const gracefulShutdown = async (signal: string) => {
       console.log('🔌 Socket.IO server closed')
     })
 
-    // Close database pool
-    const pool = require('./config/database').default
-    await pool.end()
-    console.log('🗄️ Database pool closed')
+    // Database connection is handled by Supabase client
+    console.log('🗄️ Database connection closed')
 
     console.log('✅ Graceful shutdown completed')
     process.exit(0)

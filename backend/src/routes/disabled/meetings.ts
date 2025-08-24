@@ -1,5 +1,5 @@
 import express from 'express';
-import { query } from '../config/database';
+import { supabase } from '../config/database';
 import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();

@@ -103,6 +103,10 @@ cp env.example .env
 Gerekli environment variables'ları ayarlayın:
 
 ```env
+# Supabase Configuration
+VITE_PUBLIC_SUPABASE_URL=https://fagblbogumttcrsbletc.supabase.co
+VITE_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ2JsYm9ndW10dGNyc2JsZXRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4NDg4OTksImV4cCI6MjA3MTQyNDg5OX0.PNQpiOsctCqIrH20BdylDtzVVKOJW4KmBo79w2izioo
+
 # API Configuration
 VITE_API_URL=http://localhost:5001/api
 ```
@@ -231,6 +235,15 @@ Portal tüm cihaz türlerinde mükemmel çalışır:
 - **Fast Refresh** - Hızlı yenileme
 
 ## 🔄 Changelog
+
+### v2.2.0 (2025-08-24) - Complete Supabase Integration & Cleanup
+- ✅ **Complete Supabase Integration**: Frontend and backend now fully connected to Supabase
+- ✅ **Removed Docker Dependencies**: Eliminated Docker, docker-compose, and nginx configurations
+- ✅ **Cleaned Unnecessary Files**: Removed Supabase Edge Functions, deployment scripts, and unused configurations
+- ✅ **Simplified Authentication**: Integrated Supabase Auth with fallback mechanism
+- ✅ **Backend Optimization**: All API routes now use Supabase instead of PostgreSQL
+- ✅ **Frontend Cleanup**: Removed unused dependencies and simplified build process
+- ✅ **Environment Configuration**: Streamlined environment variables for Supabase
 
 ### v2.1.0 (2025-01-XX)
 

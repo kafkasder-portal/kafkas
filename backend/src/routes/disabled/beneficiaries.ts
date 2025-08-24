@@ -1,5 +1,5 @@
 import express from 'express';
-import { query } from '../config/database';
+import { supabase } from '../config/database';
 // Auth middleware removed - using Supabase auth instead
 import { v4 as uuidv4 } from 'uuid';
 
