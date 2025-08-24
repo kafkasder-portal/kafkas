@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, memo, useState } from 'react'
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
+import { Route, BrowserRouter as Router, Routes, createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './App.css'
 import './animations.css'
 import AnimatedRoutes from './components/AnimatedRoutes'

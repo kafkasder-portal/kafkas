@@ -21,6 +21,12 @@ class PerformanceMonitor {
   init() {
     if (this.isInitialized) return
 
+    // Skip monitoring in development mode
+    if (import.meta.env.DEV) {
+      console.log('🔍 Performance monitoring disabled in development mode')
+      return
+    }
+
     // Web Vitals monitoring
     this.setupWebVitals()
 
