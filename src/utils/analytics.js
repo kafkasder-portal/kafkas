@@ -445,15 +445,5 @@ document.addEventListener('visibilitychange', () => {
 export default {
   analyticsTracker,
   performanceMonitor,
-<<<<<<< Current (Your changes)
   systemHealthMonitor,
-=======
-  systemHealthMonitor
-<<<<<<< Current (Your changes)
-<<<<<<< Current (Your changes)
->>>>>>> Incoming (Background Agent changes)
-=======
->>>>>>> Incoming (Background Agent changes)
-=======
->>>>>>> Incoming (Background Agent changes)
 };

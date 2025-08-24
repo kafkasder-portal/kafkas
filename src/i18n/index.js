@@ -59,32 +59,8 @@ i18n
     },
     
     // Çeviri kayıp olduğunda
-<<<<<<< Current (Your changes)
     // saveMissing is disabled in browser builds to avoid process reference
     saveMissing: false,
-=======
-    saveMissing: process.env.NODE_ENV === 'development',
-    missingKeyHandler(lng, ns, key, fallbackValue) {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn(`Missing translation key: ${key} for language: ${lng}`)
-      }
-    },
-    
-    // React ayarları
-    react: {
-      // Trans component'i için
-      useSuspense: false,
-      
-      // Bind events to loaded resources
-      bindI18n: 'languageChanged loaded',
-      
-      // Bind events to loading resources
-      bindI18nStore: 'added removed',
-      
-      // Namespace'leri otomatik yükle
-      nsMode: 'default'
-    }
->>>>>>> Incoming (Background Agent changes)
   })
 
 // Add format functions using the new i18next approach

@@ -83,7 +83,6 @@ class ErrorTracker {
     // Track important logs
     console.log = (...args) => {
       const message = args.join(' ')
-<<<<<<< Current (Your changes)
       if (
         message.includes('error') ||
         message.includes('Error') ||
@@ -92,12 +91,6 @@ class ErrorTracker {
       ) {
         this.trackWarning('console.log', {
           message,
-=======
-      if (message.includes('error') || message.includes('Error') || 
-          message.includes('failed') || message.includes('Failed')) {
-        this.trackError('console.error', {
-          message: message,
->>>>>>> Incoming (Background Agent changes)
           stack: new Error().stack,
           timestamp: new Date().toISOString(),
           args
