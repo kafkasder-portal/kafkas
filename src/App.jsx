@@ -158,7 +158,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path="/yardim/ihtiyac-sahipleri"
+                    path="/beneficiaries"
                     element={
                       <ProtectedRoute>
                         <Beneficiaries />
@@ -166,7 +166,7 @@ const AppContent = memo(() => {
                     }
                   />
                   <Route
-                    path="/yardim/ihtiyac-sahipleri/:id"
+                    path="/beneficiaries/:id"
                     element={
                       <ProtectedRoute>
                         <BeneficiaryDetail />
