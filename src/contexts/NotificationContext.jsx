@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
-import { toast } from 'sonner'
+import { toast, Toaster } from 'sonner'
 import { createNotificationService } from '../services/notificationService'
 import { NOTIFICATION_TYPES, NOTIFICATION_PRIORITY } from './notificationConstants'
 
