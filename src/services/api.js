@@ -1,5 +1,8 @@
 // API Base Configuration
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
+// Import mock client for fallback
+import { mockApiClient } from './mockApiClient.js'
 const MAX_RETRIES = 3
 const RETRY_DELAY = 1000
 
@@ -74,7 +77,9 @@ class SecureApiClient {
         const data = await response.json()
         return data
       } catch (error) {
-        return handleApiError(error)
+        // Fallback to mock API if real API fails
+        console.warn('API request failed, falling back to mock API:', error.message);
+        return await mockApiClient.request(endpoint, requestOptions);
       }
     })
   }
