@@ -28,6 +28,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import whatsappService from '../services/whatsappService'
+import WhatsAppLogin from './WhatsAppLogin'
 
 const WhatsApp = () => {
   const [contacts, setContacts] = useState([])
@@ -43,6 +44,8 @@ const WhatsApp = () => {
     email: '',
     notes: ''
   })
+  const [isWhatsAppConnected, setIsWhatsAppConnected] = useState(false)
+  const [whatsAppSession, setWhatsAppSession] = useState(null)
   const messagesEndRef = useRef(null)
 
   // Mock data for contacts
@@ -227,6 +230,12 @@ const WhatsApp = () => {
     }
   }
 
+  const handleWhatsAppLogin = (sessionData) => {
+    setIsWhatsAppConnected(true)
+    setWhatsAppSession(sessionData)
+    toast.success(`WhatsApp bağlandı: ${sessionData.phoneNumber}`)
+  }
+
   const handleAddContact = () => {
     if (!newContact.name || !newContact.phone) {
       toast.error('İsim ve telefon numarası gereklidir')
@@ -271,6 +280,16 @@ const WhatsApp = () => {
     }
   }
 
+  // Show WhatsApp login if not connected
+  if (!isWhatsAppConnected) {
+    return (
+      <WhatsAppLogin 
+        onLoginSuccess={handleWhatsAppLogin}
+        onBack={() => window.history.back()}
+      />
+    )
+  }
+
   return (
     <div style={{ height: '100vh', display: 'flex', backgroundColor: 'var(--background-secondary)' }}>
       {/* Contacts Sidebar */}
@@ -278,9 +297,25 @@ const WhatsApp = () => {
         {/* Header */}
         <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '600', color: 'var(--text-primary)', margin: 0 }}>
-              WhatsApp
-            </h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: '600', color: 'var(--text-primary)', margin: 0 }}>
+                WhatsApp
+              </h2>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.25rem',
+                padding: '0.25rem 0.5rem',
+                backgroundColor: '#25D366',
+                color: 'white',
+                borderRadius: 'var(--radius-sm)',
+                fontSize: '0.75rem',
+                fontWeight: '500'
+              }}>
+                <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'white' }} />
+                Bağlı
+              </div>
+            </div>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               <motion.button
                 whileHover={{ scale: 1.05 }}
