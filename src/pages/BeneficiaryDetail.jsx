@@ -838,7 +838,7 @@ const BeneficiaryDetail = () => {
                 style={{
                   flex: 1,
                   padding: '1rem',
-                  backgroundColor: activeTab === tab.id ? '#f8fafc' : 'transparent',
+                  backgroundColor: activeTab === tab.id ? '#f8fafc' : 'rgba(0,0,0,0)',
                   border: 'none',
                   borderBottom: activeTab === tab.id ? '2px solid #3b82f6' : '2px solid transparent',
                   cursor: 'pointer',

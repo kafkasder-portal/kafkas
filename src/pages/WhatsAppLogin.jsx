@@ -382,7 +382,7 @@ const WhatsAppLogin = ({ onLoginSuccess, onBack }) => {
                 disabled={isLoading}
                 style={{
                   padding: '0.75rem',
-                  backgroundColor: 'transparent',
+                  backgroundColor: 'rgba(0,0,0,0)',
                   color: 'var(--text-primary)',
                   border: '1px solid var(--border-color)',
                   borderRadius: 'var(--radius-lg)',
@@ -436,7 +436,7 @@ const WhatsAppLogin = ({ onLoginSuccess, onBack }) => {
               onClick={onBack}
               style={{
                 padding: '0.75rem',
-                backgroundColor: 'transparent',
+                backgroundColor: 'rgba(0,0,0,0)',
                 color: 'var(--text-secondary)',
                 border: 'none',
                 borderRadius: 'var(--radius-lg)',

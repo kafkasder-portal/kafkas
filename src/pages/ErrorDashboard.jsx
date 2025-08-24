@@ -470,7 +470,7 @@ const ErrorDashboard = () => {
                     transition: 'background-color 0.2s'
                   }}
                   onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--background-secondary)'}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = 'rgba(0,0,0,0)'}
                 >
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
                     <div style={{ 
@@ -648,7 +648,7 @@ const ErrorDashboard = () => {
                   onClick={() => setShowDetails(false)}
                   style={{
                     padding: '0.5rem',
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'rgba(0,0,0,0)',
                     border: 'none',
                     borderRadius: 'var(--radius-md)',
                     cursor: 'pointer',

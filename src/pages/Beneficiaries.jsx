@@ -836,7 +836,7 @@ const Beneficiaries = () => {
                 <motion.button
                   style={{
                     padding: '0.5rem',
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'rgba(0,0,0,0)',
                     border: 'none',
                     cursor: 'pointer',
                     borderRadius: '6px'

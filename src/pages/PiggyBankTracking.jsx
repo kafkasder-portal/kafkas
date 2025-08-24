@@ -524,7 +524,7 @@ const PiggyBankTracking = () => {
                     <motion.button
                       onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(piggyBank.address)}`, '_blank')}
                       style={{
-                        backgroundColor: 'transparent',
+                        backgroundColor: 'rgba(0,0,0,0)',
                         border: 'none',
                         color: '#3b82f6',
                         fontSize: '0.875rem',

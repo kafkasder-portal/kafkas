@@ -540,7 +540,7 @@ const NotificationPanel = () => {
                               padding: '4px',
                               border: 'none',
                               borderRadius: '4px',
-                              backgroundColor: 'transparent',
+                              backgroundColor: 'rgba(0,0,0,0)',
                               cursor: 'pointer',
                             }}
                             title="Okundu olarak işaretle"
@@ -560,7 +560,7 @@ const NotificationPanel = () => {
                             padding: '4px',
                             border: 'none',
                             borderRadius: '4px',
-                            backgroundColor: 'transparent',
+                            backgroundColor: 'rgba(0,0,0,0)',
                             cursor: 'pointer',
                           }}
                           title="Bildirimi sil"

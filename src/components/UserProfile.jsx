@@ -169,7 +169,7 @@ const UserProfile = () => {
                   style={{
                     width: '100%',
                     padding: '0.75rem 1rem',
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'rgba(0,0,0,0)',
                     border: 'none',
                     textAlign: 'left',
                     cursor: 'pointer',
@@ -193,7 +193,7 @@ const UserProfile = () => {
                   style={{
                     width: '100%',
                     padding: '0.75rem 1rem',
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'rgba(0,0,0,0)',
                     border: 'none',
                     textAlign: 'left',
                     cursor: 'pointer',

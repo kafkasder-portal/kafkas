@@ -406,7 +406,7 @@ const DynamicFormBuilder = () => {
                     fontWeight: 'bold',
                     border: 'none',
                     outline: 'none',
-                    backgroundColor: 'transparent'
+                    backgroundColor: 'rgba(0,0,0,0)'
                   }}
                 />
                 <textarea
@@ -417,7 +417,7 @@ const DynamicFormBuilder = () => {
                   style={{
                     border: 'none',
                     outline: 'none',
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'rgba(0,0,0,0)',
                     resize: 'none',
                     color: '#6b7280'
                   }}
@@ -456,7 +456,7 @@ const DynamicFormBuilder = () => {
                         alignItems: 'center',
                         gap: '0.5rem',
                         padding: '1rem 0.5rem',
-                        backgroundColor: 'transparent',
+                        backgroundColor: 'rgba(0,0,0,0)',
                         border: `2px dashed ${type.color}40`,
                         borderRadius: '8px',
                         cursor: 'pointer',
@@ -517,7 +517,7 @@ const DynamicFormBuilder = () => {
                           padding: '1rem',
                           border: selectedElement === element.id ? `2px solid ${fieldType?.color}` : '1px solid #e5e7eb',
                           borderRadius: '8px',
-                          backgroundColor: selectedElement === element.id ? `${fieldType?.color}05` : 'transparent'
+                          backgroundColor: selectedElement === element.id ? `${fieldType?.color}05` : 'rgba(0,0,0,0)'
                         }}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}

@@ -345,7 +345,7 @@ const Messages = () => {
                         }}
                         style={{
                           padding: '0.25rem',
-                          backgroundColor: 'transparent',
+                          backgroundColor: 'rgba(0,0,0,0)',
                           border: 'none',
                           borderRadius: 'var(--radius-sm)',
                           cursor: 'pointer',
@@ -361,7 +361,7 @@ const Messages = () => {
                         }}
                         style={{
                           padding: '0.25rem',
-                          backgroundColor: 'transparent',
+                          backgroundColor: 'rgba(0,0,0,0)',
                           border: 'none',
                           borderRadius: 'var(--radius-sm)',
                           cursor: 'pointer',
@@ -427,7 +427,7 @@ const Messages = () => {
                   onClick={() => setSelectedMessage(null)}
                   style={{
                     padding: '0.5rem',
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'rgba(0,0,0,0)',
                     border: 'none',
                     borderRadius: 'var(--radius-sm)',
                     cursor: 'pointer',

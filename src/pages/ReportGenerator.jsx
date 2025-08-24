@@ -146,7 +146,7 @@ const ReportGenerator = () => {
                     border: `2px solid ${isSelected ? type.color : '#e2e8f0'}`,
                     borderRadius: '12px',
                     cursor: 'pointer',
-                    backgroundColor: isSelected ? `${type.color}10` : 'transparent',
+                    backgroundColor: isSelected ? `${type.color}10` : 'rgba(0,0,0,0)',
                     transition: 'all 0.2s ease'
                   }}
                   whileHover={{ 

@@ -10,4 +10,10 @@ import './index.css'
 // Initialize error tracking
 import './utils/errorTracker'
 
+// React DevTools for development
+if (import.meta.env.DEV) {
+  // This will show the React DevTools installation message in development
+  console.log('💡 React DevTools: https://reactjs.org/link/react-devtools')
+}
+
 createRoot(document.getElementById('root')).render(<App />)

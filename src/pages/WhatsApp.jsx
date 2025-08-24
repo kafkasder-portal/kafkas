@@ -322,7 +322,7 @@ const WhatsApp = () => {
                 whileTap={{ scale: 0.95 }}
                 style={{
                   padding: '0.5rem',
-                  backgroundColor: 'transparent',
+                  backgroundColor: 'rgba(0,0,0,0)',
                   border: 'none',
                   borderRadius: 'var(--radius-md)',
                   cursor: 'pointer',
@@ -337,7 +337,7 @@ const WhatsApp = () => {
                 onClick={() => setShowNewContactModal(true)}
                 style={{
                   padding: '0.5rem',
-                  backgroundColor: 'transparent',
+                  backgroundColor: 'rgba(0,0,0,0)',
                   border: 'none',
                   borderRadius: 'var(--radius-md)',
                   cursor: 'pointer',
@@ -381,7 +381,7 @@ const WhatsApp = () => {
                 padding: '1rem',
                 borderBottom: '1px solid var(--border-color)',
                 cursor: 'pointer',
-                backgroundColor: selectedContact?.id === contact.id ? 'var(--background-secondary)' : 'transparent'
+                backgroundColor: selectedContact?.id === contact.id ? 'var(--background-secondary)' : 'rgba(0,0,0,0)'
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -504,7 +504,7 @@ const WhatsApp = () => {
                   whileTap={{ scale: 0.95 }}
                   style={{
                     padding: '0.5rem',
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'rgba(0,0,0,0)',
                     border: 'none',
                     borderRadius: 'var(--radius-md)',
                     cursor: 'pointer',
@@ -518,7 +518,7 @@ const WhatsApp = () => {
                   whileTap={{ scale: 0.95 }}
                   style={{
                     padding: '0.5rem',
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'rgba(0,0,0,0)',
                     border: 'none',
                     borderRadius: 'var(--radius-md)',
                     cursor: 'pointer',
@@ -532,7 +532,7 @@ const WhatsApp = () => {
                   whileTap={{ scale: 0.95 }}
                   style={{
                     padding: '0.5rem',
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'rgba(0,0,0,0)',
                     border: 'none',
                     borderRadius: 'var(--radius-md)',
                     cursor: 'pointer',
@@ -594,7 +594,7 @@ const WhatsApp = () => {
                   whileTap={{ scale: 0.95 }}
                   style={{
                     padding: '0.5rem',
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'rgba(0,0,0,0)',
                     border: 'none',
                     borderRadius: 'var(--radius-md)',
                     cursor: 'pointer',
@@ -609,7 +609,7 @@ const WhatsApp = () => {
                   whileTap={{ scale: 0.95 }}
                   style={{
                     padding: '0.5rem',
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'rgba(0,0,0,0)',
                     border: 'none',
                     borderRadius: 'var(--radius-md)',
                     cursor: 'pointer',

@@ -302,7 +302,7 @@ const ThemeCustomizer = () => {
                       alignItems: 'center',
                       gap: '0.5rem',
                       padding: '1rem',
-                      backgroundColor: isActive ? `${preset.colors.primary}15` : 'transparent',
+                      backgroundColor: isActive ? `${preset.colors.primary}15` : 'rgba(0,0,0,0)',
                       border: `2px solid ${isActive ? preset.colors.primary : '#e2e8f0'}`,
                       borderRadius: `${borderRadius}px`,
                       cursor: 'pointer',
@@ -470,7 +470,7 @@ const ThemeCustomizer = () => {
                       onClick={() => setShadows(option.id)}
                       style={{
                         padding: '0.5rem',
-                        backgroundColor: shadows === option.id ? customColors.primary : 'transparent',
+                        backgroundColor: shadows === option.id ? customColors.primary : 'rgba(0,0,0,0)',
                         color: shadows === option.id ? 'white' : '#6b7280',
                         border: `1px solid ${shadows === option.id ? customColors.primary : '#d1d5db'}`,
                         borderRadius: `${borderRadius}px`,
@@ -529,7 +529,7 @@ const ThemeCustomizer = () => {
               <motion.button
                 style={{
                   padding: '0.75rem 1.5rem',
-                  backgroundColor: 'transparent',
+                  backgroundColor: 'rgba(0,0,0,0)',
                   color: customColors.primary,
                   border: `1px solid ${customColors.primary}`,
                   borderRadius: `${borderRadius}px`,

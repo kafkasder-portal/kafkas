@@ -389,7 +389,7 @@ const Donations = () => {
                 textDecoration: 'none',
                 fontWeight: '500',
                 transition: 'all 0.2s ease',
-                backgroundColor: isActive ? 'rgba(16, 185, 129, 0.1)' : 'transparent',
+                backgroundColor: isActive ? 'rgba(16, 185, 129, 0.1)' : 'rgba(0,0,0,0)',
                 color: isActive ? '#10b981' : '#64748b',
                 border: isActive ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid transparent'
               }}

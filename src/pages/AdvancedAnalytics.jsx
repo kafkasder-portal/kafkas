@@ -456,7 +456,7 @@ const AdvancedAnalytics = () => {
               onClick={() => setSelectedTimeRange(range.id)}
               style={{
                 padding: '0.5rem 1rem',
-                backgroundColor: selectedTimeRange === range.id ? '#667eea' : 'transparent',
+                backgroundColor: selectedTimeRange === range.id ? '#667eea' : 'rgba(0,0,0,0)',
                 color: selectedTimeRange === range.id ? 'white' : '#6b7280',
                 border: `1px solid ${selectedTimeRange === range.id ? '#667eea' : '#d1d5db'}`,
                 borderRadius: '6px',

@@ -99,7 +99,7 @@ const AdvancedSearchBar = ({
               border: 'none',
               outline: 'none',
               fontSize: '0.875rem',
-              backgroundColor: 'transparent'
+                              backgroundColor: 'rgba(0,0,0,0)'
             }}
           />
           {searchTerm && (

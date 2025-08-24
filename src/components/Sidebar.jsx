@@ -230,7 +230,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
                 >
                   <motion.div
                     className="icon-wrapper"
-                    style={{ backgroundColor: active ? item.color : 'transparent' }}
+                    style={{ backgroundColor: active ? item.color : 'rgba(0,0,0,0)' }}
                     whileHover={{ scale: 1.1 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                   >

@@ -393,13 +393,15 @@ const AppContent = memo(() => {
   )
 })
 
+
+
 function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider>
         <AuthProvider>
           <NotificationProvider>
-            <Router>
+            <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <AppContent />
             </Router>
           </NotificationProvider>
