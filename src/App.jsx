@@ -28,7 +28,6 @@ const Volunteers = lazy(() => import('./pages/Volunteers'))
 const Tasks = lazy(() => import('./pages/Tasks'))
 const Messages = lazy(() => import('./pages/Messages'))
 const WhatsApp = lazy(() => import('./pages/WhatsApp'))
-const ErrorDashboard = lazy(() => import('./pages/ErrorDashboard'))
 const Inventory = lazy(() => import('./pages/Inventory'))
 const Donors = lazy(() => import('./pages/Donors'))
 const Scholarship = lazy(() => import('./pages/Scholarship'))
@@ -36,14 +35,7 @@ const Fund = lazy(() => import('./pages/Fund'))
 const PiggyBankTracking = lazy(() => import('./pages/PiggyBankTracking'))
 const System = lazy(() => import('./pages/System'))
 const UserManagement = lazy(() => import('./pages/UserManagement'))
-const ReportGenerator = lazy(() => import('./pages/ReportGenerator'))
-const FormBuilder = lazy(() => import('./pages/FormBuilder'))
-const PerformanceDashboard = lazy(() => import('./pages/PerformanceDashboard'))
-const AdvancedAnalytics = lazy(() => import('./pages/AdvancedAnalytics'))
-const RealTimeDashboard = lazy(() => import('./pages/RealTimeDashboard'))
-const WorkflowAutomation = lazy(() => import('./pages/WorkflowAutomation'))
 const HospitalReferral = lazy(() => import('./pages/HospitalReferral'))
-const MonitoringDashboard = lazy(() => import('./components/MonitoringDashboard'))
 const TodosList = lazy(() => import('./components/TodosList'))
 
 // Loading component
@@ -207,14 +199,7 @@ const AppContent = memo(() => {
                       </ProtectedRoute>
                     }
                   />
-                  <Route
-                    path="/system/error-dashboard"
-                    element={
-                      <ProtectedRoute requiredRoles={['admin']}>
-                        <ErrorDashboard />
-                      </ProtectedRoute>
-                    }
-                  />
+
                   <Route
                     path="/inventory/*"
                     element={
@@ -271,62 +256,7 @@ const AppContent = memo(() => {
                       </ProtectedRoute>
                     }
                   />
-                  <Route
-                    path="/reports"
-                    element={
-                      <ProtectedRoute>
-                        <ReportGenerator />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/form-builder"
-                    element={
-                      <ProtectedRoute>
-                        <FormBuilder />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/performance"
-                    element={
-                      <ProtectedRoute requiredRoles={['admin']}>
-                        <PerformanceDashboard />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/analytics"
-                    element={
-                      <ProtectedRoute>
-                        <AdvancedAnalytics />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/realtime"
-                    element={
-                      <ProtectedRoute>
-                        <RealTimeDashboard />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/workflow"
-                    element={
-                      <ProtectedRoute>
-                        <WorkflowAutomation />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/monitoring-dashboard"
-                    element={
-                      <ProtectedRoute>
-                        <MonitoringDashboard />
-                      </ProtectedRoute>
-                    }
-                  />
+
                   <Route
                     path="/todos"
                     element={

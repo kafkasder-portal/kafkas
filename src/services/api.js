@@ -3,7 +3,7 @@ const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 // Import mock client for fallback
-import { mockApiClient } from './mockApiClient.js';
+
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
 
@@ -64,7 +64,7 @@ class SecureApiClient {
   async request(endpoint, options = {}) {
     // Use mock API directly in development mode
     if (this.useMock) {
-      return await mockApiClient.request(endpoint, options);
+      throw new Error('API endpoint not available');
     }
 
     const url = `${this.baseURL}${endpoint}`;
@@ -97,7 +97,7 @@ class SecureApiClient {
           'API request failed, falling back to mock API:',
           error.message
         );
-        return await mockApiClient.request(endpoint, requestOptions);
+        throw new Error('API endpoint not available');
       }
     });
   }

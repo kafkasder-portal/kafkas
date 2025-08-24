@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
-import toast, { Toaster } from 'react-hot-toast'
+import { toast } from 'sonner'
 import { createNotificationService } from '../services/notificationService'
 import { NOTIFICATION_TYPES, NOTIFICATION_PRIORITY } from './notificationConstants'
 
@@ -29,16 +29,6 @@ export const NotificationProvider = ({ children }) => {
   const showToast = useCallback((message, type = NOTIFICATION_TYPES.INFO, options = {}) => {
     const toastOptions = {
       duration: options.duration || 4000,
-      position: options.position || 'top-right',
-      style: {
-        borderRadius: '10px',
-        background: getToastBackground(type),
-        color: '#fff',
-        fontSize: '14px',
-        fontWeight: '500',
-        padding: '12px 16px',
-        ...options.style,
-      },
       ...options,
     }
 
@@ -48,7 +38,7 @@ export const NotificationProvider = ({ children }) => {
       case NOTIFICATION_TYPES.ERROR:
         return toast.error(message, toastOptions)
       case NOTIFICATION_TYPES.WARNING:
-        return toast(message, { ...toastOptions, icon: '⚠️' })
+        return toast.warning(message, toastOptions)
       case NOTIFICATION_TYPES.LOADING:
         return toast.loading(message, toastOptions)
       default:

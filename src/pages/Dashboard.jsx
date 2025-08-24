@@ -10,13 +10,9 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import AISuggestions from '../components/AISuggestions';
-import {
-  BarChart,
-  ChartContainer,
-  LineChart,
-} from '../components/DataVisualization';
-import RealTimeCollaboration from '../components/RealTimeCollaboration';
+
+
+
 import { beneficiariesService } from '../services/beneficiariesService';
 import { donationsService } from '../services/donationsService';
 import { hospitalReferralsService } from '../services/hospitalReferralsService';
@@ -198,11 +194,11 @@ const Dashboard = () => {
       {/* AI Suggestions & Collaboration Section */}
       <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8'>
         <motion.div variants={itemVariants}>
-          <AISuggestions type='general' />
+
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <RealTimeCollaboration roomId='dashboard' />
+          
         </motion.div>
       </div>
 
