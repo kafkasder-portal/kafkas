@@ -81,7 +81,7 @@ const AppContent = memo(() => {
 
   // Temporary dev bypass - remove this in production
   const isDev = import.meta.env.DEV
-  const bypassAuth = true // Always bypass for now to fix local development
+  const bypassAuth = false // Disable bypass to show proper login flow
 
   return (
     <div className={`app device-${deviceInfo.type} ${deviceInfo.orientation}`}>

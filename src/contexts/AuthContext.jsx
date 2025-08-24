@@ -41,6 +41,22 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
+        // Dev mode auto-login for testing
+        if (import.meta.env.DEV) {
+          const devUser = {
+            id: 'dev-user-1',
+            email: 'admin@kafportal.com',
+            name: 'Admin User',
+            role: 'admin',
+            permissions: ['read', 'write', 'admin'],
+          }
+          setUser(devUser)
+          setIsAuthenticated(true)
+          localStorage.setItem('fallbackUser', JSON.stringify(devUser))
+          setLoading(false)
+          return
+        }
+
         // If Supabase is not connected, use fallback auth
         if (!supabaseConnected) {
           const fallbackUser = localStorage.getItem('fallbackUser')
