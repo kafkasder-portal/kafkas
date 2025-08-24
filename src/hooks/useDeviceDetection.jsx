@@ -11,8 +11,12 @@ const useDeviceDetection = () => {
     screenHeight: typeof window !== 'undefined' ? window.innerHeight : 1080,
     userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
     platform: typeof navigator !== 'undefined' ? navigator.platform : '',
-    orientation: typeof window !== 'undefined' ?
-      (window.innerWidth > window.innerHeight ? 'landscape' : 'portrait') : 'landscape'
+    orientation:
+      typeof window !== 'undefined'
+        ? window.innerWidth > window.innerHeight
+          ? 'landscape'
+          : 'portrait'
+        : 'landscape',
   }));
 
   const detectDevice = useCallback(() => {
@@ -24,7 +28,10 @@ const useDeviceDetection = () => {
     const userAgent = navigator.userAgent.toLowerCase();
 
     // User Agent tabanlı mobil cihaz kontrolü
-    const isMobileUA = /android|webos|iphone|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+    const isMobileUA =
+      /android|webos|iphone|ipod|blackberry|iemobile|opera mini/i.test(
+        userAgent
+      );
     const isTabletUA = /ipad|android.*tablet|tablet/i.test(userAgent);
 
     // Ekran boyutu tabanlı kontroller
@@ -71,7 +78,10 @@ const useDeviceDetection = () => {
       // Ek bilgiler
       browser: getBrowserInfo(),
       os: getOSInfo(),
-      touchSupport: typeof window !== 'undefined' ? ('ontouchstart' in window || navigator.maxTouchPoints > 0) : false
+      touchSupport:
+        typeof window !== 'undefined'
+          ? 'ontouchstart' in window || navigator.maxTouchPoints > 0
+          : false,
     };
   }, []);
 
@@ -80,7 +90,8 @@ const useDeviceDetection = () => {
     const userAgent = navigator.userAgent.toLowerCase();
     if (userAgent.includes('chrome')) return 'Chrome';
     if (userAgent.includes('firefox')) return 'Firefox';
-    if (userAgent.includes('safari') && !userAgent.includes('chrome')) return 'Safari';
+    if (userAgent.includes('safari') && !userAgent.includes('chrome'))
+      return 'Safari';
     if (userAgent.includes('edge')) return 'Edge';
     if (userAgent.includes('opera')) return 'Opera';
     return 'Unknown';
@@ -93,7 +104,12 @@ const useDeviceDetection = () => {
     if (userAgent.includes('mac')) return 'macOS';
     if (userAgent.includes('linux')) return 'Linux';
     if (userAgent.includes('android')) return 'Android';
-    if (userAgent.includes('ios') || userAgent.includes('iphone') || userAgent.includes('ipad')) return 'iOS';
+    if (
+      userAgent.includes('ios') ||
+      userAgent.includes('iphone') ||
+      userAgent.includes('ipad')
+    )
+      return 'iOS';
     return 'Unknown';
   }, []);
 

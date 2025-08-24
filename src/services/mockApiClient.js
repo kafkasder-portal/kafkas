@@ -12,7 +12,7 @@ const MOCK_DATA = {
       last_name: 'User',
       role: 'admin',
       status: 'active',
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     },
     {
       id: '2',
@@ -21,8 +21,8 @@ const MOCK_DATA = {
       last_name: 'User',
       role: 'user',
       status: 'active',
-      created_at: new Date().toISOString()
-    }
+      created_at: new Date().toISOString(),
+    },
   ],
   inventory: [
     {
@@ -34,7 +34,7 @@ const MOCK_DATA = {
       unit: 'paket',
       status: 'available',
       location: 'Depo A',
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     },
     {
       id: '2',
@@ -45,7 +45,7 @@ const MOCK_DATA = {
       unit: 'paket',
       status: 'available',
       location: 'Depo A',
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     },
     {
       id: '3',
@@ -56,8 +56,8 @@ const MOCK_DATA = {
       unit: 'adet',
       status: 'low_stock',
       location: 'Depo B',
-      created_at: new Date().toISOString()
-    }
+      created_at: new Date().toISOString(),
+    },
   ],
   tasks: [
     {
@@ -67,7 +67,7 @@ const MOCK_DATA = {
       status: 'pending',
       priority: 'medium',
       due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     },
     {
       id: '2',
@@ -76,8 +76,8 @@ const MOCK_DATA = {
       status: 'in_progress',
       priority: 'high',
       due_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-      created_at: new Date().toISOString()
-    }
+      created_at: new Date().toISOString(),
+    },
   ],
   donations: [
     {
@@ -87,7 +87,7 @@ const MOCK_DATA = {
       amount: 500,
       currency: 'TRY',
       status: 'completed',
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     },
     {
       id: '2',
@@ -96,13 +96,13 @@ const MOCK_DATA = {
       amount: 1000,
       currency: 'TRY',
       status: 'completed',
-      created_at: new Date().toISOString()
-    }
-  ]
+      created_at: new Date().toISOString(),
+    },
+  ],
 };
 
 // Mock API delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // Mock API Client
 class MockApiClient {
@@ -116,7 +116,6 @@ class MockApiClient {
 
     const method = options.method || 'GET';
     const resourceName = endpoint.split('/')[1];
-    
 
     switch (method) {
       case 'GET':
@@ -124,7 +123,7 @@ class MockApiClient {
           return {
             success: true,
             data: MOCK_DATA[resourceName],
-            count: MOCK_DATA[resourceName].length
+            count: MOCK_DATA[resourceName].length,
           };
         }
         break;
@@ -134,12 +133,12 @@ class MockApiClient {
           const newItem = {
             id: (MOCK_DATA[resourceName].length + 1).toString(),
             ...JSON.parse(options.body),
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
           };
           MOCK_DATA[resourceName].push(newItem);
           return {
             success: true,
-            data: newItem
+            data: newItem,
           };
         }
         break;
@@ -149,14 +148,14 @@ class MockApiClient {
         // Update logic would go here
         return {
           success: true,
-          message: 'Updated successfully'
+          message: 'Updated successfully',
         };
 
       case 'DELETE':
         // Delete logic would go here
         return {
           success: true,
-          message: 'Deleted successfully'
+          message: 'Deleted successfully',
         };
     }
 
@@ -164,7 +163,7 @@ class MockApiClient {
     return {
       success: true,
       data: [],
-      message: 'Mock API response'
+      message: 'Mock API response',
     };
   }
 

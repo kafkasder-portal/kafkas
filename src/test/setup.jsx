@@ -1,19 +1,19 @@
-import '@testing-library/jest-dom'
-import { vi } from 'vitest'
+import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 
 // Mock IntersectionObserver
 global.IntersectionObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
-}))
+}));
 
 // Mock ResizeObserver
 global.ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
-}))
+}));
 
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
@@ -28,7 +28,7 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
-})
+});
 
 // Mock localStorage
 const localStorageMock = {
@@ -36,8 +36,8 @@ const localStorageMock = {
   setItem: vi.fn(),
   removeItem: vi.fn(),
   clear: vi.fn(),
-}
-global.localStorage = localStorageMock
+};
+global.localStorage = localStorageMock;
 
 // Mock sessionStorage
 const sessionStorageMock = {
@@ -45,8 +45,8 @@ const sessionStorageMock = {
   setItem: vi.fn(),
   removeItem: vi.fn(),
   clear: vi.fn(),
-}
-global.sessionStorage = sessionStorageMock
+};
+global.sessionStorage = sessionStorageMock;
 
 // Mock WebSocket
 global.WebSocket = vi.fn().mockImplementation(() => ({
@@ -55,10 +55,10 @@ global.WebSocket = vi.fn().mockImplementation(() => ({
   addEventListener: vi.fn(),
   removeEventListener: vi.fn(),
   readyState: 1,
-}))
+}));
 
 // Mock fetch
-global.fetch = vi.fn()
+global.fetch = vi.fn();
 
 // Mock DOMPurify
 vi.mock('dompurify', () => ({
@@ -71,10 +71,10 @@ vi.mock('dompurify', () => ({
         .replace(/<iframe[^>]*>.*?<\/iframe>/gi, '')
         .replace(/<object[^>]*>.*?<\/object>/gi, '')
         .replace(/<embed[^>]*>.*?<\/embed>/gi, '')
-        .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+        .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '');
     }),
   },
-}))
+}));
 
 // Mock Framer Motion
 vi.mock('framer-motion', () => ({
@@ -100,8 +100,12 @@ vi.mock('framer-motion', () => ({
     header: ({ children, ...props }) => <header {...props}>{children}</header>,
     footer: ({ children, ...props }) => <footer {...props}>{children}</footer>,
     main: ({ children, ...props }) => <main {...props}>{children}</main>,
-    section: ({ children, ...props }) => <section {...props}>{children}</section>,
-    article: ({ children, ...props }) => <article {...props}>{children}</article>,
+    section: ({ children, ...props }) => (
+      <section {...props}>{children}</section>
+    ),
+    article: ({ children, ...props }) => (
+      <article {...props}>{children}</article>
+    ),
     aside: ({ children, ...props }) => <aside {...props}>{children}</aside>,
     table: ({ children, ...props }) => <table {...props}>{children}</table>,
     thead: ({ children, ...props }) => <thead {...props}>{children}</thead>,
@@ -122,7 +126,9 @@ vi.mock('framer-motion', () => ({
     tspan: ({ children, ...props }) => <tspan {...props}>{children}</tspan>,
     g: ({ children, ...props }) => <g {...props}>{children}</g>,
     defs: ({ children, ...props }) => <defs {...props}>{children}</defs>,
-    clipPath: ({ children, ...props }) => <clipPath {...props}>{children}</clipPath>,
+    clipPath: ({ children, ...props }) => (
+      <clipPath {...props}>{children}</clipPath>
+    ),
     linearGradient: ({ children, ...props }) => (
       <linearGradient {...props}>{children}</linearGradient>
     ),
@@ -131,12 +137,20 @@ vi.mock('framer-motion', () => ({
     ),
     stop: props => <stop {...props} />,
     mask: ({ children, ...props }) => <mask {...props}>{children}</mask>,
-    pattern: ({ children, ...props }) => <pattern {...props}>{children}</pattern>,
+    pattern: ({ children, ...props }) => (
+      <pattern {...props}>{children}</pattern>
+    ),
     symbol: ({ children, ...props }) => <symbol {...props}>{children}</symbol>,
     use: props => <use {...props} />,
-    foreignObject: ({ children, ...props }) => <foreignObject {...props}>{children}</foreignObject>,
-    animate: ({ children, ...props }) => <animate {...props}>{children}</animate>,
-    animateMotion: ({ children, ...props }) => <animateMotion {...props}>{children}</animateMotion>,
+    foreignObject: ({ children, ...props }) => (
+      <foreignObject {...props}>{children}</foreignObject>
+    ),
+    animate: ({ children, ...props }) => (
+      <animate {...props}>{children}</animate>
+    ),
+    animateMotion: ({ children, ...props }) => (
+      <animateMotion {...props}>{children}</animateMotion>
+    ),
     animateTransform: ({ children, ...props }) => (
       <animateTransform {...props}>{children}</animateTransform>
     ),
@@ -164,7 +178,10 @@ vi.mock('framer-motion', () => ({
     scrollYProgress: { get: vi.fn(), set: vi.fn() },
   })),
   useSpring: vi.fn(value => ({ get: vi.fn(() => value), set: vi.fn() })),
-  useTransform: vi.fn((value, input, output) => ({ get: vi.fn(() => output[0]), set: vi.fn() })),
+  useTransform: vi.fn((value, input, output) => ({
+    get: vi.fn(() => output[0]),
+    set: vi.fn(),
+  })),
   useCycle: vi.fn((...args) => [args[0], vi.fn()]),
   useReducedMotion: vi.fn(() => false),
   usePresence: vi.fn(() => [true, vi.fn()]),
@@ -197,7 +214,7 @@ vi.mock('framer-motion', () => ({
   useGesture: vi.fn(() => ({})),
   useMeasure: vi.fn(() => [vi.fn(), { width: 100, height: 100 }]),
   useMotionTemplate: vi.fn(template => template),
-}))
+}));
 
 // Mock React Router
 vi.mock('react-router-dom', () => ({
@@ -213,9 +230,9 @@ vi.mock('react-router-dom', () => ({
   useLocation: () => ({ pathname: '/', search: '', hash: '', state: null }),
   useParams: () => ({}),
   useSearchParams: () => [new URLSearchParams(), vi.fn()],
-  Outlet: () => <div data-testid="outlet" />,
-  Navigate: ({ to }) => <div data-testid="navigate" data-to={to} />,
-}))
+  Outlet: () => <div data-testid='outlet' />,
+  Navigate: ({ to }) => <div data-testid='navigate' data-to={to} />,
+}));
 
 // Mock i18next
 vi.mock('react-i18next', () => ({
@@ -227,7 +244,7 @@ vi.mock('react-i18next', () => ({
     },
   }),
   Trans: ({ children }) => children,
-}))
+}));
 
 // Socket.io-client removed from project
 
@@ -241,114 +258,112 @@ vi.mock('sonner', () => ({
     loading: vi.fn(),
     dismiss: vi.fn(),
   },
-}))
+}));
 
 // Mock lucide-react
 vi.mock('lucide-react', () => ({
-  Home: () => <div data-testid="icon-home" />,
-  Users: () => <div data-testid="icon-users" />,
-  DollarSign: () => <div data-testid="icon-dollar" />,
-  Package: () => <div data-testid="icon-package" />,
-  Calendar: () => <div data-testid="icon-calendar" />,
-  MessageSquare: () => <div data-testid="icon-message" />,
-  Settings: () => <div data-testid="icon-settings" />,
-  Shield: () => <div data-testid="icon-shield" />,
-  Heart: () => <div data-testid="icon-heart" />,
-  GraduationCap: () => <div data-testid="icon-graduation" />,
-  PiggyBank: () => <div data-testid="icon-piggy" />,
-  Building2: () => <div data-testid="icon-building" />,
-  CheckCircle: () => <div data-testid="icon-check" />,
-  AlertCircle: () => <div data-testid="icon-alert" />,
-  Eye: () => <div data-testid="icon-eye" />,
-  EyeOff: () => <div data-testid="icon-eye-off" />,
-  Mail: () => <div data-testid="icon-mail" />,
-  Lock: () => <div data-testid="icon-lock" />,
-  Loader: () => <div data-testid="icon-loader" />,
-  Plus: () => <div data-testid="icon-plus" />,
-  Edit: () => <div data-testid="icon-edit" />,
-  Trash2: () => <div data-testid="icon-trash" />,
-  Search: () => <div data-testid="icon-search" />,
-  Filter: () => <div data-testid="icon-filter" />,
-  Download: () => <div data-testid="icon-download" />,
-  Upload: () => <div data-testid="icon-upload" />,
-  RefreshCw: () => <div data-testid="icon-refresh" />,
-  Activity: () => <div data-testid="icon-activity" />,
-  TrendingUp: () => <div data-testid="icon-trending-up" />,
-  TrendingDown: () => <div data-testid="icon-trending-down" />,
-  Zap: () => <div data-testid="icon-zap" />,
-  HardDrive: () => <div data-testid="icon-hard-drive" />,
-  Wifi: () => <div data-testid="icon-wifi" />,
-  Clock: () => <div data-testid="icon-clock" />,
-  Gauge: () => <div data-testid="icon-gauge" />,
-  AlertTriangle: () => <div data-testid="icon-alert-triangle" />,
-  CheckCircle2: () => <div data-testid="icon-check-circle" />,
-  X: () => <div data-testid="icon-x" />,
-  ChevronDown: () => <div data-testid="icon-chevron-down" />,
-  ChevronUp: () => <div data-testid="icon-chevron-up" />,
-  ChevronLeft: () => <div data-testid="icon-chevron-left" />,
-  ChevronRight: () => <div data-testid="icon-chevron-right" />,
-  Menu: () => <div data-testid="icon-menu" />,
-  XCircle: () => <div data-testid="icon-x-circle" />,
-  Info: () => <div data-testid="icon-info" />,
-  HelpCircle: () => <div data-testid="icon-help" />,
-  ExternalLink: () => <div data-testid="icon-external-link" />,
-  Copy: () => <div data-testid="icon-copy" />,
-  Share: () => <div data-testid="icon-share" />,
-  Bookmark: () => <div data-testid="icon-bookmark" />,
-  Star: () => <div data-testid="icon-star" />,
-  ThumbsUp: () => <div data-testid="icon-thumbs-up" />,
-  ThumbsDown: () => <div data-testid="icon-thumbs-down" />,
-  Flag: () => <div data-testid="icon-flag" />,
-  Bell: () => <div data-testid="icon-bell" />,
-  User: () => <div data-testid="icon-user" />,
-  LogOut: () => <div data-testid="icon-logout" />,
-  LogIn: () => <div data-testid="icon-login" />,
-  UserPlus: () => <div data-testid="icon-user-plus" />,
-  UserMinus: () => <div data-testid="icon-user-minus" />,
-  UserCheck: () => <div data-testid="icon-user-check" />,
-  UserX: () => <div data-testid="icon-user-x" />,
-  Key: () => <div data-testid="icon-key" />,
-  Unlock: () => <div data-testid="icon-unlock" />,
-  ShieldCheck: () => <div data-testid="icon-shield-check" />,
-  ShieldX: () => <div data-testid="icon-shield-x" />,
-  ShieldAlert: () => <div data-testid="icon-shield-alert" />,
-  ShieldOff: () => <div data-testid="icon-shield-off" />,
-  ShieldPlus: () => <div data-testid="icon-shield-plus" />,
-  ShieldMinus: () => <div data-testid="icon-shield-minus" />,
-  ShieldQuestion: () => <div data-testid="icon-shield-question" />,
-}))
-
-
+  Home: () => <div data-testid='icon-home' />,
+  Users: () => <div data-testid='icon-users' />,
+  DollarSign: () => <div data-testid='icon-dollar' />,
+  Package: () => <div data-testid='icon-package' />,
+  Calendar: () => <div data-testid='icon-calendar' />,
+  MessageSquare: () => <div data-testid='icon-message' />,
+  Settings: () => <div data-testid='icon-settings' />,
+  Shield: () => <div data-testid='icon-shield' />,
+  Heart: () => <div data-testid='icon-heart' />,
+  GraduationCap: () => <div data-testid='icon-graduation' />,
+  PiggyBank: () => <div data-testid='icon-piggy' />,
+  Building2: () => <div data-testid='icon-building' />,
+  CheckCircle: () => <div data-testid='icon-check' />,
+  AlertCircle: () => <div data-testid='icon-alert' />,
+  Eye: () => <div data-testid='icon-eye' />,
+  EyeOff: () => <div data-testid='icon-eye-off' />,
+  Mail: () => <div data-testid='icon-mail' />,
+  Lock: () => <div data-testid='icon-lock' />,
+  Loader: () => <div data-testid='icon-loader' />,
+  Plus: () => <div data-testid='icon-plus' />,
+  Edit: () => <div data-testid='icon-edit' />,
+  Trash2: () => <div data-testid='icon-trash' />,
+  Search: () => <div data-testid='icon-search' />,
+  Filter: () => <div data-testid='icon-filter' />,
+  Download: () => <div data-testid='icon-download' />,
+  Upload: () => <div data-testid='icon-upload' />,
+  RefreshCw: () => <div data-testid='icon-refresh' />,
+  Activity: () => <div data-testid='icon-activity' />,
+  TrendingUp: () => <div data-testid='icon-trending-up' />,
+  TrendingDown: () => <div data-testid='icon-trending-down' />,
+  Zap: () => <div data-testid='icon-zap' />,
+  HardDrive: () => <div data-testid='icon-hard-drive' />,
+  Wifi: () => <div data-testid='icon-wifi' />,
+  Clock: () => <div data-testid='icon-clock' />,
+  Gauge: () => <div data-testid='icon-gauge' />,
+  AlertTriangle: () => <div data-testid='icon-alert-triangle' />,
+  CheckCircle2: () => <div data-testid='icon-check-circle' />,
+  X: () => <div data-testid='icon-x' />,
+  ChevronDown: () => <div data-testid='icon-chevron-down' />,
+  ChevronUp: () => <div data-testid='icon-chevron-up' />,
+  ChevronLeft: () => <div data-testid='icon-chevron-left' />,
+  ChevronRight: () => <div data-testid='icon-chevron-right' />,
+  Menu: () => <div data-testid='icon-menu' />,
+  XCircle: () => <div data-testid='icon-x-circle' />,
+  Info: () => <div data-testid='icon-info' />,
+  HelpCircle: () => <div data-testid='icon-help' />,
+  ExternalLink: () => <div data-testid='icon-external-link' />,
+  Copy: () => <div data-testid='icon-copy' />,
+  Share: () => <div data-testid='icon-share' />,
+  Bookmark: () => <div data-testid='icon-bookmark' />,
+  Star: () => <div data-testid='icon-star' />,
+  ThumbsUp: () => <div data-testid='icon-thumbs-up' />,
+  ThumbsDown: () => <div data-testid='icon-thumbs-down' />,
+  Flag: () => <div data-testid='icon-flag' />,
+  Bell: () => <div data-testid='icon-bell' />,
+  User: () => <div data-testid='icon-user' />,
+  LogOut: () => <div data-testid='icon-logout' />,
+  LogIn: () => <div data-testid='icon-login' />,
+  UserPlus: () => <div data-testid='icon-user-plus' />,
+  UserMinus: () => <div data-testid='icon-user-minus' />,
+  UserCheck: () => <div data-testid='icon-user-check' />,
+  UserX: () => <div data-testid='icon-user-x' />,
+  Key: () => <div data-testid='icon-key' />,
+  Unlock: () => <div data-testid='icon-unlock' />,
+  ShieldCheck: () => <div data-testid='icon-shield-check' />,
+  ShieldX: () => <div data-testid='icon-shield-x' />,
+  ShieldAlert: () => <div data-testid='icon-shield-alert' />,
+  ShieldOff: () => <div data-testid='icon-shield-off' />,
+  ShieldPlus: () => <div data-testid='icon-shield-plus' />,
+  ShieldMinus: () => <div data-testid='icon-shield-minus' />,
+  ShieldQuestion: () => <div data-testid='icon-shield-question' />,
+}));
 
 // Mock uuid
 vi.mock('uuid', () => ({
   v4: vi.fn(() => 'test-uuid'),
-}))
+}));
 
 // Mock dompurify
 vi.mock('dompurify', () => ({
   default: {
     sanitize: vi.fn(input => input),
   },
-}))
+}));
 
 // Console error suppression for tests
-const originalError = console.error
+const originalError = console.error;
 beforeAll(() => {
   console.error = (...args) => {
     if (
       typeof args[0] === 'string' &&
       args[0].includes('Warning: ReactDOM.render is no longer supported')
     ) {
-      return
+      return;
     }
-    originalError.call(console, ...args)
-  }
-})
+    originalError.call(console, ...args);
+  };
+});
 
 afterAll(() => {
-  console.error = originalError
-})
+  console.error = originalError;
+});
 
 // Global test utilities
 global.testUtils = {
@@ -395,33 +410,34 @@ global.testUtils = {
     stopPropagation: vi.fn(),
   }),
 
-  createMockFile: (name = 'test.jpg', type = 'image/jpeg') => new File(['test'], name, { type }),
+  createMockFile: (name = 'test.jpg', type = 'image/jpeg') =>
+    new File(['test'], name, { type }),
 
   waitForElement: async (selector, timeout = 1000) => {
     return new Promise((resolve, reject) => {
-      const element = document.querySelector(selector)
+      const element = document.querySelector(selector);
       if (element) {
-        resolve(element)
-        return
+        resolve(element);
+        return;
       }
 
       const observer = new MutationObserver(() => {
-        const element = document.querySelector(selector)
+        const element = document.querySelector(selector);
         if (element) {
-          observer.disconnect()
-          resolve(element)
+          observer.disconnect();
+          resolve(element);
         }
-      })
+      });
 
       observer.observe(document.body, {
         childList: true,
         subtree: true,
-      })
+      });
 
       setTimeout(() => {
-        observer.disconnect()
-        reject(new Error(`Element ${selector} not found within ${timeout}ms`))
-      }, timeout)
-    })
+        observer.disconnect();
+        reject(new Error(`Element ${selector} not found within ${timeout}ms`));
+      }, timeout);
+    });
   },
-}
+};

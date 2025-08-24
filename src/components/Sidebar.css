@@ -80,9 +80,11 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg,
-      rgba(102, 126, 234, 0.06) 0%,
-      rgba(118, 75, 162, 0.06) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.06) 0%,
+    rgba(118, 75, 162, 0.06) 100%
+  );
   opacity: 0;
   transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   border-radius: inherit;
@@ -137,9 +139,11 @@
   position: absolute;
   inset: 0;
   border-radius: 12px;
-  background: linear-gradient(135deg,
-      rgba(248, 250, 252, 0.8) 0%,
-      rgba(241, 245, 249, 0.8) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(248, 250, 252, 0.8) 0%,
+    rgba(241, 245, 249, 0.8) 100%
+  );
   opacity: 0;
   transition: all 0.4s ease;
   transform: scale(0.8);
@@ -150,9 +154,11 @@
   position: absolute;
   inset: 0;
   border-radius: 12px;
-  background: linear-gradient(135deg,
-      rgba(102, 126, 234, 0.08) 0%,
-      rgba(118, 75, 162, 0.08) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.08) 0%,
+    rgba(118, 75, 162, 0.08) 100%
+  );
   opacity: 0;
   transition: all 0.4s ease;
   transform: scale(0.9) rotate(-5deg);
@@ -177,13 +183,13 @@
 }
 
 /* Icon animation */
-.icon-wrapper>svg {
+.icon-wrapper > svg {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   z-index: 2;
 }
 
-.nav-item:hover .icon-wrapper>svg {
+.nav-item:hover .icon-wrapper > svg {
   transform: scale(1.1);
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
@@ -260,9 +266,11 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg,
-      rgba(102, 126, 234, 0.06) 0%,
-      rgba(118, 75, 162, 0.06) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.06) 0%,
+    rgba(118, 75, 162, 0.06) 100%
+  );
   opacity: 0;
   transition: all 0.3s ease;
   transform: translateX(-100%);
@@ -415,7 +423,11 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.05)
+  );
   border-radius: inherit;
   pointer-events: none;
 }
@@ -424,7 +436,11 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.05)
+  );
   border-radius: inherit;
   pointer-events: none;
 }

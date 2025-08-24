@@ -82,7 +82,9 @@ export const meetingsService = {
   // Get meetings by date range
   async getMeetingsByDateRange(startDate, endDate) {
     try {
-      const response = await apiClient.get(`/meetings?start=${startDate}&end=${endDate}`);
+      const response = await apiClient.get(
+        `/meetings?start=${startDate}&end=${endDate}`
+      );
       return response;
     } catch (error) {
       console.error('Failed to fetch meetings by date range:', error);
@@ -93,7 +95,9 @@ export const meetingsService = {
   // Search meetings
   async searchMeetings(query) {
     try {
-      const response = await apiClient.get(`/meetings/search?q=${encodeURIComponent(query)}`);
+      const response = await apiClient.get(
+        `/meetings/search?q=${encodeURIComponent(query)}`
+      );
       return response;
     } catch (error) {
       console.error('Failed to search meetings:', error);
@@ -104,7 +108,9 @@ export const meetingsService = {
   // Update meeting status
   async updateMeetingStatus(id, status) {
     try {
-      const response = await apiClient.put(`/meetings/${id}/status`, { status });
+      const response = await apiClient.put(`/meetings/${id}/status`, {
+        status,
+      });
       return response;
     } catch (error) {
       console.error('Failed to update meeting status:', error);
@@ -115,7 +121,10 @@ export const meetingsService = {
   // Add attendee to meeting
   async addAttendee(meetingId, attendeeId) {
     try {
-      const response = await apiClient.post(`/meetings/${meetingId}/attendees`, { attendeeId });
+      const response = await apiClient.post(
+        `/meetings/${meetingId}/attendees`,
+        { attendeeId }
+      );
       return response;
     } catch (error) {
       console.error('Failed to add attendee to meeting:', error);
@@ -126,7 +135,9 @@ export const meetingsService = {
   // Remove attendee from meeting
   async removeAttendee(meetingId, attendeeId) {
     try {
-      const response = await apiClient.delete(`/meetings/${meetingId}/attendees/${attendeeId}`);
+      const response = await apiClient.delete(
+        `/meetings/${meetingId}/attendees/${attendeeId}`
+      );
       return response;
     } catch (error) {
       console.error('Failed to remove attendee from meeting:', error);

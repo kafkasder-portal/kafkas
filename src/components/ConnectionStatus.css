@@ -70,11 +70,11 @@
     max-width: none;
     padding: 10px 12px;
   }
-  
+
   .connection-status-message {
     font-size: 13px;
   }
-  
+
   .connection-status-description {
     font-size: 11px;
   }
@@ -86,7 +86,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {

@@ -1,71 +1,77 @@
-import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronDown, Globe } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import i18n, { getCurrentLanguage, getLanguageInfo, getSupportedLanguages } from '../i18n'
+import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronDown, Globe } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import i18n, {
+  getCurrentLanguage,
+  getLanguageInfo,
+  getSupportedLanguages,
+} from '../i18n';
 
 const LanguageSwitcher = ({ variant = 'dropdown' }) => {
-  const { t } = useTranslation()
-  const [isOpen, setIsOpen] = useState(false)
-  const [currentLang, setCurrentLang] = useState(getCurrentLanguage())
-  const dropdownRef = useRef(null)
-  const supportedLanguages = getSupportedLanguages()
+  const { t } = useTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState(getCurrentLanguage());
+  const dropdownRef = useRef(null);
+  const supportedLanguages = getSupportedLanguages();
 
   // Dil değişikliklerini dinle
   useEffect(() => {
     const handleLanguageChange = () => {
-      setCurrentLang(i18n.language)
-    }
+      setCurrentLang(i18n.language);
+    };
 
-    i18n.on('languageChanged', handleLanguageChange)
+    i18n.on('languageChanged', handleLanguageChange);
     return () => {
-      i18n.off('languageChanged', handleLanguageChange)
-    }
-  }, [])
+      i18n.off('languageChanged', handleLanguageChange);
+    };
+  }, []);
 
   // Dışarıda tıklandığında dropdown'u kapat
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = event => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false)
+        setIsOpen(false);
       }
-    }
+    };
 
-    const handleEscapeKey = (event) => {
+    const handleEscapeKey = event => {
       if (event.key === 'Escape') {
-        setIsOpen(false)
+        setIsOpen(false);
       }
-    }
+    };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-      document.addEventListener('keydown', handleEscapeKey)
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscapeKey);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('keydown', handleEscapeKey)
-    }
-  }, [isOpen])
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [isOpen]);
 
-  const handleLanguageChange = async (langCode) => {
+  const handleLanguageChange = async langCode => {
     try {
-      await i18n.changeLanguage(langCode)
-      setCurrentLang(langCode)
-      setIsOpen(false)
+      await i18n.changeLanguage(langCode);
+      setCurrentLang(langCode);
+      setIsOpen(false);
 
       // Force re-render by triggering a custom event
-      window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: langCode } }))
+      window.dispatchEvent(
+        new CustomEvent('languageChanged', { detail: { language: langCode } })
+      );
     } catch (error) {
-      console.error('Dil değiştirme hatası:', error)
+      console.error('Dil değiştirme hatası:', error);
     }
-  }
+  };
 
   // Toggle variant - sadece iki dil arasında geçiş
   if (variant === 'toggle') {
-    const otherLang = currentLang === 'tr' ? 'ru' : 'tr'
-    const currentInfo = getLanguageInfo(currentLang)
-    const otherInfo = getLanguageInfo(otherLang)
+    const otherLang = currentLang === 'tr' ? 'ru' : 'tr';
+    const currentInfo = getLanguageInfo(currentLang);
+    const otherInfo = getLanguageInfo(otherLang);
 
     return (
       <motion.button
@@ -84,7 +90,7 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
           fontSize: '14px',
           fontWeight: '500',
           color: '#374151',
-          transition: 'all 0.2s ease'
+          transition: 'all 0.2s ease',
         }}
         title={`${t('language.selectLanguage')}: ${otherInfo.nativeName}`}
       >
@@ -98,22 +104,22 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
           <Globe size={16} />
         </motion.div>
       </motion.button>
-    )
+    );
   }
 
   // Icon variant - sadece ikon
   if (variant === 'icon') {
-    const currentInfo = getLanguageInfo(currentLang)
+    const currentInfo = getLanguageInfo(currentLang);
 
     return (
-      <div className="language-switcher-icon" ref={dropdownRef}>
+      <div className='language-switcher-icon' ref={dropdownRef}>
         <motion.button
           onClick={() => setIsOpen(!isOpen)}
           whileHover={{
-            scale: 1.05
+            scale: 1.05,
           }}
           whileTap={{ scale: 0.95 }}
-          transition={{ type: "spring", stiffness: 300, damping: 25 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
           style={{
             padding: '10px',
             borderRadius: '12px',
@@ -126,7 +132,7 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
             justifyContent: 'center',
             position: 'relative',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           }}
           title={`${t('language.selectLanguage')}: ${currentInfo.nativeName}`}
         >
@@ -139,22 +145,22 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
               initial={{
                 opacity: 0,
                 y: -15,
-                scale: 0.92
+                scale: 0.92,
               }}
               animate={{
                 opacity: 1,
                 y: 0,
-                scale: 1
+                scale: 1,
               }}
               exit={{
                 opacity: 0,
                 y: -10,
-                scale: 0.95
+                scale: 0.95,
               }}
               transition={{
-                type: "spring",
+                type: 'spring',
                 stiffness: 300,
-                damping: 25
+                damping: 25,
               }}
               style={{
                 position: 'absolute',
@@ -172,12 +178,12 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
                 zIndex: 1000,
                 minWidth: '140px',
                 overflow: 'hidden',
-                transformOrigin: 'top right'
+                transformOrigin: 'top right',
               }}
             >
               {supportedLanguages.map((langCode, index) => {
-                const langInfo = getLanguageInfo(langCode)
-                const isSelected = langCode === currentLang
+                const langInfo = getLanguageInfo(langCode);
+                const isSelected = langCode === currentLang;
 
                 return (
                   <motion.button
@@ -187,14 +193,16 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                     whileHover={{
-                      x: 4
+                      x: 4,
                     }}
                     whileTap={{ scale: 0.98 }}
                     style={{
                       width: '100%',
                       padding: '14px 20px',
                       border: 'none',
-                      backgroundColor: isSelected ? 'rgba(102, 126, 234, 0.08)' : 'rgba(0,0,0,0)',
+                      backgroundColor: isSelected
+                        ? 'rgba(102, 126, 234, 0.08)'
+                        : 'rgba(0,0,0,0)',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
@@ -204,32 +212,34 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
                       fontWeight: isSelected ? '600' : '500',
                       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                       position: 'relative',
-                      borderLeft: isSelected ? '3px solid #3b82f6' : '3px solid transparent'
+                      borderLeft: isSelected
+                        ? '3px solid #3b82f6'
+                        : '3px solid transparent',
                     }}
                   >
                     <motion.span
                       style={{ fontSize: '16px' }}
                       whileHover={{ scale: 1.1 }}
-                      transition={{ type: "spring", stiffness: 300 }}
+                      transition={{ type: 'spring', stiffness: 300 }}
                     >
                       {langInfo.flag}
                     </motion.span>
                     <span>{langInfo.nativeName}</span>
                   </motion.button>
-                )
+                );
               })}
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-    )
+    );
   }
 
   // Default dropdown variant
-  const currentInfo = getLanguageInfo(currentLang)
+  const currentInfo = getLanguageInfo(currentLang);
 
   return (
-    <div className="language-switcher" ref={dropdownRef}>
+    <div className='language-switcher' ref={dropdownRef}>
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.02 }}
@@ -247,7 +257,7 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
           fontWeight: '500',
           color: '#374151',
           minWidth: '140px',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -269,7 +279,7 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
             initial={{ opacity: 0, y: -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             style={{
               position: 'absolute',
               top: '100%',
@@ -281,13 +291,13 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
               boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
               border: '1px solid #e2e8f0',
               zIndex: 1000,
-              overflow: 'hidden'
+              overflow: 'hidden',
             }}
           >
             <div style={{ padding: '8px 0' }}>
-              {supportedLanguages.map((langCode) => {
-                const langInfo = getLanguageInfo(langCode)
-                const isSelected = langCode === currentLang
+              {supportedLanguages.map(langCode => {
+                const langInfo = getLanguageInfo(langCode);
+                const isSelected = langCode === currentLang;
 
                 return (
                   <motion.button
@@ -306,17 +316,19 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
                       fontSize: '14px',
                       color: isSelected ? '#3b82f6' : '#374151',
                       fontWeight: isSelected ? '600' : '400',
-                      textAlign: 'left'
+                      textAlign: 'left',
                     }}
                   >
                     <span style={{ fontSize: '16px' }}>{langInfo.flag}</span>
                     <div>
                       <div>{langInfo.nativeName}</div>
-                      <div style={{
-                        fontSize: '12px',
-                        color: '#6b7280',
-                        fontWeight: '400'
-                      }}>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: '#6b7280',
+                          fontWeight: '400',
+                        }}
+                      >
                         {langInfo.name}
                       </div>
                     </div>
@@ -329,26 +341,30 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
                           width: '6px',
                           height: '6px',
                           borderRadius: '50%',
-                          backgroundColor: '#3b82f6'
+                          backgroundColor: '#3b82f6',
                         }}
                       />
                     )}
                   </motion.button>
-                )
+                );
               })}
             </div>
 
             {/* Ayarlar bölümü */}
-            <div style={{
-              borderTop: '1px solid #f1f5f9',
-              padding: '8px 16px',
-              backgroundColor: '#f8fafc'
-            }}>
-              <div style={{
-                fontSize: '12px',
-                color: '#6b7280',
-                fontWeight: '500'
-              }}>
+            <div
+              style={{
+                borderTop: '1px solid #f1f5f9',
+                padding: '8px 16px',
+                backgroundColor: '#f8fafc',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '12px',
+                  color: '#6b7280',
+                  fontWeight: '500',
+                }}
+              >
                 {t('language.selectLanguage')}
               </div>
             </div>
@@ -356,7 +372,7 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
         )}
       </AnimatePresence>
     </div>
-  )
-}
+  );
+};
 
-export default LanguageSwitcher
+export default LanguageSwitcher;

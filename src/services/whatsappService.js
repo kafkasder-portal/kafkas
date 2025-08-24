@@ -1,12 +1,14 @@
-import { apiClient } from './api.js'
+import { apiClient } from './api.js';
 
 // WhatsApp Cloud API Configuration
-const WHATSAPP_API_VERSION = 'v17.0'
-const WHATSAPP_PHONE_NUMBER_ID = import.meta.env.VITE_WHATSAPP_PHONE_NUMBER_ID || '1234567890123456'
-const WHATSAPP_ACCESS_TOKEN = import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN || 'your-access-token'
+const WHATSAPP_API_VERSION = 'v17.0';
+const WHATSAPP_PHONE_NUMBER_ID =
+  import.meta.env.VITE_WHATSAPP_PHONE_NUMBER_ID || '1234567890123456';
+const WHATSAPP_ACCESS_TOKEN =
+  import.meta.env.VITE_WHATSAPP_ACCESS_TOKEN || 'your-access-token';
 
 // WhatsApp Cloud API Base URL
-const WHATSAPP_API_BASE_URL = `https://graph.facebook.com/${WHATSAPP_API_VERSION}/${WHATSAPP_PHONE_NUMBER_ID}`
+const WHATSAPP_API_BASE_URL = `https://graph.facebook.com/${WHATSAPP_API_VERSION}/${WHATSAPP_PHONE_NUMBER_ID}`;
 
 // WhatsApp Service
 export const whatsappService = {
@@ -23,29 +25,31 @@ export const whatsappService = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${WHATSAPP_ACCESS_TOKEN}`
+          Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({
           messaging_product: 'whatsapp',
           recipient_type: 'individual',
-          to: to,
+          to,
           type: 'text',
           text: {
             preview_url: previewUrl,
-            body: message
-          }
-        })
-      })
+            body: message,
+          },
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error(`WhatsApp API error: ${response.status} ${response.statusText}`)
+        throw new Error(
+          `WhatsApp API error: ${response.status} ${response.statusText}`
+        );
       }
 
-      const data = await response.json()
-      return data
+      const data = await response.json();
+      return data;
     } catch (error) {
-      console.error('Failed to send WhatsApp message:', error)
-      throw error
+      console.error('Failed to send WhatsApp message:', error);
+      throw error;
     }
   },
 
@@ -57,38 +61,45 @@ export const whatsappService = {
    * @param {Array} components - Template components
    * @returns {Promise} API response
    */
-  async sendTemplateMessage(to, templateName, languageCode = 'tr_TR', components = []) {
+  async sendTemplateMessage(
+    to,
+    templateName,
+    languageCode = 'tr_TR',
+    components = []
+  ) {
     try {
       const response = await fetch(`${WHATSAPP_API_BASE_URL}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${WHATSAPP_ACCESS_TOKEN}`
+          Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({
           messaging_product: 'whatsapp',
           recipient_type: 'individual',
-          to: to,
+          to,
           type: 'template',
           template: {
             name: templateName,
             language: {
-              code: languageCode
+              code: languageCode,
             },
-            components: components
-          }
-        })
-      })
+            components,
+          },
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error(`WhatsApp API error: ${response.status} ${response.statusText}`)
+        throw new Error(
+          `WhatsApp API error: ${response.status} ${response.statusText}`
+        );
       }
 
-      const data = await response.json()
-      return data
+      const data = await response.json();
+      return data;
     } catch (error) {
-      console.error('Failed to send WhatsApp template message:', error)
-      throw error
+      console.error('Failed to send WhatsApp template message:', error);
+      throw error;
     }
   },
 
@@ -106,35 +117,37 @@ export const whatsappService = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${WHATSAPP_ACCESS_TOKEN}`
+          Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({
           messaging_product: 'whatsapp',
           recipient_type: 'individual',
-          to: to,
+          to,
           type: 'interactive',
           interactive: {
             type: 'button',
             body: {
-              text: bodyText
+              text: bodyText,
             },
             ...(footerText && { footer: { text: footerText } }),
             action: {
-              buttons: buttons
-            }
-          }
-        })
-      })
+              buttons,
+            },
+          },
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error(`WhatsApp API error: ${response.status} ${response.statusText}`)
+        throw new Error(
+          `WhatsApp API error: ${response.status} ${response.statusText}`
+        );
       }
 
-      const data = await response.json()
-      return data
+      const data = await response.json();
+      return data;
     } catch (error) {
-      console.error('Failed to send WhatsApp interactive message:', error)
-      throw error
+      console.error('Failed to send WhatsApp interactive message:', error);
+      throw error;
     }
   },
 
@@ -150,41 +163,43 @@ export const whatsappService = {
   async sendMediaMessage(to, type, url, caption = null, filename = null) {
     try {
       const mediaPayload = {
-        link: url
-      }
+        link: url,
+      };
 
       if (caption) {
-        mediaPayload.caption = caption
+        mediaPayload.caption = caption;
       }
 
       if (filename && type === 'document') {
-        mediaPayload.filename = filename
+        mediaPayload.filename = filename;
       }
 
       const response = await fetch(`${WHATSAPP_API_BASE_URL}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${WHATSAPP_ACCESS_TOKEN}`
+          Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({
           messaging_product: 'whatsapp',
           recipient_type: 'individual',
-          to: to,
-          type: type,
-          [type]: mediaPayload
-        })
-      })
+          to,
+          type,
+          [type]: mediaPayload,
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error(`WhatsApp API error: ${response.status} ${response.statusText}`)
+        throw new Error(
+          `WhatsApp API error: ${response.status} ${response.statusText}`
+        );
       }
 
-      const data = await response.json()
-      return data
+      const data = await response.json();
+      return data;
     } catch (error) {
-      console.error('Failed to send WhatsApp media message:', error)
-      throw error
+      console.error('Failed to send WhatsApp media message:', error);
+      throw error;
     }
   },
 
@@ -197,45 +212,53 @@ export const whatsappService = {
    * @param {string} address - Optional location address
    * @returns {Promise} API response
    */
-  async sendLocationMessage(to, latitude, longitude, name = null, address = null) {
+  async sendLocationMessage(
+    to,
+    latitude,
+    longitude,
+    name = null,
+    address = null
+  ) {
     try {
       const locationPayload = {
-        latitude: latitude,
-        longitude: longitude
-      }
+        latitude,
+        longitude,
+      };
 
       if (name) {
-        locationPayload.name = name
+        locationPayload.name = name;
       }
 
       if (address) {
-        locationPayload.address = address
+        locationPayload.address = address;
       }
 
       const response = await fetch(`${WHATSAPP_API_BASE_URL}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${WHATSAPP_ACCESS_TOKEN}`
+          Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({
           messaging_product: 'whatsapp',
           recipient_type: 'individual',
-          to: to,
+          to,
           type: 'location',
-          location: locationPayload
-        })
-      })
+          location: locationPayload,
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error(`WhatsApp API error: ${response.status} ${response.statusText}`)
+        throw new Error(
+          `WhatsApp API error: ${response.status} ${response.statusText}`
+        );
       }
 
-      const data = await response.json()
-      return data
+      const data = await response.json();
+      return data;
     } catch (error) {
-      console.error('Failed to send WhatsApp location message:', error)
-      throw error
+      console.error('Failed to send WhatsApp location message:', error);
+      throw error;
     }
   },
 
@@ -246,22 +269,27 @@ export const whatsappService = {
    */
   async getMessageStatus(messageId) {
     try {
-      const response = await fetch(`${WHATSAPP_API_BASE_URL}/messages?ids=${messageId}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${WHATSAPP_ACCESS_TOKEN}`
+      const response = await fetch(
+        `${WHATSAPP_API_BASE_URL}/messages?ids=${messageId}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
+          },
         }
-      })
+      );
 
       if (!response.ok) {
-        throw new Error(`WhatsApp API error: ${response.status} ${response.statusText}`)
+        throw new Error(
+          `WhatsApp API error: ${response.status} ${response.statusText}`
+        );
       }
 
-      const data = await response.json()
-      return data
+      const data = await response.json();
+      return data;
     } catch (error) {
-      console.error('Failed to get WhatsApp message status:', error)
-      throw error
+      console.error('Failed to get WhatsApp message status:', error);
+      throw error;
     }
   },
 
@@ -272,22 +300,27 @@ export const whatsappService = {
    */
   async getMediaUrl(mediaId) {
     try {
-      const response = await fetch(`https://graph.facebook.com/${WHATSAPP_API_VERSION}/${mediaId}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${WHATSAPP_ACCESS_TOKEN}`
+      const response = await fetch(
+        `https://graph.facebook.com/${WHATSAPP_API_VERSION}/${mediaId}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
+          },
         }
-      })
+      );
 
       if (!response.ok) {
-        throw new Error(`WhatsApp API error: ${response.status} ${response.statusText}`)
+        throw new Error(
+          `WhatsApp API error: ${response.status} ${response.statusText}`
+        );
       }
 
-      const data = await response.json()
-      return data
+      const data = await response.json();
+      return data;
     } catch (error) {
-      console.error('Failed to get WhatsApp media URL:', error)
-      throw error
+      console.error('Failed to get WhatsApp media URL:', error);
+      throw error;
     }
   },
 
@@ -298,22 +331,24 @@ export const whatsappService = {
    */
   async downloadMedia(mediaId) {
     try {
-      const mediaInfo = await this.getMediaUrl(mediaId)
+      const mediaInfo = await this.getMediaUrl(mediaId);
       const response = await fetch(mediaInfo.url, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${WHATSAPP_ACCESS_TOKEN}`
-        }
-      })
+          Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
+        },
+      });
 
       if (!response.ok) {
-        throw new Error(`Failed to download media: ${response.status} ${response.statusText}`)
+        throw new Error(
+          `Failed to download media: ${response.status} ${response.statusText}`
+        );
       }
 
-      return await response.blob()
+      return await response.blob();
     } catch (error) {
-      console.error('Failed to download WhatsApp media:', error)
-      throw error
+      console.error('Failed to download WhatsApp media:', error);
+      throw error;
     }
   },
 
@@ -325,23 +360,23 @@ export const whatsappService = {
    * @returns {Promise} Array of results
    */
   async sendBulkMessages(recipients, message, delay = 1000) {
-    const results = []
-    
+    const results = [];
+
     for (const recipient of recipients) {
       try {
-        const result = await this.sendTextMessage(recipient, message)
-        results.push({ recipient, success: true, data: result })
+        const result = await this.sendTextMessage(recipient, message);
+        results.push({ recipient, success: true, data: result });
       } catch (error) {
-        results.push({ recipient, success: false, error: error.message })
+        results.push({ recipient, success: false, error: error.message });
       }
-      
+
       // Add delay between messages to avoid rate limiting
       if (delay > 0) {
-        await new Promise(resolve => setTimeout(resolve, delay))
+        await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
-    
-    return results
+
+    return results;
   },
 
   /**
@@ -360,15 +395,15 @@ export const whatsappService = {
           parameters: [
             {
               type: 'text',
-              text: title
+              text: title,
             },
             {
               type: 'text',
-              text: body
-            }
-          ]
-        }
-      ]
+              text: body,
+            },
+          ],
+        },
+      ];
 
       if (actionUrl) {
         components.push({
@@ -378,16 +413,21 @@ export const whatsappService = {
           parameters: [
             {
               type: 'text',
-              text: actionUrl
-            }
-          ]
-        })
+              text: actionUrl,
+            },
+          ],
+        });
       }
 
-      return await this.sendTemplateMessage(to, 'notification', 'tr_TR', components)
+      return await this.sendTemplateMessage(
+        to,
+        'notification',
+        'tr_TR',
+        components
+      );
     } catch (error) {
-      console.error('Failed to send WhatsApp notification:', error)
-      throw error
+      console.error('Failed to send WhatsApp notification:', error);
+      throw error;
     }
   },
 
@@ -402,31 +442,31 @@ export const whatsappService = {
         type: 'reply',
         reply: {
           id: 'help_general',
-          title: 'Genel Yardım'
-        }
+          title: 'Genel Yardım',
+        },
       },
       {
         type: 'reply',
         reply: {
           id: 'help_technical',
-          title: 'Teknik Destek'
-        }
+          title: 'Teknik Destek',
+        },
       },
       {
         type: 'reply',
         reply: {
           id: 'help_contact',
-          title: 'İletişim'
-        }
-      }
-    ]
+          title: 'İletişim',
+        },
+      },
+    ];
 
     return await this.sendInteractiveMessage(
       to,
       'Size nasıl yardımcı olabilirim? Lütfen aşağıdaki seçeneklerden birini seçin:',
       buttons,
       'KAF Portal - Yardım Merkezi'
-    )
+    );
   },
 
   /**
@@ -436,10 +476,10 @@ export const whatsappService = {
    */
   validatePhoneNumber(phoneNumber) {
     // Remove all non-digit characters
-    const cleaned = phoneNumber.replace(/\D/g, '')
-    
+    const cleaned = phoneNumber.replace(/\D/g, '');
+
     // Check if it's a valid international format (10-15 digits)
-    return cleaned.length >= 10 && cleaned.length <= 15
+    return cleaned.length >= 10 && cleaned.length <= 15;
   },
 
   /**
@@ -449,11 +489,11 @@ export const whatsappService = {
    */
   formatPhoneNumber(phoneNumber) {
     // Remove all non-digit characters
-    const cleaned = phoneNumber.replace(/\D/g, '')
-    
-    // Remove leading zeros
-    return cleaned.replace(/^0+/, '')
-  }
-}
+    const cleaned = phoneNumber.replace(/\D/g, '');
 
-export default whatsappService
+    // Remove leading zeros
+    return cleaned.replace(/^0+/, '');
+  },
+};
+
+export default whatsappService;

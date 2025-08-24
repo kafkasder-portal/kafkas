@@ -82,7 +82,9 @@ export const inventoryService = {
   // Search inventory items
   async searchItems(query) {
     try {
-      const response = await apiClient.get(`/inventory/search?q=${encodeURIComponent(query)}`);
+      const response = await apiClient.get(
+        `/inventory/search?q=${encodeURIComponent(query)}`
+      );
       return response;
     } catch (error) {
       console.error('Failed to search inventory items:', error);
@@ -93,7 +95,10 @@ export const inventoryService = {
   // Update item stock
   async updateStock(id, quantity, operation = 'set') {
     try {
-      const response = await apiClient.put(`/inventory/${id}/stock`, { quantity, operation });
+      const response = await apiClient.put(`/inventory/${id}/stock`, {
+        quantity,
+        operation,
+      });
       return response;
     } catch (error) {
       console.error('Failed to update item stock:', error);

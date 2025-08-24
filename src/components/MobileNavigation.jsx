@@ -1,38 +1,38 @@
-import { AnimatePresence, motion } from 'framer-motion'
-import { LogOut, Menu, Search, Settings, X } from 'lucide-react'
-import { useState } from 'react'
-import useDeviceDetection from '../hooks/useDeviceDetection.jsx'
+import { AnimatePresence, motion } from 'framer-motion';
+import { LogOut, Menu, Search, Settings, X } from 'lucide-react';
+import { useState } from 'react';
+import useDeviceDetection from '../hooks/useDeviceDetection.jsx';
 
 const MobileHeader = ({ onMenuToggle }) => {
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
-  const deviceInfo = useDeviceDetection()
-  
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const deviceInfo = useDeviceDetection();
+
   // Mock kullanıcı verisi
   const user = {
     fullName: 'Admin Kullanıcı',
-    email: 'admin@kafportal.com'
-  }
+    email: 'admin@kafportal.com',
+  };
 
-  const handleSearch = (e) => {
-    e.preventDefault()
+  const handleSearch = e => {
+    e.preventDefault();
     if (searchTerm.trim()) {
       // Implement global search
     }
-  }
+  };
 
   const quickSearchSuggestions = [
     { title: 'İhtiyaç Sahipleri', path: '/beneficiaries', icon: '👥' },
     { title: 'Bağışlar', path: '/donations', icon: '💰' },
     { title: 'Gönüllüler', path: '/volunteers', icon: '🤝' },
-    { title: 'Görevler', path: '/tasks', icon: '✅' }
-  ]
+    { title: 'Görevler', path: '/tasks', icon: '✅' },
+  ];
 
-  if (!deviceInfo.isMobile) return null
+  if (!deviceInfo.isMobile) return null;
 
   return (
-    <motion.div 
-      className="mobile-header"
+    <motion.div
+      className='mobile-header'
       style={{
         position: 'fixed',
         top: 0,
@@ -46,7 +46,7 @@ const MobileHeader = ({ onMenuToggle }) => {
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '0 1rem',
-        zIndex: 1000
+        zIndex: 1000,
       }}
       initial={{ y: -64 }}
       animate={{ y: 0 }}
@@ -60,31 +60,35 @@ const MobileHeader = ({ onMenuToggle }) => {
           border: 'none',
           cursor: 'pointer',
           padding: '0.5rem',
-          borderRadius: '8px'
+          borderRadius: '8px',
         }}
         whileTap={{ scale: 0.95 }}
         whileHover={{ backgroundColor: '#f1f5f9' }}
       >
-        <Menu size={24} color="#1a202c" />
+        <Menu size={24} color='#1a202c' />
       </motion.button>
 
       {/* Orta - Logo */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <div style={{
-          width: '32px',
-          height: '32px',
-          backgroundColor: '#667eea',
-          borderRadius: '8px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          fontWeight: 'bold',
-          fontSize: '1.25rem'
-        }}>
+        <div
+          style={{
+            width: '32px',
+            height: '32px',
+            backgroundColor: '#667eea',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: '1.25rem',
+          }}
+        >
           K
         </div>
-        <span style={{ fontSize: '1.125rem', fontWeight: '600', color: '#1a202c' }}>
+        <span
+          style={{ fontSize: '1.125rem', fontWeight: '600', color: '#1a202c' }}
+        >
           Portal
         </span>
       </div>
@@ -98,26 +102,28 @@ const MobileHeader = ({ onMenuToggle }) => {
             border: 'none',
             cursor: 'pointer',
             padding: '0.5rem',
-            borderRadius: '8px'
+            borderRadius: '8px',
           }}
           whileTap={{ scale: 0.95 }}
           whileHover={{ backgroundColor: '#f1f5f9' }}
         >
-          <Search size={20} color="#64748b" />
+          <Search size={20} color='#64748b' />
         </motion.button>
 
-        <div style={{
-          width: '32px',
-          height: '32px',
-          borderRadius: '50%',
-          backgroundColor: '#667eea',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          fontSize: '0.875rem',
-          fontWeight: '600'
-        }}>
+        <div
+          style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '50%',
+            backgroundColor: '#667eea',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontSize: '0.875rem',
+            fontWeight: '600',
+          }}
+        >
           {user?.fullName?.charAt(0) || 'U'}
         </div>
       </div>
@@ -137,7 +143,7 @@ const MobileHeader = ({ onMenuToggle }) => {
               display: 'flex',
               alignItems: 'flex-start',
               justifyContent: 'center',
-              paddingTop: '2rem'
+              paddingTop: '2rem',
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -151,28 +157,35 @@ const MobileHeader = ({ onMenuToggle }) => {
                 backgroundColor: 'white',
                 borderRadius: '16px',
                 padding: '1.5rem',
-                boxShadow: '0 25px 50px rgba(0,0,0,0.25)'
+                boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
               }}
               initial={{ opacity: 0, y: -50, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -50, scale: 0.9 }}
-              onClick={(e) => e.stopPropagation()}
+              onClick={e => e.stopPropagation()}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-                <Search size={20} color="#64748b" />
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  marginBottom: '1rem',
+                }}
+              >
+                <Search size={20} color='#64748b' />
                 <form onSubmit={handleSearch} style={{ flex: 1 }}>
                   <input
-                    type="text"
-                    placeholder="Ne arıyorsunuz?"
+                    type='text'
+                    placeholder='Ne arıyorsunuz?'
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={e => setSearchTerm(e.target.value)}
                     autoFocus
                     style={{
                       width: '100%',
                       border: 'none',
                       outline: 'none',
                       fontSize: '1rem',
-                      color: '#1a202c'
+                      color: '#1a202c',
                     }}
                   />
                 </form>
@@ -182,19 +195,34 @@ const MobileHeader = ({ onMenuToggle }) => {
                     background: 'none',
                     border: 'none',
                     cursor: 'pointer',
-                    padding: '0.25rem'
+                    padding: '0.25rem',
                   }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  <X size={20} color="#64748b" />
+                  <X size={20} color='#64748b' />
                 </motion.button>
               </div>
 
-              <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem' }}>
-                <p style={{ fontSize: '0.875rem', fontWeight: '500', color: '#64748b', marginBottom: '0.75rem' }}>
+              <div
+                style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem' }}
+              >
+                <p
+                  style={{
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    color: '#64748b',
+                    marginBottom: '0.75rem',
+                  }}
+                >
                   Hızlı Erişim
                 </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.5rem',
+                  }}
+                >
                   {quickSearchSuggestions.map((item, index) => (
                     <motion.a
                       key={index}
@@ -207,13 +235,15 @@ const MobileHeader = ({ onMenuToggle }) => {
                         padding: '0.75rem',
                         borderRadius: '8px',
                         textDecoration: 'none',
-                        color: '#374151'
+                        color: '#374151',
                       }}
                       whileHover={{ backgroundColor: '#f9fafb' }}
                       whileTap={{ scale: 0.98 }}
                     >
                       <span style={{ fontSize: '1.25rem' }}>{item.icon}</span>
-                      <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>{item.title}</span>
+                      <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>
+                        {item.title}
+                      </span>
                     </motion.a>
                   ))}
                 </div>
@@ -223,21 +253,21 @@ const MobileHeader = ({ onMenuToggle }) => {
         )}
       </AnimatePresence>
     </motion.div>
-  )
-}
+  );
+};
 
 const MobileSidebar = ({ isOpen, onClose, menuItems }) => {
   // Mock kullanıcı verisi
   const user = {
     fullName: 'Admin Kullanıcı',
-    email: 'admin@kafportal.com'
-  }
-  
+    email: 'admin@kafportal.com',
+  };
+
   const logout = () => {
     if (window.confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
-      window.location.reload()
+      window.location.reload();
     }
-  }
+  };
 
   return (
     <AnimatePresence>
@@ -252,7 +282,7 @@ const MobileSidebar = ({ isOpen, onClose, menuItems }) => {
               right: 0,
               bottom: 0,
               backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              zIndex: 1500
+              zIndex: 1500,
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -272,41 +302,64 @@ const MobileSidebar = ({ isOpen, onClose, menuItems }) => {
               zIndex: 1600,
               display: 'flex',
               flexDirection: 'column',
-              boxShadow: '4px 0 24px rgba(0,0,0,0.12)'
+              boxShadow: '4px 0 24px rgba(0,0,0,0.12)',
             }}
             initial={{ x: -280 }}
             animate={{ x: 0 }}
             exit={{ x: -280 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           >
             {/* Header */}
-            <div style={{ 
-              padding: '1.5rem', 
-              borderBottom: '1px solid #e5e7eb',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div style={{
-                  width: '40px',
-                  height: '40px',
-                  backgroundColor: '#667eea',
-                  borderRadius: '10px',
+            <div
+              style={{
+                padding: '1.5rem',
+                borderBottom: '1px solid #e5e7eb',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div
+                style={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  fontWeight: 'bold',
-                  fontSize: '1.5rem'
-                }}>
+                  gap: '0.75rem',
+                }}
+              >
+                <div
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    backgroundColor: '#667eea',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontWeight: 'bold',
+                    fontSize: '1.5rem',
+                  }}
+                >
                   K
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#1a202c', margin: 0 }}>
+                  <h3
+                    style={{
+                      fontSize: '1.125rem',
+                      fontWeight: '600',
+                      color: '#1a202c',
+                      margin: 0,
+                    }}
+                  >
                     Kafkas Derneği
                   </h3>
-                  <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>
+                  <p
+                    style={{
+                      fontSize: '0.875rem',
+                      color: '#64748b',
+                      margin: 0,
+                    }}
+                  >
                     Portal
                   </p>
                 </div>
@@ -318,12 +371,12 @@ const MobileSidebar = ({ isOpen, onClose, menuItems }) => {
                   border: 'none',
                   cursor: 'pointer',
                   padding: '0.5rem',
-                  borderRadius: '6px'
+                  borderRadius: '6px',
                 }}
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ backgroundColor: '#f1f5f9' }}
               >
-                <X size={20} color="#64748b" />
+                <X size={20} color='#64748b' />
               </motion.button>
             </div>
 
@@ -342,7 +395,7 @@ const MobileSidebar = ({ isOpen, onClose, menuItems }) => {
                     marginBottom: '0.25rem',
                     borderRadius: '8px',
                     textDecoration: 'none',
-                    color: '#374151'
+                    color: '#374151',
                   }}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -359,31 +412,51 @@ const MobileSidebar = ({ isOpen, onClose, menuItems }) => {
             </div>
 
             {/* User Section */}
-            <div style={{ 
-              padding: '1rem', 
-              borderTop: '1px solid #e5e7eb',
-              backgroundColor: '#f8fafc'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-                <div style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  backgroundColor: '#667eea',
+            <div
+              style={{
+                padding: '1rem',
+                borderTop: '1px solid #e5e7eb',
+                backgroundColor: '#f8fafc',
+              }}
+            >
+              <div
+                style={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  fontSize: '0.875rem',
-                  fontWeight: '600'
-                }}>
+                  gap: '0.75rem',
+                  marginBottom: '1rem',
+                }}
+              >
+                <div
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    backgroundColor: '#667eea',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontSize: '0.875rem',
+                    fontWeight: '600',
+                  }}
+                >
                   {user?.fullName?.charAt(0) || 'U'}
                 </div>
                 <div>
-                  <p style={{ fontSize: '0.875rem', fontWeight: '500', color: '#1a202c', margin: 0 }}>
+                  <p
+                    style={{
+                      fontSize: '0.875rem',
+                      fontWeight: '500',
+                      color: '#1a202c',
+                      margin: 0,
+                    }}
+                  >
                     {user?.fullName || 'Kullanıcı'}
                   </p>
-                  <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>
+                  <p
+                    style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}
+                  >
                     {user?.email}
                   </p>
                 </div>
@@ -404,7 +477,7 @@ const MobileSidebar = ({ isOpen, onClose, menuItems }) => {
                     cursor: 'pointer',
                     fontSize: '0.875rem',
                     fontWeight: '500',
-                    color: '#374151'
+                    color: '#374151',
                   }}
                   whileTap={{ scale: 0.95 }}
                   whileHover={{ backgroundColor: '#e5e7eb' }}
@@ -412,7 +485,7 @@ const MobileSidebar = ({ isOpen, onClose, menuItems }) => {
                   <Settings size={16} />
                   Ayarlar
                 </motion.button>
-                
+
                 <motion.button
                   onClick={logout}
                   style={{
@@ -424,7 +497,7 @@ const MobileSidebar = ({ isOpen, onClose, menuItems }) => {
                     border: 'none',
                     borderRadius: '8px',
                     cursor: 'pointer',
-                    color: '#dc2626'
+                    color: '#dc2626',
                   }}
                   whileTap={{ scale: 0.95 }}
                   whileHover={{ backgroundColor: '#fee2e2' }}
@@ -437,21 +510,24 @@ const MobileSidebar = ({ isOpen, onClose, menuItems }) => {
         </>
       )}
     </AnimatePresence>
-  )
-}
+  );
+};
 
-export { MobileHeader, MobileSidebar }
+export { MobileHeader, MobileSidebar };
 
 // Combined Mobile Navigation Component
 const MobileNavigation = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <>
       <MobileHeader onMenuToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
-      <MobileSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <MobileSidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
     </>
-  )
-}
+  );
+};
 
-export default MobileNavigation
+export default MobileNavigation;

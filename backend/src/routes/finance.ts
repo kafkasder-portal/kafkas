@@ -5,15 +5,25 @@ import { v4 as uuidv4 } from 'uuid';
 const router = express.Router();
 
 // Supabase client
-const supabaseUrl = process.env.SUPABASE_URL || 'https://fagblbogumttcrsbletc.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ2JsYm9ndW10dGNyc2JsZXRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4NDg4OTksImV4cCI6MjA3MTQyNDg5OX0.PNQpiOsctCqIrH20BdylDtzVVKOJW4KmBo79w2izioo';
+const supabaseUrl =
+  process.env.SUPABASE_URL || 'https://fagblbogumttcrsbletc.supabase.co';
+const supabaseKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ2JsYm9ndW10dGNyc2JsZXRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4NDg4OTksImV4cCI6MjA3MTQyNDg5OX0.PNQpiOsctCqIrH20BdylDtzVVKOJW4KmBo79w2izioo';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Get all financial transactions
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = '', type = '', category = '', status = '' } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      search = '',
+      type = '',
+      category = '',
+      status = '',
+    } = req.query;
     const offset = (Number(page) - 1) * Number(limit);
 
     let supabaseQuery = supabase
@@ -22,7 +32,9 @@ router.get('/', async (req, res) => {
 
     // Apply filters
     if (search) {
-      supabaseQuery = supabaseQuery.or(`description.ilike.%${search}%,reference.ilike.%${search}%`);
+      supabaseQuery = supabaseQuery.or(
+        `description.ilike.%${search}%,reference.ilike.%${search}%`
+      );
     }
     if (type) {
       supabaseQuery = supabaseQuery.eq('type', type);
@@ -34,7 +46,11 @@ router.get('/', async (req, res) => {
       supabaseQuery = supabaseQuery.eq('status', status);
     }
 
-    const { data: transactions, error, count } = await supabaseQuery
+    const {
+      data: transactions,
+      error,
+      count,
+    } = await supabaseQuery
       .order('transaction_date', { ascending: false })
       .range(offset, offset + Number(limit) - 1);
 
@@ -45,18 +61,19 @@ router.get('/', async (req, res) => {
 
     const totalTransactions = count || 0;
 
-    const formattedTransactions = transactions?.map((transaction: any) => ({
-      id: transaction.id,
-      type: transaction.type,
-      category: transaction.category,
-      amount: parseFloat(transaction.amount),
-      description: transaction.description,
-      reference: transaction.reference,
-      status: transaction.status,
-      transactionDate: transaction.transaction_date,
-      createdAt: transaction.created_at,
-      updatedAt: transaction.updated_at
-    })) || [];
+    const formattedTransactions =
+      transactions?.map((transaction: any) => ({
+        id: transaction.id,
+        type: transaction.type,
+        category: transaction.category,
+        amount: parseFloat(transaction.amount),
+        description: transaction.description,
+        reference: transaction.reference,
+        status: transaction.status,
+        transactionDate: transaction.transaction_date,
+        createdAt: transaction.created_at,
+        updatedAt: transaction.updated_at,
+      })) || [];
 
     res.json({
       success: true,
@@ -66,15 +83,15 @@ router.get('/', async (req, res) => {
           page: Number(page),
           limit: Number(limit),
           total: totalTransactions,
-          totalPages: Math.ceil(totalTransactions / Number(limit))
-        }
-      }
+          totalPages: Math.ceil(totalTransactions / Number(limit)),
+        },
+      },
     });
   } catch (error) {
     console.error('Get financial transactions error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -98,7 +115,7 @@ router.get('/:id', async (req, res) => {
     if (!transaction) {
       return res.status(404).json({
         success: false,
-        message: 'Transaction not found'
+        message: 'Transaction not found',
       });
     }
 
@@ -114,14 +131,14 @@ router.get('/:id', async (req, res) => {
         status: transaction.status,
         transactionDate: transaction.transaction_date,
         createdAt: transaction.created_at,
-        updatedAt: transaction.updated_at
-      }
+        updatedAt: transaction.updated_at,
+      },
     });
   } catch (error) {
     console.error('Get transaction error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -136,14 +153,14 @@ router.post('/', async (req, res) => {
       description,
       reference,
       status = 'pending',
-      transactionDate
+      transactionDate,
     } = req.body;
 
     // Validate required fields
     if (!type || !category || !amount || !description) {
       return res.status(400).json({
         success: false,
-        message: 'Type, category, amount, and description are required'
+        message: 'Type, category, amount, and description are required',
       });
     }
 
@@ -157,7 +174,7 @@ router.post('/', async (req, res) => {
       status,
       transaction_date: transactionDate || new Date().toISOString(),
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data, error } = await supabase
@@ -183,14 +200,14 @@ router.post('/', async (req, res) => {
         status: data.status,
         transactionDate: data.transaction_date,
         createdAt: data.created_at,
-        updatedAt: data.updated_at
-      }
+        updatedAt: data.updated_at,
+      },
     });
   } catch (error) {
     console.error('Create transaction error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -206,7 +223,7 @@ router.put('/:id', async (req, res) => {
       description,
       reference,
       status,
-      transactionDate
+      transactionDate,
     } = req.body;
 
     // Check if transaction exists
@@ -219,12 +236,12 @@ router.put('/:id', async (req, res) => {
     if (checkError || !existingTransaction) {
       return res.status(404).json({
         success: false,
-        message: 'Transaction not found'
+        message: 'Transaction not found',
       });
     }
 
     const updateData: any = {
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     if (type) updateData.type = type;
@@ -259,14 +276,14 @@ router.put('/:id', async (req, res) => {
         status: data.status,
         transactionDate: data.transaction_date,
         createdAt: data.created_at,
-        updatedAt: data.updated_at
-      }
+        updatedAt: data.updated_at,
+      },
     });
   } catch (error) {
     console.error('Update transaction error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -286,7 +303,7 @@ router.delete('/:id', async (req, res) => {
     if (checkError || !existingTransaction) {
       return res.status(404).json({
         success: false,
-        message: 'Transaction not found'
+        message: 'Transaction not found',
       });
     }
 
@@ -302,13 +319,13 @@ router.delete('/:id', async (req, res) => {
 
     res.json({
       success: true,
-      message: 'Transaction deleted successfully'
+      message: 'Transaction deleted successfully',
     });
   } catch (error) {
     console.error('Delete transaction error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -323,7 +340,10 @@ router.get('/summary/overview', async (req, res) => {
       .select('type, amount, status');
 
     if (startDate) {
-      supabaseQuery = supabaseQuery.gte('transaction_date', startDate as string);
+      supabaseQuery = supabaseQuery.gte(
+        'transaction_date',
+        startDate as string
+      );
     }
     if (endDate) {
       supabaseQuery = supabaseQuery.lte('transaction_date', endDate as string);
@@ -341,12 +361,12 @@ router.get('/summary/overview', async (req, res) => {
       totalExpense: 0,
       pendingTransactions: 0,
       completedTransactions: 0,
-      cancelledTransactions: 0
+      cancelledTransactions: 0,
     };
 
     transactions?.forEach((transaction: any) => {
       const amount = parseFloat(transaction.amount);
-      
+
       if (transaction.type === 'income') {
         summary.totalIncome += amount;
       } else if (transaction.type === 'expense') {
@@ -369,14 +389,14 @@ router.get('/summary/overview', async (req, res) => {
       data: {
         ...summary,
         netBalance,
-        totalTransactions: transactions?.length || 0
-      }
+        totalTransactions: transactions?.length || 0,
+      },
     });
   } catch (error) {
     console.error('Get financial summary error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });

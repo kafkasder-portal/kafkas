@@ -38,7 +38,10 @@ export const scholarshipService = {
   // Update scholarship
   async updateScholarship(id, scholarshipData) {
     try {
-      const response = await apiClient.put(`/scholarships/${id}`, scholarshipData);
+      const response = await apiClient.put(
+        `/scholarships/${id}`,
+        scholarshipData
+      );
       return response;
     } catch (error) {
       console.error('Failed to update scholarship:', error);
@@ -93,7 +96,9 @@ export const scholarshipService = {
   // Get scholarship applications
   async getScholarshipApplications(scholarshipId) {
     try {
-      const response = await apiClient.get(`/scholarships/${scholarshipId}/applications`);
+      const response = await apiClient.get(
+        `/scholarships/${scholarshipId}/applications`
+      );
       return response;
     } catch (error) {
       console.error('Failed to fetch scholarship applications:', error);
@@ -104,7 +109,10 @@ export const scholarshipService = {
   // Submit scholarship application
   async submitApplication(scholarshipId, applicationData) {
     try {
-      const response = await apiClient.post(`/scholarships/${scholarshipId}/applications`, applicationData);
+      const response = await apiClient.post(
+        `/scholarships/${scholarshipId}/applications`,
+        applicationData
+      );
       return response;
     } catch (error) {
       console.error('Failed to submit scholarship application:', error);
@@ -115,7 +123,10 @@ export const scholarshipService = {
   // Update application status
   async updateApplicationStatus(applicationId, status) {
     try {
-      const response = await apiClient.patch(`/scholarship-applications/${applicationId}/status`, { status });
+      const response = await apiClient.patch(
+        `/scholarship-applications/${applicationId}/status`,
+        { status }
+      );
       return response;
     } catch (error) {
       console.error('Failed to update application status:', error);
@@ -126,7 +137,9 @@ export const scholarshipService = {
   // Get application by ID
   async getApplicationById(applicationId) {
     try {
-      const response = await apiClient.get(`/scholarship-applications/${applicationId}`);
+      const response = await apiClient.get(
+        `/scholarship-applications/${applicationId}`
+      );
       return response;
     } catch (error) {
       console.error('Failed to fetch application:', error);
@@ -137,7 +150,9 @@ export const scholarshipService = {
   // Search scholarships
   async searchScholarships(query) {
     try {
-      const response = await apiClient.get(`/scholarships/search?q=${encodeURIComponent(query)}`);
+      const response = await apiClient.get(
+        `/scholarships/search?q=${encodeURIComponent(query)}`
+      );
       return response;
     } catch (error) {
       console.error('Failed to search scholarships:', error);
@@ -159,7 +174,9 @@ export const scholarshipService = {
   // Get scholarship recipients
   async getScholarshipRecipients(scholarshipId) {
     try {
-      const response = await apiClient.get(`/scholarships/${scholarshipId}/recipients`);
+      const response = await apiClient.get(
+        `/scholarships/${scholarshipId}/recipients`
+      );
       return response;
     } catch (error) {
       console.error('Failed to fetch scholarship recipients:', error);
@@ -170,7 +187,10 @@ export const scholarshipService = {
   // Award scholarship
   async awardScholarship(scholarshipId, recipientData) {
     try {
-      const response = await apiClient.post(`/scholarships/${scholarshipId}/award`, recipientData);
+      const response = await apiClient.post(
+        `/scholarships/${scholarshipId}/award`,
+        recipientData
+      );
       return response;
     } catch (error) {
       console.error('Failed to award scholarship:', error);
@@ -192,7 +212,9 @@ export const scholarshipService = {
   // Get scholarship reports
   async getScholarshipReports(period) {
     try {
-      const response = await apiClient.get(`/scholarships/reports?period=${period}`);
+      const response = await apiClient.get(
+        `/scholarships/reports?period=${period}`
+      );
       return response;
     } catch (error) {
       console.error('Failed to fetch scholarship reports:', error);
@@ -203,7 +225,9 @@ export const scholarshipService = {
   // Get user applications
   async getUserApplications(userId) {
     try {
-      const response = await apiClient.get(`/users/${userId}/scholarship-applications`);
+      const response = await apiClient.get(
+        `/users/${userId}/scholarship-applications`
+      );
       return response;
     } catch (error) {
       console.error('Failed to fetch user applications:', error);

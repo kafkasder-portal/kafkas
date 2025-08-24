@@ -1,5 +1,15 @@
-import { motion } from 'framer-motion'
-import { Users, Heart, TrendingUp, DollarSign, Plus, Search, Filter, Mail, Phone } from 'lucide-react'
+import { motion } from 'framer-motion';
+import {
+  Users,
+  Heart,
+  TrendingUp,
+  DollarSign,
+  Plus,
+  Search,
+  Filter,
+  Mail,
+  Phone,
+} from 'lucide-react';
 
 const Donors = () => {
   const donors = [
@@ -12,7 +22,7 @@ const Donors = () => {
       donationCount: 12,
       lastDonation: '2024-01-10',
       category: 'Büyük Bağışçı',
-      status: 'Aktif'
+      status: 'Aktif',
     },
     {
       id: 2,
@@ -23,7 +33,7 @@ const Donors = () => {
       donationCount: 8,
       lastDonation: '2024-01-08',
       category: 'Düzenli Bağışçı',
-      status: 'Aktif'
+      status: 'Aktif',
     },
     {
       id: 3,
@@ -34,7 +44,7 @@ const Donors = () => {
       donationCount: 3,
       lastDonation: '2023-12-15',
       category: 'Yeni Bağışçı',
-      status: 'Pasif'
+      status: 'Pasif',
     },
     {
       id: 4,
@@ -45,60 +55,60 @@ const Donors = () => {
       donationCount: 20,
       lastDonation: '2024-01-12',
       category: 'Büyük Bağışçı',
-      status: 'Aktif'
-    }
-  ]
+      status: 'Aktif',
+    },
+  ];
 
   const stats = [
     {
       title: 'Toplam Bağışçı',
       value: '1,247',
       icon: Users,
-      color: '#3b82f6'
+      color: '#3b82f6',
     },
     {
       title: 'Aktif Bağışçı',
       value: '892',
       icon: Heart,
-      color: '#ef4444'
+      color: '#ef4444',
     },
     {
       title: 'Bu Ay Yeni',
       value: '45',
       icon: TrendingUp,
-      color: '#10b981'
+      color: '#10b981',
     },
     {
       title: 'Ortalama Bağış',
       value: '₺2,450',
       icon: DollarSign,
-      color: '#f59e0b'
-    }
-  ]
+      color: '#f59e0b',
+    },
+  ];
 
-  const getCategoryColor = (category) => {
+  const getCategoryColor = category => {
     switch (category) {
       case 'Büyük Bağışçı':
-        return '#ef4444'
+        return '#ef4444';
       case 'Düzenli Bağışçı':
-        return '#10b981'
+        return '#10b981';
       case 'Yeni Bağışçı':
-        return '#3b82f6'
+        return '#3b82f6';
       default:
-        return '#64748b'
+        return '#64748b';
     }
-  }
+  };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status) {
       case 'Aktif':
-        return '#10b981'
+        return '#10b981';
       case 'Pasif':
-        return '#f59e0b'
+        return '#f59e0b';
       default:
-        return '#64748b'
+        return '#64748b';
     }
-  }
+  };
 
   return (
     <motion.div
@@ -107,10 +117,28 @@ const Donors = () => {
       transition={{ duration: 0.5 }}
       style={{ padding: '2rem' }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '2rem',
+        }}
+      >
         <div>
-          <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#1a202c', margin: 0 }}>Bağışçı Yönetimi</h1>
-          <p style={{ color: '#64748b', margin: '0.5rem 0 0 0' }}>Bağışçı takibi ve ilişki yönetimi</p>
+          <h1
+            style={{
+              fontSize: '2rem',
+              fontWeight: '700',
+              color: '#1a202c',
+              margin: 0,
+            }}
+          >
+            Bağışçı Yönetimi
+          </h1>
+          <p style={{ color: '#64748b', margin: '0.5rem 0 0 0' }}>
+            Bağışçı takibi ve ilişki yönetimi
+          </p>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <motion.button
@@ -122,7 +150,7 @@ const Donors = () => {
               backgroundColor: '#f8fafc',
               border: '2px solid #e2e8f0',
               borderRadius: '12px',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
             whileHover={{ backgroundColor: '#f1f5f9' }}
           >
@@ -140,7 +168,7 @@ const Donors = () => {
               border: 'none',
               borderRadius: '12px',
               fontWeight: '600',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -152,16 +180,23 @@ const Donors = () => {
       </div>
 
       {/* İstatistikler */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '1.5rem',
+          marginBottom: '2rem',
+        }}
+      >
         {stats.map((stat, index) => (
           <motion.div
             key={index}
-            className="card"
+            className='card'
             style={{
               padding: '1.5rem',
               display: 'flex',
               alignItems: 'center',
-              gap: '1rem'
+              gap: '1rem',
             }}
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.2 }}
@@ -171,34 +206,60 @@ const Donors = () => {
                 padding: '1rem',
                 borderRadius: '12px',
                 backgroundColor: `${stat.color}20`,
-                color: stat.color
+                color: stat.color,
               }}
             >
               <stat.icon size={24} />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1a202c', margin: 0 }}>{stat.value}</h3>
-              <p style={{ color: '#64748b', margin: '0.25rem 0 0 0', fontSize: '0.875rem' }}>{stat.title}</p>
+              <h3
+                style={{
+                  fontSize: '1.5rem',
+                  fontWeight: '700',
+                  color: '#1a202c',
+                  margin: 0,
+                }}
+              >
+                {stat.value}
+              </h3>
+              <p
+                style={{
+                  color: '#64748b',
+                  margin: '0.25rem 0 0 0',
+                  fontSize: '0.875rem',
+                }}
+              >
+                {stat.title}
+              </p>
             </div>
           </motion.div>
         ))}
       </div>
 
       {/* Arama ve Filtre */}
-      <div className="card" style={{ marginBottom: '1.5rem' }}>
+      <div className='card' style={{ marginBottom: '1.5rem' }}>
         <div style={{ display: 'flex', gap: '1rem' }}>
           <div style={{ position: 'relative', flex: 1 }}>
-            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+            <Search
+              size={18}
+              style={{
+                position: 'absolute',
+                left: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: '#64748b',
+              }}
+            />
             <input
-              type="text"
-              placeholder="Bağışçı ara..."
+              type='text'
+              placeholder='Bağışçı ara...'
               style={{
                 width: '100%',
                 padding: '0.75rem 0.75rem 0.75rem 2.5rem',
                 border: '2px solid #e2e8f0',
                 borderRadius: '12px',
                 fontSize: '0.875rem',
-                outline: 'none'
+                outline: 'none',
               }}
             />
           </div>
@@ -209,13 +270,13 @@ const Donors = () => {
               borderRadius: '12px',
               fontSize: '0.875rem',
               backgroundColor: '#ffffff',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
-            <option value="">Tüm Kategoriler</option>
-            <option value="buyuk">Büyük Bağışçı</option>
-            <option value="duzenli">Düzenli Bağışçı</option>
-            <option value="yeni">Yeni Bağışçı</option>
+            <option value=''>Tüm Kategoriler</option>
+            <option value='buyuk'>Büyük Bağışçı</option>
+            <option value='duzenli'>Düzenli Bağışçı</option>
+            <option value='yeni'>Yeni Bağışçı</option>
           </select>
           <select
             style={{
@@ -224,12 +285,12 @@ const Donors = () => {
               borderRadius: '12px',
               fontSize: '0.875rem',
               backgroundColor: '#ffffff',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
           >
-            <option value="">Tüm Durumlar</option>
-            <option value="aktif">Aktif</option>
-            <option value="pasif">Pasif</option>
+            <option value=''>Tüm Durumlar</option>
+            <option value='aktif'>Aktif</option>
+            <option value='pasif'>Pasif</option>
           </select>
           <motion.button
             style={{
@@ -240,7 +301,7 @@ const Donors = () => {
               backgroundColor: '#f8fafc',
               border: '2px solid #e2e8f0',
               borderRadius: '12px',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
             whileHover={{ backgroundColor: '#f1f5f9' }}
           >
@@ -251,25 +312,58 @@ const Donors = () => {
       </div>
 
       {/* Bağışçı Listesi */}
-      <div className="card">
-        <h3 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1a202c', marginBottom: '1.5rem' }}>Bağışçı Listesi</h3>
+      <div className='card'>
+        <h3
+          style={{
+            fontSize: '1.25rem',
+            fontWeight: '600',
+            color: '#1a202c',
+            marginBottom: '1.5rem',
+          }}
+        >
+          Bağışçı Listesi
+        </h3>
         <div style={{ display: 'grid', gap: '1rem' }}>
-          {donors.map((donor) => (
+          {donors.map(donor => (
             <motion.div
               key={donor.id}
               style={{
                 padding: '1.5rem',
                 border: '2px solid #e2e8f0',
                 borderRadius: '12px',
-                backgroundColor: '#ffffff'
+                backgroundColor: '#ffffff',
               }}
-              whileHover={{ scale: 1.02, boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}
+              whileHover={{
+                scale: 1.02,
+                boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+              }}
               transition={{ duration: 0.2 }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  marginBottom: '1rem',
+                }}
+              >
                 <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                    <h4 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#1a202c', margin: 0 }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    <h4
+                      style={{
+                        fontSize: '1.125rem',
+                        fontWeight: '600',
+                        color: '#1a202c',
+                        margin: 0,
+                      }}
+                    >
                       {donor.name}
                     </h4>
                     <span
@@ -279,38 +373,158 @@ const Donors = () => {
                         color: 'white',
                         borderRadius: '12px',
                         fontSize: '0.75rem',
-                        fontWeight: '600'
+                        fontWeight: '600',
                       }}
                     >
                       {donor.category}
                     </span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: '#64748b', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '1rem',
+                      color: '#64748b',
+                      fontSize: '0.875rem',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.25rem',
+                      }}
+                    >
                       <Mail size={14} />
                       {donor.email}
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.25rem',
+                      }}
+                    >
                       <Phone size={14} />
                       {donor.phone}
                     </div>
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginTop: '1rem' }}>
-                    <div style={{ padding: '0.75rem', backgroundColor: '#f8fafc', borderRadius: '8px' }}>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.25rem' }}>Toplam Bağış</div>
-                      <div style={{ fontSize: '1rem', fontWeight: '600', color: '#1a202c' }}>₺{donor.totalDonations.toLocaleString()}</div>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(150px, 1fr))',
+                      gap: '1rem',
+                      marginTop: '1rem',
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: '0.75rem',
+                        backgroundColor: '#f8fafc',
+                        borderRadius: '8px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '0.75rem',
+                          color: '#64748b',
+                          marginBottom: '0.25rem',
+                        }}
+                      >
+                        Toplam Bağış
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '1rem',
+                          fontWeight: '600',
+                          color: '#1a202c',
+                        }}
+                      >
+                        ₺{donor.totalDonations.toLocaleString()}
+                      </div>
                     </div>
-                    <div style={{ padding: '0.75rem', backgroundColor: '#f8fafc', borderRadius: '8px' }}>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.25rem' }}>Bağış Sayısı</div>
-                      <div style={{ fontSize: '1rem', fontWeight: '600', color: '#1a202c' }}>{donor.donationCount}</div>
+                    <div
+                      style={{
+                        padding: '0.75rem',
+                        backgroundColor: '#f8fafc',
+                        borderRadius: '8px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '0.75rem',
+                          color: '#64748b',
+                          marginBottom: '0.25rem',
+                        }}
+                      >
+                        Bağış Sayısı
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '1rem',
+                          fontWeight: '600',
+                          color: '#1a202c',
+                        }}
+                      >
+                        {donor.donationCount}
+                      </div>
                     </div>
-                    <div style={{ padding: '0.75rem', backgroundColor: '#f8fafc', borderRadius: '8px' }}>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.25rem' }}>Son Bağış</div>
-                      <div style={{ fontSize: '1rem', fontWeight: '600', color: '#1a202c' }}>{donor.lastDonation}</div>
+                    <div
+                      style={{
+                        padding: '0.75rem',
+                        backgroundColor: '#f8fafc',
+                        borderRadius: '8px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '0.75rem',
+                          color: '#64748b',
+                          marginBottom: '0.25rem',
+                        }}
+                      >
+                        Son Bağış
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '1rem',
+                          fontWeight: '600',
+                          color: '#1a202c',
+                        }}
+                      >
+                        {donor.lastDonation}
+                      </div>
                     </div>
-                    <div style={{ padding: '0.75rem', backgroundColor: '#f8fafc', borderRadius: '8px' }}>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.25rem' }}>Ortalama</div>
-                      <div style={{ fontSize: '1rem', fontWeight: '600', color: '#1a202c' }}>₺{Math.round(donor.totalDonations / donor.donationCount).toLocaleString()}</div>
+                    <div
+                      style={{
+                        padding: '0.75rem',
+                        backgroundColor: '#f8fafc',
+                        borderRadius: '8px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '0.75rem',
+                          color: '#64748b',
+                          marginBottom: '0.25rem',
+                        }}
+                      >
+                        Ortalama
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '1rem',
+                          fontWeight: '600',
+                          color: '#1a202c',
+                        }}
+                      >
+                        ₺
+                        {Math.round(
+                          donor.totalDonations / donor.donationCount
+                        ).toLocaleString()}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -321,7 +535,7 @@ const Donors = () => {
                     color: 'white',
                     borderRadius: '20px',
                     fontSize: '0.75rem',
-                    fontWeight: '600'
+                    fontWeight: '600',
                   }}
                 >
                   {donor.status}
@@ -336,7 +550,7 @@ const Donors = () => {
                     border: 'none',
                     borderRadius: '8px',
                     fontSize: '0.875rem',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
                   }}
                   whileHover={{ backgroundColor: '#dc2626' }}
                 >
@@ -350,7 +564,7 @@ const Donors = () => {
                     border: 'none',
                     borderRadius: '8px',
                     fontSize: '0.875rem',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
                   }}
                   whileHover={{ backgroundColor: '#059669' }}
                 >
@@ -364,7 +578,7 @@ const Donors = () => {
                     border: '1px solid #e2e8f0',
                     borderRadius: '8px',
                     fontSize: '0.875rem',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
                   }}
                   whileHover={{ backgroundColor: '#f1f5f9' }}
                 >
@@ -376,7 +590,7 @@ const Donors = () => {
         </div>
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
-export default Donors
+export default Donors;

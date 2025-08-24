@@ -64,12 +64,24 @@
   opacity: 0;
 }
 
-.card-animate:nth-child(1) { animation-delay: 0.1s; }
-.card-animate:nth-child(2) { animation-delay: 0.15s; }
-.card-animate:nth-child(3) { animation-delay: 0.2s; }
-.card-animate:nth-child(4) { animation-delay: 0.25s; }
-.card-animate:nth-child(5) { animation-delay: 0.3s; }
-.card-animate:nth-child(6) { animation-delay: 0.35s; }
+.card-animate:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.card-animate:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.card-animate:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.card-animate:nth-child(4) {
+  animation-delay: 0.25s;
+}
+.card-animate:nth-child(5) {
+  animation-delay: 0.3s;
+}
+.card-animate:nth-child(6) {
+  animation-delay: 0.35s;
+}
 
 @keyframes cardSlideUp {
   from {
@@ -98,10 +110,18 @@
   opacity: 0;
 }
 
-.form-animate:nth-child(1) { animation-delay: 0.1s; }
-.form-animate:nth-child(2) { animation-delay: 0.15s; }
-.form-animate:nth-child(3) { animation-delay: 0.2s; }
-.form-animate:nth-child(4) { animation-delay: 0.25s; }
+.form-animate:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.form-animate:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.form-animate:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.form-animate:nth-child(4) {
+  animation-delay: 0.25s;
+}
 
 @keyframes formElementFadeIn {
   from {
@@ -120,7 +140,8 @@
 }
 
 @keyframes loadingPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.6;
     transform: scale(1);
   }
@@ -135,11 +156,11 @@
   .animated-routes.fade-in {
     animation-duration: 0.3s;
   }
-  
+
   .animated-routes.fade-out {
     animation-duration: 0.2s;
   }
-  
+
   @keyframes pageSlideInFade {
     from {
       opacity: 0;

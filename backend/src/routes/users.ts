@@ -8,16 +8,22 @@ const router = express.Router();
 // Get all users
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = '', role = '', status = '' } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      search = '',
+      role = '',
+      status = '',
+    } = req.query;
     const offset = (Number(page) - 1) * Number(limit);
 
-    let supabaseQuery = supabase
-      .from('users')
-      .select('*', { count: 'exact' });
+    let supabaseQuery = supabase.from('users').select('*', { count: 'exact' });
 
     // Apply filters
     if (search) {
-      supabaseQuery = supabaseQuery.or(`name.ilike.%${search}%,email.ilike.%${search}%`);
+      supabaseQuery = supabaseQuery.or(
+        `name.ilike.%${search}%,email.ilike.%${search}%`
+      );
     }
     if (role) {
       supabaseQuery = supabaseQuery.eq('role', role);
@@ -26,7 +32,11 @@ router.get('/', async (req, res) => {
       supabaseQuery = supabaseQuery.eq('status', status);
     }
 
-    const { data: users, error, count } = await supabaseQuery
+    const {
+      data: users,
+      error,
+      count,
+    } = await supabaseQuery
       .order('created_at', { ascending: false })
       .range(offset, offset + Number(limit) - 1);
 
@@ -37,17 +47,18 @@ router.get('/', async (req, res) => {
 
     const totalUsers = count || 0;
 
-    const formattedUsers = users?.map((user: any) => ({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      status: user.status,
-      phone: user.phone,
-      address: user.address,
-      createdAt: user.created_at,
-      updatedAt: user.updated_at
-    })) || [];
+    const formattedUsers =
+      users?.map((user: any) => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        status: user.status,
+        phone: user.phone,
+        address: user.address,
+        createdAt: user.created_at,
+        updatedAt: user.updated_at,
+      })) || [];
 
     res.json({
       success: true,
@@ -57,15 +68,15 @@ router.get('/', async (req, res) => {
           page: Number(page),
           limit: Number(limit),
           total: totalUsers,
-          totalPages: Math.ceil(totalUsers / Number(limit))
-        }
-      }
+          totalPages: Math.ceil(totalUsers / Number(limit)),
+        },
+      },
     });
   } catch (error) {
     console.error('Get users error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -84,7 +95,7 @@ router.get('/:id', async (req, res) => {
     if (error || !user) {
       return res.status(404).json({
         success: false,
-        message: 'User not found'
+        message: 'User not found',
       });
     }
 
@@ -100,15 +111,15 @@ router.get('/:id', async (req, res) => {
           phone: user.phone,
           address: user.address,
           createdAt: user.created_at,
-          updatedAt: user.updated_at
-        }
-      }
+          updatedAt: user.updated_at,
+        },
+      },
     });
   } catch (error) {
     console.error('Get user error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -121,7 +132,7 @@ router.post('/', async (req, res) => {
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Name, email, and password are required'
+        message: 'Name, email, and password are required',
       });
     }
 
@@ -138,18 +149,16 @@ router.post('/', async (req, res) => {
       phone: phone || null,
       address: address || null,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
-    const { error } = await supabase
-      .from('users')
-      .insert([newUser]);
+    const { error } = await supabase.from('users').insert([newUser]);
 
     if (error) {
       console.error('Database error:', error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to create user'
+        message: 'Failed to create user',
       });
     }
 
@@ -165,16 +174,16 @@ router.post('/', async (req, res) => {
           phone: newUser.phone,
           address: newUser.address,
           createdAt: newUser.created_at,
-          updatedAt: newUser.updated_at
-        }
+          updatedAt: newUser.updated_at,
+        },
       },
-      message: 'User created successfully'
+      message: 'User created successfully',
     });
   } catch (error) {
     console.error('Create user error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -194,7 +203,7 @@ router.put('/:id', async (req, res) => {
     if (checkError || !existingUser) {
       return res.status(404).json({
         success: false,
-        message: 'User not found'
+        message: 'User not found',
       });
     }
 
@@ -205,7 +214,7 @@ router.put('/:id', async (req, res) => {
       status: status || existingUser.status,
       phone: phone !== undefined ? phone : existingUser.phone,
       address: address !== undefined ? address : existingUser.address,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { error: updateError } = await supabase
@@ -217,7 +226,7 @@ router.put('/:id', async (req, res) => {
       console.error('Database error:', updateError);
       return res.status(500).json({
         success: false,
-        message: 'Failed to update user'
+        message: 'Failed to update user',
       });
     }
 
@@ -226,16 +235,16 @@ router.put('/:id', async (req, res) => {
       data: {
         user: {
           id,
-          ...updateData
-        }
+          ...updateData,
+        },
       },
-      message: 'User updated successfully'
+      message: 'User updated successfully',
     });
   } catch (error) {
     console.error('Update user error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -254,19 +263,19 @@ router.delete('/:id', async (req, res) => {
       console.error('Database error:', deleteError);
       return res.status(500).json({
         success: false,
-        message: 'Failed to delete user'
+        message: 'Failed to delete user',
       });
     }
 
     res.json({
       success: true,
-      message: 'User deleted successfully'
+      message: 'User deleted successfully',
     });
   } catch (error) {
     console.error('Delete user error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -277,7 +286,7 @@ router.get('/health', (req, res) => {
     status: 'OK',
     message: 'Kafkas Derneği Portal API is running',
     timestamp: new Date().toISOString(),
-    version: '1.0.0'
+    version: '1.0.0',
   });
 });
 

@@ -5,15 +5,24 @@ import { v4 as uuidv4 } from 'uuid';
 const router = express.Router();
 
 // Supabase client
-const supabaseUrl = process.env.SUPABASE_URL || 'https://fagblbogumttcrsbletc.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ2JsYm9ndW10dGNyc2JsZXRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4NDg4OTksImV4cCI6MjA3MTQyNDg5OX0.PNQpiOsctCqIrH20BdylDtzVVKOJW4KmBo79w2izioo';
+const supabaseUrl =
+  process.env.SUPABASE_URL || 'https://fagblbogumttcrsbletc.supabase.co';
+const supabaseKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ2JsYm9ndW10dGNyc2JsZXRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4NDg4OTksImV4cCI6MjA3MTQyNDg5OX0.PNQpiOsctCqIrH20BdylDtzVVKOJW4KmBo79w2izioo';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Get all inventory items
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = '', category = '', status = '' } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      search = '',
+      category = '',
+      status = '',
+    } = req.query;
     const offset = (Number(page) - 1) * Number(limit);
 
     // Build Supabase query
@@ -23,7 +32,9 @@ router.get('/', async (req, res) => {
 
     // Apply filters
     if (search) {
-      supabaseQuery = supabaseQuery.or(`name.ilike.%${search}%,description.ilike.%${search}%`);
+      supabaseQuery = supabaseQuery.or(
+        `name.ilike.%${search}%,description.ilike.%${search}%`
+      );
     }
     if (category) {
       supabaseQuery = supabaseQuery.eq('category', category);
@@ -33,7 +44,11 @@ router.get('/', async (req, res) => {
     }
 
     // Apply pagination and ordering
-    const { data: items, error, count } = await supabaseQuery
+    const {
+      data: items,
+      error,
+      count,
+    } = await supabaseQuery
       .order('created_at', { ascending: false })
       .range(offset, offset + Number(limit) - 1);
 
@@ -44,18 +59,19 @@ router.get('/', async (req, res) => {
 
     const totalItems = count || 0;
 
-    const formattedItems = items?.map((item: any) => ({
-      id: item.id,
-      name: item.name,
-      description: item.description,
-      category: item.category,
-      quantity: item.quantity,
-      unit: item.unit,
-      status: item.status,
-      location: item.location,
-      createdAt: item.created_at,
-      updatedAt: item.updated_at
-    })) || [];
+    const formattedItems =
+      items?.map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        category: item.category,
+        quantity: item.quantity,
+        unit: item.unit,
+        status: item.status,
+        location: item.location,
+        createdAt: item.created_at,
+        updatedAt: item.updated_at,
+      })) || [];
 
     res.json({
       success: true,
@@ -65,15 +81,15 @@ router.get('/', async (req, res) => {
           page: Number(page),
           limit: Number(limit),
           total: totalItems,
-          totalPages: Math.ceil(totalItems / Number(limit))
-        }
-      }
+          totalPages: Math.ceil(totalItems / Number(limit)),
+        },
+      },
     });
   } catch (error) {
     console.error('Get inventory items error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -92,7 +108,7 @@ router.get('/:id', async (req, res) => {
     if (error || !item) {
       return res.status(404).json({
         success: false,
-        message: 'Inventory item not found'
+        message: 'Inventory item not found',
       });
     }
 
@@ -109,15 +125,15 @@ router.get('/:id', async (req, res) => {
           status: item.status,
           location: item.location,
           createdAt: item.created_at,
-          updatedAt: item.updated_at
-        }
-      }
+          updatedAt: item.updated_at,
+        },
+      },
     });
   } catch (error) {
     console.error('Get inventory item error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -125,13 +141,14 @@ router.get('/:id', async (req, res) => {
 // Create new inventory item
 router.post('/', async (req, res) => {
   try {
-    const { name, description, category, quantity, unit, status, location } = req.body;
+    const { name, description, category, quantity, unit, status, location } =
+      req.body;
 
     // Validate required fields
     if (!name || !category || !quantity) {
       return res.status(400).json({
         success: false,
-        message: 'Name, category, and quantity are required'
+        message: 'Name, category, and quantity are required',
       });
     }
 
@@ -145,18 +162,16 @@ router.post('/', async (req, res) => {
       status: status || 'active',
       location: location || '',
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
-    const { error } = await supabase
-      .from('inventory')
-      .insert([newItem]);
+    const { error } = await supabase.from('inventory').insert([newItem]);
 
     if (error) {
       console.error('Database error:', error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to create inventory item'
+        message: 'Failed to create inventory item',
       });
     }
 
@@ -173,16 +188,16 @@ router.post('/', async (req, res) => {
           status: newItem.status,
           location: newItem.location,
           createdAt: newItem.created_at,
-          updatedAt: newItem.updated_at
-        }
+          updatedAt: newItem.updated_at,
+        },
       },
-      message: 'Inventory item created successfully'
+      message: 'Inventory item created successfully',
     });
   } catch (error) {
     console.error('Create inventory item error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -191,7 +206,8 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, category, quantity, unit, status, location } = req.body;
+    const { name, description, category, quantity, unit, status, location } =
+      req.body;
 
     // Check if item exists
     const { data: existingItem, error: checkError } = await supabase
@@ -203,19 +219,21 @@ router.put('/:id', async (req, res) => {
     if (checkError || !existingItem) {
       return res.status(404).json({
         success: false,
-        message: 'Inventory item not found'
+        message: 'Inventory item not found',
       });
     }
 
     const updateData = {
       name: name || existingItem.name,
-      description: description !== undefined ? description : existingItem.description,
+      description:
+        description !== undefined ? description : existingItem.description,
       category: category || existingItem.category,
-      quantity: quantity !== undefined ? Number(quantity) : existingItem.quantity,
+      quantity:
+        quantity !== undefined ? Number(quantity) : existingItem.quantity,
       unit: unit || existingItem.unit,
       status: status || existingItem.status,
       location: location !== undefined ? location : existingItem.location,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { error: updateError } = await supabase
@@ -227,7 +245,7 @@ router.put('/:id', async (req, res) => {
       console.error('Database error:', updateError);
       return res.status(500).json({
         success: false,
-        message: 'Failed to update inventory item'
+        message: 'Failed to update inventory item',
       });
     }
 
@@ -236,16 +254,16 @@ router.put('/:id', async (req, res) => {
       data: {
         item: {
           id,
-          ...updateData
-        }
+          ...updateData,
+        },
       },
-      message: 'Inventory item updated successfully'
+      message: 'Inventory item updated successfully',
     });
   } catch (error) {
     console.error('Update inventory item error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -264,19 +282,19 @@ router.delete('/:id', async (req, res) => {
       console.error('Database error:', deleteError);
       return res.status(500).json({
         success: false,
-        message: 'Failed to delete inventory item'
+        message: 'Failed to delete inventory item',
       });
     }
 
     res.json({
       success: true,
-      message: 'Inventory item deleted successfully'
+      message: 'Inventory item deleted successfully',
     });
   } catch (error) {
     console.error('Delete inventory item error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });

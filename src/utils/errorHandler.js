@@ -12,41 +12,41 @@ export const handleError = (error, context = {}) => {
     userAgent: navigator.userAgent,
     userId: getCurrentUserId(),
     sessionId: getSessionId(),
-    ...context
-  }
+    ...context,
+  };
 
   // Log error to console in development
   if (import.meta.env.DEV) {
-    console.group('🚨 Error occurred')
-    console.error('Error:', error)
-    console.error('Context:', errorInfo)
-    console.groupEnd()
+    console.group('🚨 Error occurred');
+    console.error('Error:', error);
+    console.error('Context:', errorInfo);
+    console.groupEnd();
   }
 
   // Send to logging service in production
   if (import.meta.env.PROD) {
-    sendErrorToLoggingService(errorInfo)
+    sendErrorToLoggingService(errorInfo);
   }
 
   // Store locally for offline scenarios
-  storeErrorLocally(errorInfo)
+  storeErrorLocally(errorInfo);
 
   // Return a user-friendly error message
   return {
     message: getUserFriendlyMessage(error),
     details: import.meta.env.DEV ? error.message : null,
-    errorId: generateErrorId()
-  }
-}
+    errorId: generateErrorId(),
+  };
+};
 
 /**
  * API error handler with detailed response handling
  */
-export const handleApiError = (error) => {
+export const handleApiError = error => {
   if (error.response) {
     // Server responded with error status
-    const { status, data } = error.response
-    
+    const { status, data } = error.response;
+
     const errorMap = {
       400: 'Geçersiz istek. Lütfen bilgilerinizi kontrol edin.',
       401: 'Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.',
@@ -57,33 +57,34 @@ export const handleApiError = (error) => {
       500: 'Sunucu hatası. Lütfen daha sonra tekrar deneyin.',
       502: 'Sunucu geçici olarak kullanılamıyor.',
       503: 'Servis geçici olarak kullanılamıyor.',
-      504: 'İstek zaman aşımına uğradı.'
-    }
-    
-    const message = data?.message || errorMap[status] || 'Beklenmeyen bir hata oluştu.'
-    
+      504: 'İstek zaman aşımına uğradı.',
+    };
+
+    const message =
+      data?.message || errorMap[status] || 'Beklenmeyen bir hata oluştu.';
+
     // Handle authentication errors
     if (status === 401) {
-      handleAuthenticationError()
+      handleAuthenticationError();
     }
-    
-    return { 
-      message, 
+
+    return {
+      message,
       status,
       code: data?.code,
-      errors: data?.errors
-    }
+      errors: data?.errors,
+    };
   } else if (error.request) {
     // Network error
-    return { 
+    return {
       message: 'Bağlantı hatası. İnternet bağlantınızı kontrol edin.',
-      type: 'network_error'
-    }
+      type: 'network_error',
+    };
   } else {
     // Other error
-    return handleError(error)
+    return handleError(error);
   }
-}
+};
 
 /**
  * Report error to external monitoring service
@@ -99,40 +100,40 @@ export const reportError = (error, context = {}) => {
     sessionId: getSessionId(),
     buildId: import.meta.env.VITE_BUILD_ID,
     version: import.meta.env.VITE_APP_VERSION,
-    ...context
-  }
+    ...context,
+  };
 
   // Log to console in development
   if (import.meta.env.DEV) {
-    console.group('📊 Error reported')
-    console.error('Error:', error)
-    console.error('Report:', errorInfo)
-    console.groupEnd()
+    console.group('📊 Error reported');
+    console.error('Error:', error);
+    console.error('Report:', errorInfo);
+    console.groupEnd();
   }
 
   // Send to monitoring service
-  sendErrorToLoggingService(errorInfo)
-  
-  // Store locally
-  storeErrorLocally(errorInfo)
+  sendErrorToLoggingService(errorInfo);
 
-  return errorInfo
-}
+  // Store locally
+  storeErrorLocally(errorInfo);
+
+  return errorInfo;
+};
 
 /**
  * Send error to external logging service
  */
-const sendErrorToLoggingService = async (errorInfo) => {
+const sendErrorToLoggingService = async errorInfo => {
   try {
     // Example integration with Sentry, LogRocket, or custom service
     if (window.Sentry) {
       window.Sentry.captureException(new Error(errorInfo.message), {
         tags: {
           component: errorInfo.component,
-          userId: errorInfo.userId
+          userId: errorInfo.userId,
         },
-        extra: errorInfo
-      })
+        extra: errorInfo,
+      });
     }
 
     // Custom logging endpoint
@@ -140,145 +141,154 @@ const sendErrorToLoggingService = async (errorInfo) => {
       await fetch(import.meta.env.VITE_ERROR_LOGGING_ENDPOINT, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(errorInfo)
-      })
+        body: JSON.stringify(errorInfo),
+      });
     }
   } catch (loggingError) {
-    console.error('Failed to send error to logging service:', loggingError)
+    console.error('Failed to send error to logging service:', loggingError);
   }
-}
+};
 
 /**
  * Store error locally for offline scenarios
  */
-const storeErrorLocally = (errorInfo) => {
+const storeErrorLocally = errorInfo => {
   try {
-    const errors = JSON.parse(localStorage.getItem('app_errors') || '[]')
-    errors.push(errorInfo)
-    
+    const errors = JSON.parse(localStorage.getItem('app_errors') || '[]');
+    errors.push(errorInfo);
+
     // Keep only last 10 errors
-    const recentErrors = errors.slice(-10)
-    localStorage.setItem('app_errors', JSON.stringify(recentErrors))
+    const recentErrors = errors.slice(-10);
+    localStorage.setItem('app_errors', JSON.stringify(recentErrors));
   } catch (error) {
-    console.error('Failed to store error locally:', error)
+    console.error('Failed to store error locally:', error);
   }
-}
+};
 
 /**
  * Get user-friendly error message
  */
-const getUserFriendlyMessage = (error) => {
+const getUserFriendlyMessage = error => {
   // Known error types
   if (error.name === 'ChunkLoadError') {
-    return 'Uygulama güncellemesi mevcut. Lütfen sayfayı yenileyin.'
+    return 'Uygulama güncellemesi mevcut. Lütfen sayfayı yenileyin.';
   }
-  
+
   if (error.message?.includes('Loading chunk')) {
-    return 'Sayfa yüklenirken hata oluştu. Lütfen sayfayı yenileyin.'
+    return 'Sayfa yüklenirken hata oluştu. Lütfen sayfayı yenileyin.';
   }
-  
+
   if (error.message?.includes('Network Error')) {
-    return 'Ağ bağlantısı sorunu. İnternet bağlantınızı kontrol edin.'
+    return 'Ağ bağlantısı sorunu. İnternet bağlantınızı kontrol edin.';
   }
-  
-  return 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.'
-}
+
+  return 'Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.';
+};
 
 /**
  * Handle authentication errors
  */
 const handleAuthenticationError = () => {
   // Clear user session
-  localStorage.removeItem('auth_token')
-  localStorage.removeItem('user_data')
-  
+  localStorage.removeItem('auth_token');
+  localStorage.removeItem('user_data');
+
   // Redirect to login
   if (window.location.pathname !== '/login') {
-    window.location.href = '/login'
+    window.location.href = '/login';
   }
-}
+};
 
 /**
  * Get current user ID
  */
 const getCurrentUserId = () => {
   try {
-    const userData = localStorage.getItem('user_data')
-    return userData ? JSON.parse(userData).id : null
+    const userData = localStorage.getItem('user_data');
+    return userData ? JSON.parse(userData).id : null;
   } catch {
-    return null
+    return null;
   }
-}
+};
 
 /**
  * Get session ID
  */
 const getSessionId = () => {
-  let sessionId = sessionStorage.getItem('session_id')
+  let sessionId = sessionStorage.getItem('session_id');
   if (!sessionId) {
-    sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-    sessionStorage.setItem('session_id', sessionId)
+    sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    sessionStorage.setItem('session_id', sessionId);
   }
-  return sessionId
-}
+  return sessionId;
+};
 
 /**
  * Generate unique error ID
  */
 const generateErrorId = () => {
-  return `ERR_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-}
+  return `ERR_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+};
 
 /**
  * Global error event handlers
  */
 export const setupGlobalErrorHandlers = () => {
   // Unhandled promise rejections
-  window.addEventListener('unhandledrejection', (event) => {
-    console.error('Unhandled promise rejection:', event.reason)
-    reportError(event.reason, { type: 'unhandled_promise_rejection' })
-  })
+  window.addEventListener('unhandledrejection', event => {
+    console.error('Unhandled promise rejection:', event.reason);
+    reportError(event.reason, { type: 'unhandled_promise_rejection' });
+  });
 
   // JavaScript errors
-  window.addEventListener('error', (event) => {
-    console.error('Global error:', event.error)
-    reportError(event.error, { 
+  window.addEventListener('error', event => {
+    console.error('Global error:', event.error);
+    reportError(event.error, {
       type: 'javascript_error',
       filename: event.filename,
       lineno: event.lineno,
-      colno: event.colno
-    })
-  })
+      colno: event.colno,
+    });
+  });
 
   // Resource loading errors
-  window.addEventListener('error', (event) => {
-    if (event.target !== window) {
-      console.error('Resource loading error:', event.target)
-      reportError(new Error(`Failed to load resource: ${event.target.src || event.target.href}`), {
-        type: 'resource_error',
-        element: event.target.tagName,
-        source: event.target.src || event.target.href
-      })
-    }
-  }, true)
-}
+  window.addEventListener(
+    'error',
+    event => {
+      if (event.target !== window) {
+        console.error('Resource loading error:', event.target);
+        reportError(
+          new Error(
+            `Failed to load resource: ${event.target.src || event.target.href}`
+          ),
+          {
+            type: 'resource_error',
+            element: event.target.tagName,
+            source: event.target.src || event.target.href,
+          }
+        );
+      }
+    },
+    true
+  );
+};
 
 /**
  * Get stored errors for debugging
  */
 export const getStoredErrors = () => {
   try {
-    return JSON.parse(localStorage.getItem('app_errors') || '[]')
+    return JSON.parse(localStorage.getItem('app_errors') || '[]');
   } catch {
-    return []
+    return [];
   }
-}
+};
 
 /**
  * Clear stored errors
  */
 export const clearStoredErrors = () => {
-  localStorage.removeItem('app_errors')
-}
+  localStorage.removeItem('app_errors');
+};

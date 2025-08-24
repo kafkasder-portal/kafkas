@@ -93,7 +93,9 @@ export const fundService = {
   // Search funds
   async searchFunds(query) {
     try {
-      const response = await apiClient.get(`/funds/search?q=${encodeURIComponent(query)}`);
+      const response = await apiClient.get(
+        `/funds/search?q=${encodeURIComponent(query)}`
+      );
       return response;
     } catch (error) {
       console.error('Failed to search funds:', error);
@@ -115,7 +117,10 @@ export const fundService = {
   // Add fund contribution
   async addContribution(fundId, contributionData) {
     try {
-      const response = await apiClient.post(`/funds/${fundId}/contributions`, contributionData);
+      const response = await apiClient.post(
+        `/funds/${fundId}/contributions`,
+        contributionData
+      );
       return response;
     } catch (error) {
       console.error('Failed to add contribution:', error);
@@ -170,7 +175,9 @@ export const fundService = {
   // Get funds by date range
   async getFundsByDateRange(startDate, endDate) {
     try {
-      const response = await apiClient.get(`/funds?start=${startDate}&end=${endDate}`);
+      const response = await apiClient.get(
+        `/funds?start=${startDate}&end=${endDate}`
+      );
       return response;
     } catch (error) {
       console.error('Failed to fetch funds by date range:', error);

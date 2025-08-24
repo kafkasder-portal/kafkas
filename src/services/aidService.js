@@ -115,7 +115,9 @@ export const aidService = {
   // Search aid requests
   async searchAidRequests(query) {
     try {
-      const response = await apiClient.get(`/aid/search?q=${encodeURIComponent(query)}`);
+      const response = await apiClient.get(
+        `/aid/search?q=${encodeURIComponent(query)}`
+      );
       return response;
     } catch (error) {
       console.error('Failed to search aid requests:', error);
@@ -137,7 +139,9 @@ export const aidService = {
   // Assign aid request to volunteer
   async assignAidRequest(id, volunteerId) {
     try {
-      const response = await apiClient.patch(`/aid/${id}/assign`, { volunteerId });
+      const response = await apiClient.patch(`/aid/${id}/assign`, {
+        volunteerId,
+      });
       return response;
     } catch (error) {
       console.error('Failed to assign aid request:', error);
@@ -181,7 +185,9 @@ export const aidService = {
   // Get aid requests by date range
   async getAidRequestsByDateRange(startDate, endDate) {
     try {
-      const response = await apiClient.get(`/aid?start=${startDate}&end=${endDate}`);
+      const response = await apiClient.get(
+        `/aid?start=${startDate}&end=${endDate}`
+      );
       return response;
     } catch (error) {
       console.error('Failed to fetch aid requests by date range:', error);

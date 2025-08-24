@@ -1,20 +1,16 @@
 /**
- * Console Error Tracking System
- * Monitors and reports errors, warnings, and performance issues
+ * Error tracking and monitoring utility
+ * Tracks errors, warnings, and performance issues
  */
 
 class ErrorTracker {
   constructor() {
-    this.errors = []
-    this.warnings = []
-    this.apiErrors = []
-    this.performanceIssues = []
-    this.maxErrors = 100
-    this.isInitialized = false
-    this.errorCount = 0
-    this.warningCount = 0
-    
-    // Error categories
+    this.errors = [];
+    this.warnings = [];
+    this.apiErrors = [];
+    this.performanceIssues = [];
+    this.errorCount = 0;
+    this.warningCount = 0;
     this.categories = {
       'console.error': 0,
       'console.warn': 0,
@@ -22,421 +18,289 @@ class ErrorTracker {
       'network.error': 0,
       'react.error': 0,
       'javascript.error': 0,
-      'performance.error': 0
-    }
+      'performance.error': 0,
+    };
+    this.isInitialized = false;
   }
 
   // Initialize error tracking
   init() {
-    if (this.isInitialized) return
+    if (this.isInitialized) return;
 
-    // Override console methods
-    this.overrideConsole()
-    
-    // Setup global error handlers
-    this.setupGlobalErrorHandlers()
-    
-    // Setup React error boundary
-    this.setupReactErrorBoundary()
-    
-    // Setup performance monitoring
-    this.setupPerformanceMonitoring()
-    
-    // Setup API error tracking
-    this.setupAPIErrorTracking()
-    
-    // Setup network error tracking
-    this.setupNetworkErrorTracking()
-    
-    // Setup periodic reporting
-    this.setupPeriodicReporting()
-    
-    this.isInitialized = true
+    this.setupConsoleInterception();
+    this.setupGlobalErrorHandlers();
+    this.setupReactErrorBoundary();
+    this.setupPerformanceMonitoring();
+    this.setupAPIErrorTracking();
+
+    // Clean old errors every hour
+    setInterval(
+      () => {
+        this.cleanOldErrors();
+      },
+      60 * 60 * 1000
+    );
+
+    this.isInitialized = true;
   }
 
-  // Override console methods to capture errors and warnings
-  overrideConsole() {
-    const originalError = console.error
-    const originalWarn = console.warn
+  // Track an error
+  trackError(category, errorData) {
+    const error = {
+      id: this.generateErrorId(),
+      category,
+      ...errorData,
+      sessionId: this.getSessionId(),
+      userId: this.getUserId(),
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+      timestamp: new Date().toISOString(),
+    };
 
+    this.errors.push(error);
+    this.errorCount++;
+    this.categories[category] = (this.categories[category] || 0) + 1;
+
+    // Keep only last 100 errors
+    if (this.errors.length > 100) {
+      this.errors = this.errors.slice(-100);
+    }
+
+    // Log in development
+    if (import.meta.env.DEV) {
+      console.group('🚨 Error Tracked');
+      console.error('Category:', category);
+      console.error('Error:', error);
+      console.groupEnd();
+    }
+  }
+
+  // Track a warning
+  trackWarning(category, warningData) {
+    const warning = {
+      id: this.generateWarningId(),
+      category,
+      ...warningData,
+      sessionId: this.getSessionId(),
+      userId: this.getUserId(),
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+      timestamp: new Date().toISOString(),
+    };
+
+    this.warnings.push(warning);
+    this.warningCount++;
+    this.categories[category] = (this.categories[category] || 0) + 1;
+
+    // Keep only last 50 warnings
+    if (this.warnings.length > 50) {
+      this.warnings = this.warnings.slice(-50);
+    }
+
+    // Log in development
+    if (import.meta.env.DEV) {
+      console.group('⚠️ Warning Tracked');
+      console.warn('Category:', category);
+      console.warn('Warning:', warning);
+      console.groupEnd();
+    }
+  }
+
+  // Track API errors
+  trackAPIError(endpoint, error, requestData = {}) {
+    const apiError = {
+      id: this.generateErrorId(),
+      endpoint,
+      method: requestData.method || 'GET',
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      message: error.message,
+      response: error.response?.data,
+      request: requestData,
+      timestamp: new Date().toISOString(),
+    };
+
+    this.apiErrors.push(apiError);
+    this.trackError('api.error', apiError);
+  }
+
+  // Track performance issues
+  trackPerformanceIssue(type, issueData) {
+    const issue = {
+      id: this.generateErrorId(),
+      type,
+      ...issueData,
+      timestamp: new Date().toISOString(),
+    };
+
+    this.performanceIssues.push(issue);
+    this.trackError('performance.error', issue);
+  }
+
+  // Setup console interception
+  setupConsoleInterception() {
+    const originalError = console.error;
+    const originalWarn = console.warn;
+
+    // Intercept console.error
     console.error = (...args) => {
       this.trackError('console.error', {
         message: args.join(' '),
         stack: new Error().stack,
-        timestamp: new Date().toISOString(),
-        args: args
-      })
-      originalError.apply(console, args)
-    }
+        args,
+      });
+      originalError.apply(console, args);
+    };
 
+    // Intercept console.warn
     console.warn = (...args) => {
       this.trackWarning('console.warn', {
         message: args.join(' '),
         stack: new Error().stack,
-        timestamp: new Date().toISOString(),
-        args: args
-      })
-      originalWarn.apply(console, args)
-    }
-
-      // Track important logs
-      const message = args.join(' ')
-      if (message.includes('error') || message.includes('Error') || 
-          message.includes('failed') || message.includes('Failed')) {
-          message: message,
-          stack: new Error().stack,
-          timestamp: new Date().toISOString(),
-          args: args
-        })
-      }
-      originalLog.apply(console, args)
-    }
+        args,
+      });
+      originalWarn.apply(console, args);
+    };
   }
 
   // Setup global error handlers
   setupGlobalErrorHandlers() {
     // Unhandled promise rejections
-    window.addEventListener('unhandledrejection', (event) => {
+    window.addEventListener('unhandledrejection', event => {
       this.trackError('promise.rejection', {
         message: event.reason?.message || 'Unhandled Promise Rejection',
         stack: event.reason?.stack,
-        timestamp: new Date().toISOString(),
-        reason: event.reason
-      })
-    })
+        reason: event.reason,
+      });
+    });
 
     // JavaScript errors
-    window.addEventListener('error', (event) => {
+    window.addEventListener('error', event => {
       this.trackError('javascript.error', {
         message: event.message,
         filename: event.filename,
         lineno: event.lineno,
         colno: event.colno,
         stack: event.error?.stack,
-        timestamp: new Date().toISOString()
-      })
-    })
+      });
+    });
 
     // Resource loading errors
-    window.addEventListener('error', (event) => {
-      if (event.target && event.target !== window) {
-        this.trackError('resource.error', {
-          message: `Failed to load resource: ${event.target.src || event.target.href}`,
-          resource: event.target.src || event.target.href,
-          timestamp: new Date().toISOString()
-        })
-      }
-    }, true)
+    window.addEventListener(
+      'error',
+      event => {
+        if (event.target && event.target !== window) {
+          this.trackError('resource.error', {
+            message: `Failed to load resource: ${event.target.src || event.target.href}`,
+            resource: event.target.src || event.target.href,
+          });
+        }
+      },
+      true
+    );
   }
 
   // Setup React error boundary
   setupReactErrorBoundary() {
-    // This will be used by ErrorBoundary component
     window.reactErrorHandler = (error, errorInfo) => {
       this.trackError('react.error', {
         message: error.message,
         stack: error.stack,
         componentStack: errorInfo.componentStack,
-        timestamp: new Date().toISOString()
-      })
-    }
+      });
+    };
   }
 
   // Setup performance monitoring
   setupPerformanceMonitoring() {
     if ('PerformanceObserver' in window) {
       // Long tasks
-      const longTaskObserver = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
-          if (entry.duration > 50) { // Tasks longer than 50ms
+      const longTaskObserver = new PerformanceObserver(list => {
+        list.getEntries().forEach(entry => {
+          if (entry.duration > 50) {
             this.trackPerformanceIssue('long.task', {
               duration: entry.duration,
               startTime: entry.startTime,
-              timestamp: new Date().toISOString()
-            })
+            });
           }
-        })
-      })
-      longTaskObserver.observe({ entryTypes: ['longtask'] })
+        });
+      });
+      longTaskObserver.observe({ entryTypes: ['longtask'] });
 
       // Memory usage
       if ('memory' in performance) {
         setInterval(() => {
-          const memory = performance.memory
+          const memory = performance.memory;
           if (memory.usedJSHeapSize > memory.jsHeapSizeLimit * 0.8) {
             this.trackPerformanceIssue('memory.high', {
               used: memory.usedJSHeapSize,
               limit: memory.jsHeapSizeLimit,
-              percentage: (memory.usedJSHeapSize / memory.jsHeapSizeLimit) * 100,
-              timestamp: new Date().toISOString()
-            })
+              percentage:
+                (memory.usedJSHeapSize / memory.jsHeapSizeLimit) * 100,
+            });
           }
-        }, 30000) // Check every 30 seconds
+        }, 30000);
       }
     }
   }
 
   // Setup API error tracking
   setupAPIErrorTracking() {
-    // Override fetch to track API errors
-    const originalFetch = window.fetch
-    window.fetch = async (...args) => {
-      const startTime = performance.now()
-      try {
-        const response = await originalFetch(...args)
-        
-        if (!response.ok) {
-          this.trackAPIError({
-            url: args[0],
-            status: response.status,
-            statusText: response.statusText,
-            duration: performance.now() - startTime,
-            timestamp: new Date().toISOString()
-          })
-        }
-        
-        return response
-      } catch (error) {
-        this.trackAPIError({
-          url: args[0],
-          error: error.message,
-          duration: performance.now() - startTime,
-          timestamp: new Date().toISOString()
-        })
-        throw error
-      }
-    }
+    // This will be used by API service to track errors
+    window.apiErrorHandler = (endpoint, error, requestData) => {
+      this.trackAPIError(endpoint, error, requestData);
+    };
   }
 
-  // Setup network error tracking
-  setupNetworkErrorTracking() {
-    // Network status changes
-    window.addEventListener('online', () => {
-      this.trackWarning('network.online', {
-        message: 'Network connection restored',
-        timestamp: new Date().toISOString()
-      })
-    })
-
-    window.addEventListener('offline', () => {
-      this.trackError('network.offline', {
-        message: 'Network connection lost',
-        timestamp: new Date().toISOString()
-      })
-    })
-
-    // Slow network detection
-    if ('connection' in navigator) {
-      navigator.connection.addEventListener('change', () => {
-        const connection = navigator.connection
-        if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
-          this.trackPerformanceIssue('network.slow', {
-            effectiveType: connection.effectiveType,
-            downlink: connection.downlink,
-            timestamp: new Date().toISOString()
-          })
-        }
-      })
-    }
+  // Generate unique error ID
+  generateErrorId() {
+    return `err_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  // Setup periodic reporting
-  setupPeriodicReporting() {
-    // Report errors every 5 minutes
-    setInterval(() => {
-      this.reportErrors()
-    }, 5 * 60 * 1000)
-
-    // Clean old errors every hour
-    setInterval(() => {
-      this.cleanOldErrors()
-    }, 60 * 60 * 1000)
+  // Generate unique warning ID
+  generateWarningId() {
+    return `warn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  // Track an error
-  trackError(category, data) {
-    const error = {
-      id: this.generateId(),
-      category,
-      ...data,
-      severity: 'error',
-      userAgent: navigator.userAgent,
-      url: window.location.href,
-      timestamp: new Date().toISOString()
+  // Get session ID
+  getSessionId() {
+    let sessionId = sessionStorage.getItem('errorTrackerSessionId');
+    if (!sessionId) {
+      sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      sessionStorage.setItem('errorTrackerSessionId', sessionId);
     }
-
-    this.errors.push(error)
-    this.categories[category] = (this.categories[category] || 0) + 1
-    this.errorCount++
-
-    // Keep only recent errors
-    if (this.errors.length > this.maxErrors) {
-      this.errors.shift()
-    }
-
-    // Log to console in development
-    if (import.meta.env.DEV) {
-      console.group(`🔴 Error Tracked: ${category}`)
-      console.groupEnd()
-    }
-
-    // Send immediate report for critical errors
-    if (category.includes('javascript.error') || category.includes('react.error')) {
-      this.sendImmediateReport(error)
-    }
+    return sessionId;
   }
 
-  // Track a warning
-  trackWarning(category, data) {
-    const warning = {
-      id: this.generateId(),
-      category,
-      ...data,
-      severity: 'warning',
-      userAgent: navigator.userAgent,
-      url: window.location.href,
-      timestamp: new Date().toISOString()
-    }
-
-    this.warnings.push(warning)
-    this.categories[category] = (this.categories[category] || 0) + 1
-    this.warningCount++
-
-    // Keep only recent warnings
-    if (this.warnings.length > this.maxErrors) {
-      this.warnings.shift()
-    }
-  }
-
-  // Track API error
-  trackAPIError(data) {
-    const apiError = {
-      id: this.generateId(),
-      category: 'api.error',
-      ...data,
-      severity: 'error',
-      userAgent: navigator.userAgent,
-      url: window.location.href,
-      timestamp: new Date().toISOString()
-    }
-
-    this.apiErrors.push(apiError)
-    this.categories['api.error'] = (this.categories['api.error'] || 0) + 1
-  }
-
-  // Track performance issue
-  trackPerformanceIssue(category, data) {
-    const issue = {
-      id: this.generateId(),
-      category,
-      ...data,
-      severity: 'warning',
-      userAgent: navigator.userAgent,
-      url: window.location.href,
-      timestamp: new Date().toISOString()
-    }
-
-    this.performanceIssues.push(issue)
-    this.categories['performance.error'] = (this.categories['performance.error'] || 0) + 1
-  }
-
-  // Generate unique ID
-  generateId() {
-    return `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-  }
-
-  // Send immediate report for critical errors
-  sendImmediateReport(error) {
-    if (import.meta.env.DEV) {
-    }
-    
-    // In production, send to error reporting service
-    if (!import.meta.env.DEV) {
-      this.sendToErrorService([error])
-    }
-  }
-
-  // Report all errors
-  reportErrors() {
-    const allErrors = [
-      ...this.errors,
-      ...this.warnings,
-      ...this.apiErrors,
-      ...this.performanceIssues
-    ]
-
-    if (allErrors.length === 0) return
-
-    const report = {
-      timestamp: new Date().toISOString(),
-      sessionId: this.getSessionId(),
-      userId: this.getUserId(),
-      summary: {
-        totalErrors: this.errorCount,
-        totalWarnings: this.warningCount,
-        categories: this.categories
-      },
-      errors: allErrors.slice(-20) // Last 20 errors
-    }
-
-    if (import.meta.env.DEV) {
-      console.group('📊 Error Report')
-      console.groupEnd()
-    } else {
-      this.sendToErrorService(report.errors)
-    }
-  }
-
-  // Send errors to error reporting service
-  async sendToErrorService(errors) {
+  // Get user ID
+  getUserId() {
     try {
-      await fetch('/api/errors', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ errors })
-      })
-    } catch (error) {
-      console.warn('Failed to send error report:', error)
+      const user = JSON.parse(localStorage.getItem('user_data') || '{}');
+      return user.id || 'anonymous';
+    } catch {
+      return 'anonymous';
     }
   }
 
   // Clean old errors (older than 24 hours)
   cleanOldErrors() {
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
-    
-    this.errors = this.errors.filter(error => 
-      new Date(error.timestamp) > oneDayAgo
-    )
-    
-    this.warnings = this.warnings.filter(warning => 
-      new Date(warning.timestamp) > oneDayAgo
-    )
-    
-    this.apiErrors = this.apiErrors.filter(error => 
-      new Date(error.timestamp) > oneDayAgo
-    )
-    
-    this.performanceIssues = this.performanceIssues.filter(issue => 
-      new Date(issue.timestamp) > oneDayAgo
-    )
-  }
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-  // Get session ID
-  getSessionId() {
-    let sessionId = sessionStorage.getItem('errorTrackerSessionId')
-    if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-      sessionStorage.setItem('errorTrackerSessionId', sessionId)
-    }
-    return sessionId
-  }
+    this.errors = this.errors.filter(
+      error => new Date(error.timestamp) > oneDayAgo
+    );
 
-  // Get user ID
-  getUserId() {
-    const user = JSON.parse(localStorage.getItem('fallbackUser') || '{}')
-    return user.id || 'anonymous'
+    this.warnings = this.warnings.filter(
+      warning => new Date(warning.timestamp) > oneDayAgo
+    );
+
+    this.apiErrors = this.apiErrors.filter(
+      error => new Date(error.timestamp) > oneDayAgo
+    );
+
+    this.performanceIssues = this.performanceIssues.filter(
+      issue => new Date(issue.timestamp) > oneDayAgo
+    );
   }
 
   // Get error statistics
@@ -446,18 +310,18 @@ class ErrorTracker {
       totalWarnings: this.warningCount,
       categories: this.categories,
       recentErrors: this.errors.slice(-10),
-      recentWarnings: this.warnings.slice(-10)
-    }
+      recentWarnings: this.warnings.slice(-10),
+    };
   }
 
   // Clear all errors
   clear() {
-    this.errors = []
-    this.warnings = []
-    this.apiErrors = []
-    this.performanceIssues = []
-    this.errorCount = 0
-    this.warningCount = 0
+    this.errors = [];
+    this.warnings = [];
+    this.apiErrors = [];
+    this.performanceIssues = [];
+    this.errorCount = 0;
+    this.warningCount = 0;
     this.categories = {
       'console.error': 0,
       'console.warn': 0,
@@ -465,17 +329,17 @@ class ErrorTracker {
       'network.error': 0,
       'react.error': 0,
       'javascript.error': 0,
-      'performance.error': 0
-    }
+      'performance.error': 0,
+    };
   }
 }
 
 // Create and export singleton instance
-export const errorTracker = new ErrorTracker()
+export const errorTracker = new ErrorTracker();
 
 // Initialize error tracking
 if (typeof window !== 'undefined') {
-  errorTracker.init()
+  errorTracker.init();
 }
 
-export default errorTracker
+export default errorTracker;

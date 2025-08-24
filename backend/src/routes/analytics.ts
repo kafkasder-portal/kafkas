@@ -12,7 +12,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 const analyticsData: any = {
   events: [],
   metrics: [],
-  healthReports: []
+  healthReports: [],
 };
 
 // =====================================================
@@ -23,7 +23,7 @@ const analyticsData: any = {
 router.post('/events', async (req, res) => {
   try {
     const { events } = req.body;
-    
+
     if (!Array.isArray(events)) {
       return res.status(400).json({ error: 'Events must be an array' });
     }
@@ -34,15 +34,15 @@ router.post('/events', async (req, res) => {
     // Supabase'e kaydet (opsiyonel)
     if (events.length > 0) {
       try {
-        const { error } = await supabase
-          .from('analytics_events')
-          .insert(events.map(event => ({
+        const { error } = await supabase.from('analytics_events').insert(
+          events.map(event => ({
             name: event.name,
             properties: event.properties,
             session_id: event.properties.sessionId,
             user_id: event.properties.userId,
-            timestamp: event.properties.timestamp
-          })));
+            timestamp: event.properties.timestamp,
+          }))
+        );
 
         if (error) {
           console.error('Error saving analytics events to Supabase:', error);
@@ -68,7 +68,7 @@ router.post('/events', async (req, res) => {
 router.post('/metrics', async (req, res) => {
   try {
     const { performance, timestamp, sessionId } = req.body;
-    
+
     if (!performance) {
       return res.status(400).json({ error: 'Performance data is required' });
     }
@@ -76,7 +76,7 @@ router.post('/metrics', async (req, res) => {
     const metricData = {
       performance,
       timestamp,
-      sessionId
+      sessionId,
     };
 
     // Metrics'i geçici storage'a ekle
@@ -84,17 +84,15 @@ router.post('/metrics', async (req, res) => {
 
     // Supabase'e kaydet (opsiyonel)
     try {
-      const { error } = await supabase
-        .from('performance_metrics')
-        .insert({
-          session_id: sessionId,
-          lcp: performance.LCP,
-          fid: performance.FID,
-          cls: performance.CLS,
-          memory: performance.memory,
-          api_calls: performance.apiCalls,
-          timestamp
-        });
+      const { error } = await supabase.from('performance_metrics').insert({
+        session_id: sessionId,
+        lcp: performance.LCP,
+        fid: performance.FID,
+        cls: performance.CLS,
+        memory: performance.memory,
+        api_calls: performance.apiCalls,
+        timestamp,
+      });
 
       if (error) {
         console.error('Error saving performance metrics to Supabase:', error);
@@ -119,7 +117,7 @@ router.post('/metrics', async (req, res) => {
 router.post('/health/report', async (req, res) => {
   try {
     const healthData = req.body;
-    
+
     if (!healthData) {
       return res.status(400).json({ error: 'Health data is required' });
     }
@@ -129,14 +127,12 @@ router.post('/health/report', async (req, res) => {
 
     // Supabase'e kaydet (opsiyonel)
     try {
-      const { error } = await supabase
-        .from('health_reports')
-        .insert({
-          system_info: healthData.system,
-          network_info: healthData.network,
-          application_info: healthData.application,
-          timestamp: healthData.timestamp
-        });
+      const { error } = await supabase.from('health_reports').insert({
+        system_info: healthData.system,
+        network_info: healthData.network,
+        application_info: healthData.application,
+        timestamp: healthData.timestamp,
+      });
 
       if (error) {
         console.error('Error saving health report to Supabase:', error);
@@ -165,10 +161,10 @@ router.post('/health/report', async (req, res) => {
 router.get('/summary', async (req, res) => {
   try {
     const { period = '24h' } = req.query;
-    
+
     const now = new Date();
     let startTime: Date;
-    
+
     switch (period) {
       case '1h':
         startTime = new Date(now.getTime() - 60 * 60 * 1000);
@@ -187,16 +183,16 @@ router.get('/summary', async (req, res) => {
     }
 
     // Filter data by time period
-    const filteredEvents = analyticsData.events.filter((event: any) => 
-      new Date(event.properties.timestamp) >= startTime
+    const filteredEvents = analyticsData.events.filter(
+      (event: any) => new Date(event.properties.timestamp) >= startTime
     );
 
-    const filteredMetrics = analyticsData.metrics.filter((metric: any) => 
-      new Date(metric.timestamp) >= startTime
+    const filteredMetrics = analyticsData.metrics.filter(
+      (metric: any) => new Date(metric.timestamp) >= startTime
     );
 
-    const filteredHealthReports = analyticsData.healthReports.filter((report: any) => 
-      new Date(report.timestamp) >= startTime
+    const filteredHealthReports = analyticsData.healthReports.filter(
+      (report: any) => new Date(report.timestamp) >= startTime
     );
 
     // Calculate summary statistics
@@ -207,19 +203,25 @@ router.get('/summary', async (req, res) => {
         byType: filteredEvents.reduce((acc: any, event: any) => {
           acc[event.name] = (acc[event.name] || 0) + 1;
           return acc;
-        }, {})
+        }, {}),
       },
       performance: {
         avgLCP: calculateAverage(filteredMetrics, 'performance.LCP'),
         avgFID: calculateAverage(filteredMetrics, 'performance.FID'),
         avgCLS: calculateAverage(filteredMetrics, 'performance.CLS'),
-        avgMemoryUsage: calculateAverage(filteredMetrics, 'performance.memory.used')
+        avgMemoryUsage: calculateAverage(
+          filteredMetrics,
+          'performance.memory.used'
+        ),
       },
       health: {
         totalReports: filteredHealthReports.length,
-        avgResponseTime: calculateAverage(filteredHealthReports, 'network.responseTime'),
-        successRate: calculateSuccessRate(filteredHealthReports)
-      }
+        avgResponseTime: calculateAverage(
+          filteredHealthReports,
+          'network.responseTime'
+        ),
+        successRate: calculateSuccessRate(filteredHealthReports),
+      },
     };
 
     res.json(summary);
@@ -237,13 +239,17 @@ router.get('/events/:type', async (req, res) => {
 
     const filteredEvents = analyticsData.events
       .filter((event: any) => event.name === type)
-      .slice(parseInt(offset as string), parseInt(offset as string) + parseInt(limit as string));
+      .slice(
+        parseInt(offset as string),
+        parseInt(offset as string) + parseInt(limit as string)
+      );
 
     res.json({
       events: filteredEvents,
-      total: analyticsData.events.filter((event: any) => event.name === type).length,
+      total: analyticsData.events.filter((event: any) => event.name === type)
+        .length,
       limit: parseInt(limit as string),
-      offset: parseInt(offset as string)
+      offset: parseInt(offset as string),
     });
   } catch (error) {
     console.error('Error retrieving events:', error);
@@ -256,14 +262,16 @@ router.get('/metrics', async (req, res) => {
   try {
     const { limit = 100, offset = 0 } = req.query;
 
-    const metrics = analyticsData.metrics
-      .slice(parseInt(offset as string), parseInt(offset as string) + parseInt(limit as string));
+    const metrics = analyticsData.metrics.slice(
+      parseInt(offset as string),
+      parseInt(offset as string) + parseInt(limit as string)
+    );
 
     res.json({
       metrics,
       total: analyticsData.metrics.length,
       limit: parseInt(limit as string),
-      offset: parseInt(offset as string)
+      offset: parseInt(offset as string),
     });
   } catch (error) {
     console.error('Error retrieving metrics:', error);
@@ -276,14 +284,16 @@ router.get('/health', async (req, res) => {
   try {
     const { limit = 100, offset = 0 } = req.query;
 
-    const reports = analyticsData.healthReports
-      .slice(parseInt(offset as string), parseInt(offset as string) + parseInt(limit as string));
+    const reports = analyticsData.healthReports.slice(
+      parseInt(offset as string),
+      parseInt(offset as string) + parseInt(limit as string)
+    );
 
     res.json({
       reports,
       total: analyticsData.healthReports.length,
       limit: parseInt(limit as string),
-      offset: parseInt(offset as string)
+      offset: parseInt(offset as string),
     });
   } catch (error) {
     console.error('Error retrieving health reports:', error);
@@ -299,19 +309,19 @@ function calculateAverage(data: any[], path: string): number {
   const values = data
     .map(item => getNestedValue(item, path))
     .filter(value => value !== null && value !== undefined && !isNaN(value));
-  
+
   if (values.length === 0) return 0;
-  
+
   return values.reduce((sum, value) => sum + value, 0) / values.length;
 }
 
 function calculateSuccessRate(healthReports: any[]): number {
   if (healthReports.length === 0) return 0;
-  
-  const successfulReports = healthReports.filter(report => 
-    report.network && report.network.status === 200
+
+  const successfulReports = healthReports.filter(
+    report => report.network && report.network.status === 200
   );
-  
+
   return (successfulReports.length / healthReports.length) * 100;
 }
 
@@ -344,7 +354,7 @@ async function createAnalyticsTables() {
         CREATE INDEX IF NOT EXISTS idx_analytics_events_name ON analytics_events(name);
         CREATE INDEX IF NOT EXISTS idx_analytics_events_session_id ON analytics_events(session_id);
         CREATE INDEX IF NOT EXISTS idx_analytics_events_timestamp ON analytics_events(timestamp);
-      `
+      `,
     });
 
     if (eventsError) {
@@ -368,7 +378,7 @@ async function createAnalyticsTables() {
         
         CREATE INDEX IF NOT EXISTS idx_performance_metrics_session_id ON performance_metrics(session_id);
         CREATE INDEX IF NOT EXISTS idx_performance_metrics_timestamp ON performance_metrics(timestamp);
-      `
+      `,
     });
 
     if (metricsError) {
@@ -388,7 +398,7 @@ async function createAnalyticsTables() {
         );
         
         CREATE INDEX IF NOT EXISTS idx_health_reports_timestamp ON health_reports(timestamp);
-      `
+      `,
     });
 
     if (healthError) {

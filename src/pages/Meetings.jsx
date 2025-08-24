@@ -1,79 +1,88 @@
-import { motion } from 'framer-motion'
-import { Calendar, Clock, Filter, MapPin, Plus, Search, Users } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
-import { meetingsService } from '../services/meetingsService'
+import { motion } from 'framer-motion';
+import {
+  Calendar,
+  Clock,
+  Filter,
+  MapPin,
+  Plus,
+  Search,
+  Users,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { meetingsService } from '../services/meetingsService';
 
 const Meetings = () => {
-  const [meetings, setMeetings] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filteredMeetings, setFilteredMeetings] = useState([])
+  const [meetings, setMeetings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredMeetings, setFilteredMeetings] = useState([]);
 
   // Veri yükleme fonksiyonu
   const loadMeetings = async () => {
     try {
-      setLoading(true)
-      setError(null)
-      const data = await meetingsService.getAll()
-      setMeetings(data)
+      setLoading(true);
+      setError(null);
+      const data = await meetingsService.getAll();
+      setMeetings(data);
     } catch (_err) {
-      setError('Toplantılar yüklenirken hata oluştu')
-      toast.error('Toplantılar yüklenemedi')
+      setError('Toplantılar yüklenirken hata oluştu');
+      toast.error('Toplantılar yüklenemedi');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // Toplantı güncelleme fonksiyonu
   const handleUpdateMeeting = async (id, updates) => {
     try {
-      await meetingsService.update(id, updates)
-      await loadMeetings()
-      toast.success('Toplantı güncellendi')
+      await meetingsService.update(id, updates);
+      await loadMeetings();
+      toast.success('Toplantı güncellendi');
     } catch (_err) {
-      toast.error('Toplantı güncellenirken hata oluştu')
+      toast.error('Toplantı güncellenirken hata oluştu');
     }
-  }
+  };
 
   // Toplantı silme fonksiyonu
-  const handleDeleteMeeting = async (id) => {
+  const handleDeleteMeeting = async id => {
     try {
-      await meetingsService.delete(id)
-      await loadMeetings()
-      toast.success('Toplantı silindi')
+      await meetingsService.delete(id);
+      await loadMeetings();
+      toast.success('Toplantı silindi');
     } catch (_err) {
-      toast.error('Toplantı silinirken hata oluştu')
+      toast.error('Toplantı silinirken hata oluştu');
     }
-  }
+  };
 
   // Component mount edildiğinde veri yükle
   useEffect(() => {
-    loadMeetings()
-  }, [])
+    loadMeetings();
+  }, []);
 
   // Arama filtreleme
   useEffect(() => {
-    const filtered = meetings.filter(meeting =>
-      meeting.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      meeting.location.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    setFilteredMeetings(filtered)
-  }, [meetings, searchTerm])
+    const filtered = meetings.filter(
+      meeting =>
+        meeting.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        meeting.location.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredMeetings(filtered);
+  }, [meetings, searchTerm]);
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status) {
       case 'Planlandı':
-        return '#3b82f6'
+        return '#3b82f6';
       case 'Tamamlandı':
-        return '#10b981'
+        return '#10b981';
       case 'İptal':
-        return '#ef4444'
+        return '#ef4444';
       default:
-        return '#64748b'
+        return '#64748b';
     }
-  }
+  };
 
   return (
     <motion.div
@@ -82,10 +91,28 @@ const Meetings = () => {
       transition={{ duration: 0.5 }}
       style={{ padding: '2rem' }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '2rem',
+        }}
+      >
         <div>
-          <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#1a202c', margin: 0 }}>Toplantılar</h1>
-          <p style={{ color: '#64748b', margin: '0.5rem 0 0 0' }}>Toplantı planları ve kayıtları</p>
+          <h1
+            style={{
+              fontSize: '2rem',
+              fontWeight: '700',
+              color: '#1a202c',
+              margin: 0,
+            }}
+          >
+            Toplantılar
+          </h1>
+          <p style={{ color: '#64748b', margin: '0.5rem 0 0 0' }}>
+            Toplantı planları ve kayıtları
+          </p>
         </div>
         <motion.button
           style={{
@@ -98,7 +125,7 @@ const Meetings = () => {
             border: 'none',
             borderRadius: '12px',
             fontWeight: '600',
-            cursor: 'pointer'
+            cursor: 'pointer',
           }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -109,22 +136,31 @@ const Meetings = () => {
       </div>
 
       {/* Arama ve Filtre */}
-      <div className="card" style={{ marginBottom: '1.5rem' }}>
+      <div className='card' style={{ marginBottom: '1.5rem' }}>
         <div style={{ display: 'flex', gap: '1rem' }}>
           <div style={{ position: 'relative', flex: 1 }}>
-            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+            <Search
+              size={18}
+              style={{
+                position: 'absolute',
+                left: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: '#64748b',
+              }}
+            />
             <input
-              type="text"
-              placeholder="Toplantı ara..."
+              type='text'
+              placeholder='Toplantı ara...'
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               style={{
                 width: '100%',
                 padding: '0.75rem 0.75rem 0.75rem 2.5rem',
                 border: '2px solid #e2e8f0',
                 borderRadius: '12px',
                 fontSize: '0.875rem',
-                outline: 'none'
+                outline: 'none',
               }}
             />
           </div>
@@ -137,7 +173,7 @@ const Meetings = () => {
               backgroundColor: '#f8fafc',
               border: '2px solid #e2e8f0',
               borderRadius: '12px',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
             whileHover={{ backgroundColor: '#f1f5f9' }}
           >
@@ -148,13 +184,34 @@ const Meetings = () => {
       </div>
 
       {/* Toplantı Listesi */}
-      <div className="card">
-        <h3 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1a202c', marginBottom: '1.5rem' }}>Toplantı Listesi</h3>
+      <div className='card'>
+        <h3
+          style={{
+            fontSize: '1.25rem',
+            fontWeight: '600',
+            color: '#1a202c',
+            marginBottom: '1.5rem',
+          }}
+        >
+          Toplantı Listesi
+        </h3>
 
         {loading && (
           <div style={{ textAlign: 'center', padding: '2rem' }}>
-            <div style={{ display: 'inline-block', width: '32px', height: '32px', border: '3px solid #f3f3f3', borderTop: '3px solid #3b82f6', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
-            <p style={{ marginTop: '1rem', color: '#64748b' }}>Toplantılar yükleniyor...</p>
+            <div
+              style={{
+                display: 'inline-block',
+                width: '32px',
+                height: '32px',
+                border: '3px solid #f3f3f3',
+                borderTop: '3px solid #3b82f6',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite',
+              }}
+            ></div>
+            <p style={{ marginTop: '1rem', color: '#64748b' }}>
+              Toplantılar yükleniyor...
+            </p>
           </div>
         )}
 
@@ -169,7 +226,7 @@ const Meetings = () => {
                 color: 'white',
                 border: 'none',
                 borderRadius: '8px',
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
             >
               Tekrar Dene
@@ -185,37 +242,86 @@ const Meetings = () => {
 
         {!loading && !error && (
           <div style={{ display: 'grid', gap: '1rem' }}>
-            {filteredMeetings.map((meeting) => (
+            {filteredMeetings.map(meeting => (
               <motion.div
                 key={meeting.id}
                 style={{
                   padding: '1.5rem',
                   border: '2px solid #e2e8f0',
                   borderRadius: '12px',
-                  backgroundColor: '#ffffff'
+                  backgroundColor: '#ffffff',
                 }}
-                whileHover={{ scale: 1.02, boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}
+                whileHover={{
+                  scale: 1.02,
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                }}
                 transition={{ duration: 0.2 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    marginBottom: '1rem',
+                  }}
+                >
                   <div>
-                    <h4 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#1a202c', margin: '0 0 0.5rem 0' }}>
+                    <h4
+                      style={{
+                        fontSize: '1.125rem',
+                        fontWeight: '600',
+                        color: '#1a202c',
+                        margin: '0 0 0.5rem 0',
+                      }}
+                    >
                       {meeting.title}
                     </h4>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: '#64748b', fontSize: '0.875rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '1rem',
+                        color: '#64748b',
+                        fontSize: '0.875rem',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.25rem',
+                        }}
+                      >
                         <Calendar size={14} />
                         {meeting.date}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.25rem',
+                        }}
+                      >
                         <Clock size={14} />
                         {meeting.time}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.25rem',
+                        }}
+                      >
                         <MapPin size={14} />
                         {meeting.location}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.25rem',
+                        }}
+                      >
                         <Users size={14} />
                         {meeting.participants} kişi
                       </div>
@@ -228,7 +334,7 @@ const Meetings = () => {
                       color: 'white',
                       borderRadius: '20px',
                       fontSize: '0.75rem',
-                      fontWeight: '600'
+                      fontWeight: '600',
                     }}
                   >
                     {meeting.status}
@@ -236,7 +342,14 @@ const Meetings = () => {
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <motion.button
-                    onClick={() => handleUpdateMeeting(meeting.id, { status: meeting.status === 'Planlandı' ? 'Tamamlandı' : 'Planlandı' })}
+                    onClick={() =>
+                      handleUpdateMeeting(meeting.id, {
+                        status:
+                          meeting.status === 'Planlandı'
+                            ? 'Tamamlandı'
+                            : 'Planlandı',
+                      })
+                    }
                     style={{
                       padding: '0.5rem 1rem',
                       backgroundColor: '#667eea',
@@ -244,7 +357,7 @@ const Meetings = () => {
                       border: 'none',
                       borderRadius: '8px',
                       fontSize: '0.875rem',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
                     }}
                     whileHover={{ backgroundColor: '#5a67d8' }}
                   >
@@ -259,7 +372,7 @@ const Meetings = () => {
                       border: '1px solid #e2e8f0',
                       borderRadius: '8px',
                       fontSize: '0.875rem',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
                     }}
                     whileHover={{ backgroundColor: '#f1f5f9' }}
                   >
@@ -272,7 +385,7 @@ const Meetings = () => {
         )}
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
-export default Meetings
+export default Meetings;

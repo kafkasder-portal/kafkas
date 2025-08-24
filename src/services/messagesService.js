@@ -60,7 +60,9 @@ export const messagesService = {
   // Get messages by conversation
   async getMessagesByConversation(conversationId) {
     try {
-      const response = await apiClient.get(`/messages/conversation/${conversationId}`);
+      const response = await apiClient.get(
+        `/messages/conversation/${conversationId}`
+      );
       return response;
     } catch (error) {
       console.error('Failed to fetch messages by conversation:', error);
@@ -104,7 +106,9 @@ export const messagesService = {
   // Mark multiple messages as read
   async markMultipleAsRead(messageIds) {
     try {
-      const response = await apiClient.put('/messages/read-multiple', { messageIds });
+      const response = await apiClient.put('/messages/read-multiple', {
+        messageIds,
+      });
       return response;
     } catch (error) {
       console.error('Failed to mark messages as read:', error);
@@ -115,7 +119,9 @@ export const messagesService = {
   // Search messages
   async searchMessages(query) {
     try {
-      const response = await apiClient.get(`/messages/search?q=${encodeURIComponent(query)}`);
+      const response = await apiClient.get(
+        `/messages/search?q=${encodeURIComponent(query)}`
+      );
       return response;
     } catch (error) {
       console.error('Failed to search messages:', error);
@@ -126,7 +132,9 @@ export const messagesService = {
   // Get conversations for user
   async getUserConversations(userId) {
     try {
-      const response = await apiClient.get(`/messages/conversations?user=${userId}`);
+      const response = await apiClient.get(
+        `/messages/conversations?user=${userId}`
+      );
       return response;
     } catch (error) {
       console.error('Failed to fetch user conversations:', error);
@@ -137,7 +145,10 @@ export const messagesService = {
   // Create new conversation
   async createConversation(participantIds, title) {
     try {
-      const response = await apiClient.post('/messages/conversations', { participantIds, title });
+      const response = await apiClient.post('/messages/conversations', {
+        participantIds,
+        title,
+      });
       return response;
     } catch (error) {
       console.error('Failed to create conversation:', error);

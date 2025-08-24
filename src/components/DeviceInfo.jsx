@@ -1,6 +1,13 @@
 import React, { memo } from 'react';
 import { motion } from 'framer-motion';
-import { Monitor, Smartphone, Tablet, Info, Globe, Settings } from 'lucide-react';
+import {
+  Monitor,
+  Smartphone,
+  Tablet,
+  Info,
+  Globe,
+  Settings,
+} from 'lucide-react';
 import useDeviceDetection from '../hooks/useDeviceDetection.jsx';
 import './DeviceInfo.css';
 
@@ -31,91 +38,100 @@ const DeviceInfo = memo(({ showDetailed = false }) => {
 
   if (!showDetailed) {
     return (
-      <motion.div 
-        className="device-indicator"
+      <motion.div
+        className='device-indicator'
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
         style={{ color: getDeviceColor() }}
       >
         {getDeviceIcon()}
-        <span className="device-type">{deviceInfo.type}</span>
+        <span className='device-type'>{deviceInfo.type}</span>
       </motion.div>
     );
   }
 
   return (
-    <motion.div 
-      className="device-info-card"
+    <motion.div
+      className='device-info-card'
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="device-info-header">
-        <div className="device-icon" style={{ color: getDeviceColor() }}>
+      <div className='device-info-header'>
+        <div className='device-icon' style={{ color: getDeviceColor() }}>
           {getDeviceIcon()}
         </div>
-        <div className="device-title">
+        <div className='device-title'>
           <h3>Cihaz Bilgileri</h3>
-          <span className="device-type-badge" style={{ backgroundColor: getDeviceColor() }}>
+          <span
+            className='device-type-badge'
+            style={{ backgroundColor: getDeviceColor() }}
+          >
             {deviceInfo.type.toUpperCase()}
           </span>
         </div>
       </div>
 
-      <div className="device-info-grid">
-        <div className="info-item">
+      <div className='device-info-grid'>
+        <div className='info-item'>
           <Monitor size={16} />
           <div>
-            <span className="info-label">Ekran Boyutu</span>
-            <span className="info-value">{deviceInfo.screenWidth} x {deviceInfo.screenHeight}</span>
+            <span className='info-label'>Ekran Boyutu</span>
+            <span className='info-value'>
+              {deviceInfo.screenWidth} x {deviceInfo.screenHeight}
+            </span>
           </div>
         </div>
 
-        <div className="info-item">
+        <div className='info-item'>
           <Settings size={16} />
           <div>
-            <span className="info-label">Yönelim</span>
-            <span className="info-value">{deviceInfo.orientation === 'landscape' ? 'Yatay' : 'Dikey'}</span>
+            <span className='info-label'>Yönelim</span>
+            <span className='info-value'>
+              {deviceInfo.orientation === 'landscape' ? 'Yatay' : 'Dikey'}
+            </span>
           </div>
         </div>
 
-        <div className="info-item">
+        <div className='info-item'>
           <Globe size={16} />
           <div>
-            <span className="info-label">Tarayıcı</span>
-            <span className="info-value">{deviceInfo.browser}</span>
+            <span className='info-label'>Tarayıcı</span>
+            <span className='info-value'>{deviceInfo.browser}</span>
           </div>
         </div>
 
-        <div className="info-item">
+        <div className='info-item'>
           <Info size={16} />
           <div>
-            <span className="info-label">İşletim Sistemi</span>
-            <span className="info-value">{deviceInfo.os}</span>
+            <span className='info-label'>İşletim Sistemi</span>
+            <span className='info-value'>{deviceInfo.os}</span>
           </div>
         </div>
 
-        <div className="info-item">
+        <div className='info-item'>
           <Smartphone size={16} />
           <div>
-            <span className="info-label">Dokunmatik Destek</span>
-            <span className="info-value">{deviceInfo.touchSupport ? 'Evet' : 'Hayır'}</span>
+            <span className='info-label'>Dokunmatik Destek</span>
+            <span className='info-value'>
+              {deviceInfo.touchSupport ? 'Evet' : 'Hayır'}
+            </span>
           </div>
         </div>
 
-        <div className="info-item">
+        <div className='info-item'>
           <Settings size={16} />
           <div>
-            <span className="info-label">Platform</span>
-            <span className="info-value">{deviceInfo.platform}</span>
+            <span className='info-label'>Platform</span>
+            <span className='info-value'>{deviceInfo.platform}</span>
           </div>
         </div>
       </div>
 
-      <div className="device-capabilities">
+      <div className='device-capabilities'>
         <h4>Cihaz Özellikleri</h4>
-        <div className="capabilities-grid">
+        <div className='capabilities-grid'>
           <div className={`capability ${deviceInfo.isMobile ? 'active' : ''}`}>
             <Smartphone size={14} />
             <span>Mobil</span>
@@ -128,7 +144,9 @@ const DeviceInfo = memo(({ showDetailed = false }) => {
             <Monitor size={14} />
             <span>Desktop</span>
           </div>
-          <div className={`capability ${deviceInfo.touchSupport ? 'active' : ''}`}>
+          <div
+            className={`capability ${deviceInfo.touchSupport ? 'active' : ''}`}
+          >
             <Info size={14} />
             <span>Dokunmatik</span>
           </div>

@@ -5,24 +5,34 @@ import { v4 as uuidv4 } from 'uuid';
 const router = express.Router();
 
 // Supabase client
-const supabaseUrl = process.env.SUPABASE_URL || 'https://fagblbogumttcrsbletc.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ2JsYm9ndW10dGNyc2JsZXRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4NDg4OTksImV4cCI6MjA3MTQyNDg5OX0.PNQpiOsctCqIrH20BdylDtzVVKOJW4KmBo79w2izioo';
+const supabaseUrl =
+  process.env.SUPABASE_URL || 'https://fagblbogumttcrsbletc.supabase.co';
+const supabaseKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ2JsYm9ndW10dGNyc2JsZXRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4NDg4OTksImV4cCI6MjA3MTQyNDg5OX0.PNQpiOsctCqIrH20BdylDtzVVKOJW4KmBo79w2izioo';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Get all tasks
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = '', status = '', priority = '', assignedTo = '' } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      search = '',
+      status = '',
+      priority = '',
+      assignedTo = '',
+    } = req.query;
     const offset = (Number(page) - 1) * Number(limit);
 
-    let supabaseQuery = supabase
-      .from('tasks')
-      .select('*', { count: 'exact' });
+    let supabaseQuery = supabase.from('tasks').select('*', { count: 'exact' });
 
     // Apply filters
     if (search) {
-      supabaseQuery = supabaseQuery.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
+      supabaseQuery = supabaseQuery.or(
+        `title.ilike.%${search}%,description.ilike.%${search}%`
+      );
     }
     if (status) {
       supabaseQuery = supabaseQuery.eq('status', status);
@@ -34,7 +44,11 @@ router.get('/', async (req, res) => {
       supabaseQuery = supabaseQuery.eq('assigned_to', assignedTo);
     }
 
-    const { data: tasks, error, count } = await supabaseQuery
+    const {
+      data: tasks,
+      error,
+      count,
+    } = await supabaseQuery
       .order('created_at', { ascending: false })
       .range(offset, offset + Number(limit) - 1);
 
@@ -45,28 +59,29 @@ router.get('/', async (req, res) => {
 
     const totalTasks = count || 0;
 
-    const formattedTasks = tasks?.map((task: any) => ({
-      id: task.id,
-      title: task.title,
-      description: task.description,
-      priority: task.priority,
-      status: task.status,
-      category: task.category,
-      assignedTo: task.assigned_to,
-      createdBy: task.created_by,
-      dueDate: task.due_date,
-      startDate: task.start_date,
-      completedDate: task.completed_date,
-      estimatedHours: task.estimated_hours,
-      actualHours: task.actual_hours,
-      progress: task.progress,
-      tags: task.tags,
-      attachments: task.attachments,
-      comments: task.comments,
-      dependencies: task.dependencies,
-      createdAt: task.created_at,
-      updatedAt: task.updated_at
-    })) || [];
+    const formattedTasks =
+      tasks?.map((task: any) => ({
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        priority: task.priority,
+        status: task.status,
+        category: task.category,
+        assignedTo: task.assigned_to,
+        createdBy: task.created_by,
+        dueDate: task.due_date,
+        startDate: task.start_date,
+        completedDate: task.completed_date,
+        estimatedHours: task.estimated_hours,
+        actualHours: task.actual_hours,
+        progress: task.progress,
+        tags: task.tags,
+        attachments: task.attachments,
+        comments: task.comments,
+        dependencies: task.dependencies,
+        createdAt: task.created_at,
+        updatedAt: task.updated_at,
+      })) || [];
 
     res.json({
       success: true,
@@ -76,15 +91,15 @@ router.get('/', async (req, res) => {
           page: Number(page),
           limit: Number(limit),
           total: totalTasks,
-          totalPages: Math.ceil(totalTasks / Number(limit))
-        }
-      }
+          totalPages: Math.ceil(totalTasks / Number(limit)),
+        },
+      },
     });
   } catch (error) {
     console.error('Get tasks error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -103,7 +118,7 @@ router.get('/:id', async (req, res) => {
     if (error || !task) {
       return res.status(404).json({
         success: false,
-        message: 'Task not found'
+        message: 'Task not found',
       });
     }
 
@@ -130,15 +145,15 @@ router.get('/:id', async (req, res) => {
           comments: task.comments,
           dependencies: task.dependencies,
           createdAt: task.created_at,
-          updatedAt: task.updated_at
-        }
-      }
+          updatedAt: task.updated_at,
+        },
+      },
     });
   } catch (error) {
     console.error('Get task error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -146,12 +161,22 @@ router.get('/:id', async (req, res) => {
 // Create new task
 router.post('/', async (req, res) => {
   try {
-    const { title, description, priority, status, category, assignedTo, dueDate, estimatedHours, tags } = req.body;
+    const {
+      title,
+      description,
+      priority,
+      status,
+      category,
+      assignedTo,
+      dueDate,
+      estimatedHours,
+      tags,
+    } = req.body;
 
     if (!title || !priority || !status) {
       return res.status(400).json({
         success: false,
-        message: 'Title, priority, and status are required'
+        message: 'Title, priority, and status are required',
       });
     }
 
@@ -175,18 +200,16 @@ router.post('/', async (req, res) => {
       comments: [],
       dependencies: [],
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
-    const { error } = await supabase
-      .from('tasks')
-      .insert([newTask]);
+    const { error } = await supabase.from('tasks').insert([newTask]);
 
     if (error) {
       console.error('Database error:', error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to create task'
+        message: 'Failed to create task',
       });
     }
 
@@ -213,16 +236,16 @@ router.post('/', async (req, res) => {
           comments: newTask.comments,
           dependencies: newTask.dependencies,
           createdAt: newTask.created_at,
-          updatedAt: newTask.updated_at
-        }
+          updatedAt: newTask.updated_at,
+        },
       },
-      message: 'Task created successfully'
+      message: 'Task created successfully',
     });
   } catch (error) {
     console.error('Create task error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -231,7 +254,18 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, priority, status, category, assignedTo, dueDate, estimatedHours, progress, tags } = req.body;
+    const {
+      title,
+      description,
+      priority,
+      status,
+      category,
+      assignedTo,
+      dueDate,
+      estimatedHours,
+      progress,
+      tags,
+    } = req.body;
 
     const { data: existingTask, error: checkError } = await supabase
       .from('tasks')
@@ -242,22 +276,27 @@ router.put('/:id', async (req, res) => {
     if (checkError || !existingTask) {
       return res.status(404).json({
         success: false,
-        message: 'Task not found'
+        message: 'Task not found',
       });
     }
 
     const updateData = {
       title: title || existingTask.title,
-      description: description !== undefined ? description : existingTask.description,
+      description:
+        description !== undefined ? description : existingTask.description,
       priority: priority || existingTask.priority,
       status: status || existingTask.status,
       category: category || existingTask.category,
-      assigned_to: assignedTo !== undefined ? assignedTo : existingTask.assigned_to,
+      assigned_to:
+        assignedTo !== undefined ? assignedTo : existingTask.assigned_to,
       due_date: dueDate !== undefined ? dueDate : existingTask.due_date,
-      estimated_hours: estimatedHours !== undefined ? estimatedHours : existingTask.estimated_hours,
+      estimated_hours:
+        estimatedHours !== undefined
+          ? estimatedHours
+          : existingTask.estimated_hours,
       progress: progress !== undefined ? progress : existingTask.progress,
       tags: tags || existingTask.tags,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { error: updateError } = await supabase
@@ -269,7 +308,7 @@ router.put('/:id', async (req, res) => {
       console.error('Database error:', updateError);
       return res.status(500).json({
         success: false,
-        message: 'Failed to update task'
+        message: 'Failed to update task',
       });
     }
 
@@ -278,16 +317,16 @@ router.put('/:id', async (req, res) => {
       data: {
         task: {
           id,
-          ...updateData
-        }
+          ...updateData,
+        },
       },
-      message: 'Task updated successfully'
+      message: 'Task updated successfully',
     });
   } catch (error) {
     console.error('Update task error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -306,19 +345,19 @@ router.delete('/:id', async (req, res) => {
       console.error('Database error:', deleteError);
       return res.status(500).json({
         success: false,
-        message: 'Failed to delete task'
+        message: 'Failed to delete task',
       });
     }
 
     res.json({
       success: true,
-      message: 'Task deleted successfully'
+      message: 'Task deleted successfully',
     });
   } catch (error) {
     console.error('Delete task error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });

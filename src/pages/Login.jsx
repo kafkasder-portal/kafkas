@@ -1,126 +1,140 @@
-import { motion } from 'framer-motion'
-import { AlertCircle, Eye, EyeOff, Lock, Mail, Shield, Users } from 'lucide-react'
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
-import { validateEmail, validatePassword } from '../utils/validation'
-import { rateLimiters, auditLogger, securityMonitor } from '../utils/security'
-import { useAuth } from '../contexts/AuthContext'
+import { motion } from 'framer-motion';
+import {
+  AlertCircle,
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  Shield,
+  Users,
+} from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { validateEmail, validatePassword } from '../utils/validation';
+import { rateLimiters, auditLogger, securityMonitor } from '../utils/security';
+import { useAuth } from '../contexts/AuthContext';
 
-import './Login.css'
+import './Login.css';
 
 const Login = () => {
-  const navigate = useNavigate()
-  const { login } = useAuth()
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState({})
-  const [attempts, setAttempts] = useState(0)
-  const [securityStatus, setSecurityStatus] = useState('secure')
-  const [availableUsers, setAvailableUsers] = useState([])
-  const [loadingUsers, setLoadingUsers] = useState(false)
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [attempts, setAttempts] = useState(0);
+  const [securityStatus, setSecurityStatus] = useState('secure');
+  const [availableUsers, setAvailableUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
 
   // Demo users for development
   const fetchAvailableUsers = async () => {
     try {
-      setLoadingUsers(true)
+      setLoadingUsers(true);
 
       const demoUsers = [
         { email: 'admin@kafkas.org', name: 'Admin User', role: 'admin' },
         { email: 'manager@kafkas.org', name: 'Manager User', role: 'manager' },
-        { email: 'volunteer@kafkas.org', name: 'Volunteer User', role: 'volunteer' },
-      ]
+        {
+          email: 'volunteer@kafkas.org',
+          name: 'Volunteer User',
+          role: 'volunteer',
+        },
+      ];
 
-      setAvailableUsers(demoUsers)
+      setAvailableUsers(demoUsers);
     } catch (error) {
-      console.error('Error fetching users:', error)
+      console.error('Error fetching users:', error);
     } finally {
-      setLoadingUsers(false)
+      setLoadingUsers(false);
     }
-  }
+  };
 
   // Fetch users on component mount
   useEffect(() => {
-    fetchAvailableUsers()
-  }, [])
+    fetchAvailableUsers();
+  }, []);
 
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     // Email validation
     if (!formData.email) {
-      newErrors.email = 'E-posta adresi gereklidir'
+      newErrors.email = 'E-posta adresi gereklidir';
     } else {
-      const emailResult = validateEmail(formData.email)
+      const emailResult = validateEmail(formData.email);
       if (!emailResult.isValid) {
-        newErrors.email = emailResult.message
+        newErrors.email = emailResult.message;
       }
     }
 
     // Password validation
     if (!formData.password) {
-      newErrors.password = 'Şifre gereklidir'
+      newErrors.password = 'Şifre gereklidir';
     } else {
-      const passwordResult = validatePassword(formData.password)
+      const passwordResult = validatePassword(formData.password);
       if (!passwordResult.isValid) {
-        newErrors.password = passwordResult.message
+        newErrors.password = passwordResult.message;
       }
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async e => {
-    e.preventDefault()
+    e.preventDefault();
 
     // Check rate limiting
     if (!rateLimiters.login('anonymous')) {
-      toast.error('Çok fazla giriş denemesi yaptınız. Lütfen 5 dakika bekleyin.')
-      return
+      toast.error(
+        'Çok fazla giriş denemesi yaptınız. Lütfen 5 dakika bekleyin.'
+      );
+      return;
     }
 
     if (!validateForm()) {
-      return
+      return;
     }
 
-    setLoading(true)
-    setSecurityStatus('warning')
+    setLoading(true);
+    setSecurityStatus('warning');
 
     try {
       // Log login attempt
       auditLogger.log('login_attempt', null, {
         email: formData.email,
         userAgent: navigator.userAgent,
-      })
+      });
 
       // Monitor for suspicious activity
       securityMonitor.monitorActivity({
         type: 'login_attempt',
         userId: null,
         data: { email: formData.email },
-      })
+      });
 
       // Call the auth context login function
-      const result = await login(formData.email, formData.password)
+      const result = await login(formData.email, formData.password);
 
       if (result.success) {
-        setSecurityStatus('secure')
-        setAttempts(0)
-        navigate('/')
+        setSecurityStatus('secure');
+        setAttempts(0);
+        navigate('/');
       } else {
-        setAttempts(prev => prev + 1)
-        setSecurityStatus('error')
+        setAttempts(prev => prev + 1);
+        setSecurityStatus('error');
 
         // Log failed login
         auditLogger.log('login_failed', null, {
           email: formData.email,
           attempts: attempts + 1,
-        })
+        });
 
         // Monitor for suspicious activity
         securityMonitor.monitorActivity({
@@ -130,41 +144,41 @@ const Login = () => {
             email: formData.email,
             attempts: attempts + 1,
           },
-        })
+        });
       }
     } catch (error) {
-      setSecurityStatus('error')
-      setAttempts(prev => prev + 1)
-      toast.error('Giriş yapılırken bir hata oluştu')
+      setSecurityStatus('error');
+      setAttempts(prev => prev + 1);
+      toast.error('Giriş yapılırken bir hata oluştu');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleInputChange = e => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
 
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }))
+      setErrors(prev => ({ ...prev, [name]: '' }));
     }
-  }
+  };
 
   return (
-    <div className="login-container">
+    <div className='login-container'>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="login-wrapper"
+        className='login-wrapper'
       >
         {/* Logo */}
-        <div className="login-logo">
-          <div className="logo-circle">
-            <span className="logo-text">K</span>
+        <div className='login-logo'>
+          <div className='logo-circle'>
+            <span className='logo-text'>K</span>
           </div>
-          <h1 className="company-title">Kafkas Derneği</h1>
-          <p className="company-subtitle">Yönetim Portalı</p>
+          <h1 className='company-title'>Kafkas Derneği</h1>
+          <p className='company-subtitle'>Yönetim Portalı</p>
         </div>
 
         {/* Login Form */}
@@ -172,96 +186,107 @@ const Login = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="login-form-container"
+          className='login-form-container'
         >
-          <h2 className="form-title">Giriş Yap</h2>
+          <h2 className='form-title'>Giriş Yap</h2>
 
-          <form onSubmit={handleSubmit} className="login-form">
+          <form onSubmit={handleSubmit} className='login-form'>
             {/* Email Field */}
-            <div className="form-group">
-              <label htmlFor="email" className="form-label">
+            <div className='form-group'>
+              <label htmlFor='email' className='form-label'>
                 E-posta Adresi
               </label>
-              <div className="input-container">
-                <div className="input-icon">
-                  <Mail className="icon" />
+              <div className='input-container'>
+                <div className='input-icon'>
+                  <Mail className='icon' />
                 </div>
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
+                  id='email'
+                  name='email'
+                  type='email'
                   value={formData.email}
                   onChange={handleInputChange}
                   className={`form-input ${errors.email ? 'error' : ''}`}
-                  placeholder="ornek@email.com"
+                  placeholder='ornek@email.com'
                 />
                 {errors.email && (
-                  <div className="input-error-icon">
-                    <AlertCircle className="icon" />
+                  <div className='input-error-icon'>
+                    <AlertCircle className='icon' />
                   </div>
                 )}
               </div>
-              {errors.email && <p className="error-message">{errors.email}</p>}
+              {errors.email && <p className='error-message'>{errors.email}</p>}
             </div>
 
             {/* Password Field */}
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">
+            <div className='form-group'>
+              <label htmlFor='password' className='form-label'>
                 Şifre
               </label>
-              <div className="input-container">
-                <div className="input-icon">
-                  <Lock className="icon" />
+              <div className='input-container'>
+                <div className='input-icon'>
+                  <Lock className='icon' />
                 </div>
                 <input
-                  id="password"
-                  name="password"
+                  id='password'
+                  name='password'
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={handleInputChange}
                   className={`form-input password-input ${errors.password ? 'error' : ''}`}
-                  placeholder="••••••••"
+                  placeholder='••••••••'
                 />
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => setShowPassword(!showPassword)}
-                  className="password-toggle"
+                  className='password-toggle'
                 >
-                  {showPassword ? <EyeOff className="icon" /> : <Eye className="icon" />}
+                  {showPassword ? (
+                    <EyeOff className='icon' />
+                  ) : (
+                    <Eye className='icon' />
+                  )}
                 </button>
                 {errors.password && (
-                  <div className="input-error-icon password-error">
-                    <AlertCircle className="icon" />
+                  <div className='input-error-icon password-error'>
+                    <AlertCircle className='icon' />
                   </div>
                 )}
               </div>
-              {errors.password && <p className="error-message">{errors.password}</p>}
+              {errors.password && (
+                <p className='error-message'>{errors.password}</p>
+              )}
             </div>
 
             {/* Remember Me & Forgot Password */}
-            <div className="form-options">
-              <div className="remember-me">
-                <input id="remember-me" name="remember-me" type="checkbox" className="checkbox" />
-                <label htmlFor="remember-me" className="checkbox-label">
+            <div className='form-options'>
+              <div className='remember-me'>
+                <input
+                  id='remember-me'
+                  name='remember-me'
+                  type='checkbox'
+                  className='checkbox'
+                />
+                <label htmlFor='remember-me' className='checkbox-label'>
                   Beni hatırla
                 </label>
               </div>
-              <button type="button" className="forgot-password">
+              <button type='button' className='forgot-password'>
                 Şifremi unuttum
               </button>
             </div>
 
             {/* Submit Button */}
             <motion.button
-              type="submit"
+              type='submit'
               disabled={loading}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className={`submit-button ${loading ? 'loading' : ''}`}
             >
               {loading ? (
-                <div className="loading-content">
-                  <div className="loading-spinner"></div>
+                <div className='loading-content'>
+                  <div className='loading-spinner'></div>
                   Giriş yapılıyor...
                 </div>
               ) : (
@@ -272,21 +297,21 @@ const Login = () => {
 
           {/* Demo Users */}
           {availableUsers.length > 0 && (
-            <div className="admin-accounts">
-              <div className="admin-accounts-header">
-                <Users className="shield-icon" />
-                <p className="admin-accounts-title">Kayıtlı Kullanıcılar:</p>
+            <div className='admin-accounts'>
+              <div className='admin-accounts-header'>
+                <Users className='shield-icon' />
+                <p className='admin-accounts-title'>Kayıtlı Kullanıcılar:</p>
               </div>
-              <div className="admin-accounts-list">
+              <div className='admin-accounts-list'>
                 {loadingUsers ? (
-                  <div className="admin-account-item">
-                    <p className="admin-email">Kullanıcılar yükleniyor...</p>
+                  <div className='admin-account-item'>
+                    <p className='admin-email'>Kullanıcılar yükleniyor...</p>
                   </div>
                 ) : (
                   availableUsers.map((user, index) => (
-                    <div key={index} className="admin-account-item">
-                      <p className="admin-email">{user.email}</p>
-                      <span className="admin-role">
+                    <div key={index} className='admin-account-item'>
+                      <p className='admin-email'>{user.email}</p>
+                      <span className='admin-role'>
                         {user.role === 'admin'
                           ? 'Yönetici'
                           : user.role === 'manager'
@@ -299,18 +324,22 @@ const Login = () => {
                   ))
                 )}
               </div>
-              <p className="admin-note">* Demo kullanıcılar (geliştirme için)</p>
+              <p className='admin-note'>
+                * Demo kullanıcılar (geliştirme için)
+              </p>
             </div>
           )}
         </motion.div>
 
         {/* Footer */}
-        <div className="login-footer">
-          <p className="footer-text">© 2024 Kafkas Derneği. Tüm hakları saklıdır.</p>
+        <div className='login-footer'>
+          <p className='footer-text'>
+            © 2024 Kafkas Derneği. Tüm hakları saklıdır.
+          </p>
         </div>
       </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

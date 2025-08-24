@@ -9,9 +9,10 @@ class AnalyticsTracker {
     this.userId = null;
     this.isInitialized = false;
     this.batchSize = parseInt(import.meta.env.VITE_ANALYTICS_BATCH_SIZE) || 100;
-    this.flushInterval = parseInt(import.meta.env.VITE_ANALYTICS_FLUSH_INTERVAL) || 30000;
+    this.flushInterval =
+      parseInt(import.meta.env.VITE_ANALYTICS_FLUSH_INTERVAL) || 30000;
     this.endpoint = import.meta.env.VITE_ANALYTICS_ENDPOINT || '/api/analytics';
-    
+
     this.init();
   }
 
@@ -20,7 +21,7 @@ class AnalyticsTracker {
     if (import.meta.env.DEV) {
       return;
     }
-    
+
     if (import.meta.env.VITE_ENABLE_ANALYTICS === 'true') {
       this.isInitialized = true;
       this.setupAutoFlush();
@@ -40,7 +41,7 @@ class AnalyticsTracker {
     this.trackEvent('page_view', {
       page,
       title: document.title,
-      referrer: document.referrer
+      referrer: document.referrer,
     });
   }
 
@@ -57,8 +58,8 @@ class AnalyticsTracker {
         userAgent: navigator.userAgent,
         language: navigator.language,
         screenResolution: `${screen.width}x${screen.height}`,
-        viewport: `${window.innerWidth}x${window.innerHeight}`
-      }
+        viewport: `${window.innerWidth}x${window.innerHeight}`,
+      },
     };
 
     this.events.push(event);
@@ -73,7 +74,7 @@ class AnalyticsTracker {
     this.trackEvent('error', {
       message: error.message,
       stack: error.stack,
-      context
+      context,
     });
   }
 
@@ -88,12 +89,12 @@ class AnalyticsTracker {
     this.events = [];
 
     try {
-      const response = await fetch(this.endpoint + '/events', {
+      const response = await fetch(`${this.endpoint}/events`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ events: eventsToSend })
+        body: JSON.stringify({ events: eventsToSend }),
       });
 
       if (!response.ok) {
@@ -125,7 +126,7 @@ class PerformanceMonitor {
     this.observers = new Map();
     this.isInitialized = false;
     this.endpoint = import.meta.env.VITE_ANALYTICS_ENDPOINT || '/api/analytics';
-    
+
     this.init();
   }
 
@@ -142,7 +143,7 @@ class PerformanceMonitor {
   setupWebVitals() {
     // LCP (Largest Contentful Paint)
     if ('PerformanceObserver' in window) {
-      const lcpObserver = new PerformanceObserver((list) => {
+      const lcpObserver = new PerformanceObserver(list => {
         const entries = list.getEntries();
         const lastEntry = entries[entries.length - 1];
         this.recordMetric('LCP', lastEntry.startTime);
@@ -150,7 +151,7 @@ class PerformanceMonitor {
       lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
 
       // FID (First Input Delay)
-      const fidObserver = new PerformanceObserver((list) => {
+      const fidObserver = new PerformanceObserver(list => {
         const entries = list.getEntries();
         entries.forEach(entry => {
           this.recordMetric('FID', entry.processingStart - entry.startTime);
@@ -160,7 +161,7 @@ class PerformanceMonitor {
 
       // CLS (Cumulative Layout Shift)
       let clsValue = 0;
-      const clsObserver = new PerformanceObserver((list) => {
+      const clsObserver = new PerformanceObserver(list => {
         const entries = list.getEntries();
         entries.forEach(entry => {
           if (!entry.hadRecentInput) {
@@ -198,7 +199,7 @@ class PerformanceMonitor {
         this.recordMetric('memory', {
           used: memory.usedJSHeapSize,
           total: memory.totalJSHeapSize,
-          limit: memory.jsHeapSizeLimit
+          limit: memory.jsHeapSizeLimit,
         });
       }, 30000); // 30 saniyede bir
     }
@@ -210,7 +211,7 @@ class PerformanceMonitor {
       this.recordMetric('network', {
         effectiveType: connection.effectiveType,
         downlink: connection.downlink,
-        rtt: connection.rtt
+        rtt: connection.rtt,
       });
     }
   }
@@ -224,7 +225,7 @@ class PerformanceMonitor {
     if (!this.metrics.apiCalls) {
       this.metrics.apiCalls = {};
     }
-    
+
     if (!this.metrics.apiCalls[url]) {
       this.metrics.apiCalls[url] = [];
     }
@@ -233,7 +234,7 @@ class PerformanceMonitor {
       status,
       duration,
       success,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // Son 100 çağrıyı tut
@@ -269,16 +270,16 @@ class PerformanceMonitor {
     if (!this.isInitialized) return;
 
     try {
-      const response = await fetch(this.endpoint + '/metrics', {
+      const response = await fetch(`${this.endpoint}/metrics`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           performance: this.metrics,
           timestamp: new Date().toISOString(),
-          sessionId: analyticsTracker.sessionId
-        })
+          sessionId: analyticsTracker.sessionId,
+        }),
       });
 
       if (!response.ok) {
@@ -295,7 +296,7 @@ class SystemHealthMonitor {
     this.healthData = {};
     this.isInitialized = false;
     this.endpoint = import.meta.env.VITE_HEALTH_ENDPOINT || '/api/health';
-    
+
     this.init();
   }
 
@@ -321,7 +322,7 @@ class SystemHealthMonitor {
       system: this.getSystemInfo(),
       network: await this.checkNetworkHealth(),
       application: this.getApplicationInfo(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     this.healthData = healthData;
@@ -329,12 +330,17 @@ class SystemHealthMonitor {
   }
 
   getSystemInfo() {
-    const memory = performance.memory ? {
-      used: performance.memory.usedJSHeapSize,
-      total: performance.memory.totalJSHeapSize,
-      limit: performance.memory.jsHeapSizeLimit,
-      percentage: (performance.memory.usedJSHeapSize / performance.memory.jsHeapSizeLimit) * 100
-    } : null;
+    const memory = performance.memory
+      ? {
+          used: performance.memory.usedJSHeapSize,
+          total: performance.memory.totalJSHeapSize,
+          limit: performance.memory.jsHeapSizeLimit,
+          percentage:
+            (performance.memory.usedJSHeapSize /
+              performance.memory.jsHeapSizeLimit) *
+            100,
+        }
+      : null;
 
     return {
       memory,
@@ -342,30 +348,30 @@ class SystemHealthMonitor {
       language: navigator.language,
       cookieEnabled: navigator.cookieEnabled,
       onLine: navigator.onLine,
-      platform: navigator.platform
+      platform: navigator.platform,
     };
   }
 
   async checkNetworkHealth() {
     try {
       const startTime = performance.now();
-      const response = await fetch('/api/health', { 
+      const response = await fetch('/api/health', {
         method: 'GET',
-        cache: 'no-cache'
+        cache: 'no-cache',
       });
       const duration = performance.now() - startTime;
 
       return {
         status: response.status,
         responseTime: duration,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       return {
         status: 0,
         responseTime: 0,
         error: error.message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -377,8 +383,8 @@ class SystemHealthMonitor {
       features: {
         pwa: import.meta.env.VITE_ENABLE_PWA === 'true',
         analytics: import.meta.env.VITE_ENABLE_ANALYTICS === 'true',
-        monitoring: import.meta.env.VITE_ENABLE_MONITORING === 'true'
-      }
+        monitoring: import.meta.env.VITE_ENABLE_MONITORING === 'true',
+      },
     };
   }
 
@@ -390,12 +396,12 @@ class SystemHealthMonitor {
     if (!this.isInitialized) return;
 
     try {
-      const response = await fetch(this.endpoint + '/report', {
+      const response = await fetch(`${this.endpoint}/report`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(this.healthData)
+        body: JSON.stringify(this.healthData),
       });
 
       if (!response.ok) {
@@ -413,17 +419,17 @@ export const performanceMonitor = new PerformanceMonitor();
 export const systemHealthMonitor = new SystemHealthMonitor();
 
 // Error tracking
-window.addEventListener('error', (event) => {
+window.addEventListener('error', event => {
   analyticsTracker.trackError(event.error, {
     filename: event.filename,
     lineno: event.lineno,
-    colno: event.colno
+    colno: event.colno,
   });
 });
 
-window.addEventListener('unhandledrejection', (event) => {
+window.addEventListener('unhandledrejection', event => {
   analyticsTracker.trackError(new Error(event.reason), {
-    type: 'unhandledrejection'
+    type: 'unhandledrejection',
   });
 });
 
@@ -431,7 +437,7 @@ window.addEventListener('unhandledrejection', (event) => {
 document.addEventListener('visibilitychange', () => {
   analyticsTracker.trackEvent('visibility_change', {
     hidden: document.hidden,
-    visibilityState: document.visibilityState
+    visibilityState: document.visibilityState,
   });
 });
 
@@ -439,5 +445,5 @@ document.addEventListener('visibilitychange', () => {
 export default {
   analyticsTracker,
   performanceMonitor,
-  systemHealthMonitor
+  systemHealthMonitor,
 };

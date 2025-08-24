@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  MessageSquare, 
-  Send, 
-  Phone, 
-  Users, 
-  Search, 
-  Plus, 
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  MessageSquare,
+  Send,
+  Phone,
+  Users,
+  Search,
+  Plus,
   MoreVertical,
   Paperclip,
   Smile,
@@ -24,29 +24,29 @@ import {
   AlertCircle,
   Settings,
   Download,
-  Upload
-} from 'lucide-react'
-import { toast } from 'sonner'
-import whatsappService from '../services/whatsappService'
-import WhatsAppLogin from './WhatsAppLogin'
+  Upload,
+} from 'lucide-react';
+import { toast } from 'sonner';
+import whatsappService from '../services/whatsappService';
+import WhatsAppLogin from './WhatsAppLogin';
 
 const WhatsApp = () => {
-  const [contacts, setContacts] = useState([])
-  const [selectedContact, setSelectedContact] = useState(null)
-  const [messages, setMessages] = useState([])
-  const [newMessage, setNewMessage] = useState('')
-  const [searchTerm, setSearchTerm] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [showNewContactModal, setShowNewContactModal] = useState(false)
+  const [contacts, setContacts] = useState([]);
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showNewContactModal, setShowNewContactModal] = useState(false);
   const [newContact, setNewContact] = useState({
     name: '',
     phone: '',
     email: '',
-    notes: ''
-  })
-  const [isWhatsAppConnected, setIsWhatsAppConnected] = useState(false)
-  const [whatsAppSession, setWhatsAppSession] = useState(null)
-  const messagesEndRef = useRef(null)
+    notes: '',
+  });
+  const [isWhatsAppConnected, setIsWhatsAppConnected] = useState(false);
+  const [whatsAppSession, setWhatsAppSession] = useState(null);
+  const messagesEndRef = useRef(null);
 
   // Mock data for contacts
   const mockContacts = [
@@ -60,7 +60,7 @@ const WhatsApp = () => {
       lastMessageTime: '14:30',
       unreadCount: 2,
       status: 'online',
-      notes: 'Acil yardım ihtiyacı var'
+      notes: 'Acil yardım ihtiyacı var',
     },
     {
       id: 2,
@@ -72,7 +72,7 @@ const WhatsApp = () => {
       lastMessageTime: '12:15',
       unreadCount: 0,
       status: 'offline',
-      notes: 'Düzenli bağışçı'
+      notes: 'Düzenli bağışçı',
     },
     {
       id: 3,
@@ -84,7 +84,7 @@ const WhatsApp = () => {
       lastMessageTime: '09:45',
       unreadCount: 1,
       status: 'online',
-      notes: 'Yeni gönüllü adayı'
+      notes: 'Yeni gönüllü adayı',
     },
     {
       id: 4,
@@ -96,7 +96,7 @@ const WhatsApp = () => {
       lastMessageTime: 'Dün',
       unreadCount: 0,
       status: 'offline',
-      notes: 'Burs başvurusu yapacak'
+      notes: 'Burs başvurusu yapacak',
     },
     {
       id: 5,
@@ -108,9 +108,9 @@ const WhatsApp = () => {
       lastMessageTime: '2 gün önce',
       unreadCount: 0,
       status: 'offline',
-      notes: 'Sağlık yardımı ihtiyacı'
-    }
-  ]
+      notes: 'Sağlık yardımı ihtiyacı',
+    },
+  ];
 
   // Mock messages for selected contact
   const mockMessages = [
@@ -120,15 +120,16 @@ const WhatsApp = () => {
       content: 'Merhaba, yardım paketi ne zaman gelecek?',
       timestamp: '14:30',
       status: 'read',
-      type: 'text'
+      type: 'text',
     },
     {
       id: 2,
       sender: 'business',
-      content: 'Merhaba Ahmet Bey, yardım paketiniz yarın saat 10:00\'da teslim edilecek.',
+      content:
+        "Merhaba Ahmet Bey, yardım paketiniz yarın saat 10:00'da teslim edilecek.",
       timestamp: '14:32',
       status: 'read',
-      type: 'text'
+      type: 'text',
     },
     {
       id: 3,
@@ -136,15 +137,16 @@ const WhatsApp = () => {
       content: 'Çok teşekkürler! Adres bilgilerim doğru mu?',
       timestamp: '14:33',
       status: 'read',
-      type: 'text'
+      type: 'text',
     },
     {
       id: 4,
       sender: 'business',
-      content: 'Evet, kayıtlı adresiniz: İstanbul, Kadıköy, Atatürk Mahallesi, No: 123',
+      content:
+        'Evet, kayıtlı adresiniz: İstanbul, Kadıköy, Atatürk Mahallesi, No: 123',
       timestamp: '14:35',
       status: 'delivered',
-      type: 'text'
+      type: 'text',
     },
     {
       id: 5,
@@ -152,94 +154,104 @@ const WhatsApp = () => {
       content: 'Mükemmel! Bekliyorum.',
       timestamp: '14:36',
       status: 'sent',
-      type: 'text'
-    }
-  ]
+      type: 'text',
+    },
+  ];
 
   useEffect(() => {
-    setContacts(mockContacts)
-  }, [])
+    setContacts(mockContacts);
+  }, []);
 
   useEffect(() => {
     if (selectedContact) {
-      setMessages(mockMessages)
+      setMessages(mockMessages);
     }
-  }, [selectedContact])
+  }, [selectedContact]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    contact.phone.includes(searchTerm) ||
-    contact.email.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredContacts = contacts.filter(
+    contact =>
+      contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.phone.includes(searchTerm) ||
+      contact.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !selectedContact) return
+    if (!newMessage.trim() || !selectedContact) return;
 
     const message = {
       id: Date.now(),
       sender: 'business',
       content: newMessage,
-      timestamp: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+      timestamp: new Date().toLocaleTimeString('tr-TR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
       status: 'sending',
-      type: 'text'
-    }
+      type: 'text',
+    };
 
-    setMessages(prev => [...prev, message])
-    setNewMessage('')
+    setMessages(prev => [...prev, message]);
+    setNewMessage('');
 
     try {
       // Format phone number for WhatsApp API
-      const formattedPhone = whatsappService.formatPhoneNumber(selectedContact.phone)
-      
+      const formattedPhone = whatsappService.formatPhoneNumber(
+        selectedContact.phone
+      );
+
       // Send message via WhatsApp API
-      const response = await whatsappService.sendTextMessage(formattedPhone, newMessage)
-      
+      const response = await whatsappService.sendTextMessage(
+        formattedPhone,
+        newMessage
+      );
+
       // Update message status to sent
-      setMessages(prev => 
-        prev.map(msg => 
-          msg.id === message.id ? { ...msg, status: 'sent', whatsappId: response.messages?.[0]?.id } : msg
+      setMessages(prev =>
+        prev.map(msg =>
+          msg.id === message.id
+            ? { ...msg, status: 'sent', whatsappId: response.messages?.[0]?.id }
+            : msg
         )
-      )
-      
-      toast.success('Mesaj WhatsApp üzerinden gönderildi')
-      
+      );
+
+      toast.success('Mesaj WhatsApp üzerinden gönderildi');
+
       // Simulate delivery status (in real app, you'd use webhooks)
       setTimeout(() => {
-        setMessages(prev => 
-          prev.map(msg => 
+        setMessages(prev =>
+          prev.map(msg =>
             msg.id === message.id ? { ...msg, status: 'delivered' } : msg
           )
-        )
-      }, 2000)
-      
+        );
+      }, 2000);
     } catch (error) {
-      console.error('WhatsApp message error:', error)
-      
+      console.error('WhatsApp message error:', error);
+
       // Update message status to failed
-      setMessages(prev => 
-        prev.map(msg => 
+      setMessages(prev =>
+        prev.map(msg =>
           msg.id === message.id ? { ...msg, status: 'failed' } : msg
         )
-      )
-      
-      toast.error('Mesaj gönderilemedi: ' + error.message)
-    }
-  }
+      );
 
-  const handleWhatsAppLogin = (sessionData) => {
-    setIsWhatsAppConnected(true)
-    setWhatsAppSession(sessionData)
-    toast.success(`WhatsApp bağlandı: ${sessionData.phoneNumber}`)
-  }
+      toast.error(`Mesaj gönderilemedi: ${error.message}`);
+    }
+  };
+
+  const handleWhatsAppLogin = sessionData => {
+    setIsWhatsAppConnected(true);
+    setWhatsAppSession(sessionData);
+    toast.success(`WhatsApp bağlandı: ${sessionData.phoneNumber}`);
+  };
 
   const handleAddContact = () => {
     if (!newContact.name || !newContact.phone) {
-      toast.error('İsim ve telefon numarası gereklidir')
-      return
+      toast.error('İsim ve telefon numarası gereklidir');
+      return;
     }
 
     const contact = {
@@ -247,72 +259,129 @@ const WhatsApp = () => {
       name: newContact.name,
       phone: newContact.phone,
       email: newContact.email,
-      avatar: newContact.name.split(' ').map(n => n[0]).join('').toUpperCase(),
+      avatar: newContact.name
+        .split(' ')
+        .map(n => n[0])
+        .join('')
+        .toUpperCase(),
       lastMessage: '',
       lastMessageTime: 'Şimdi',
       unreadCount: 0,
       status: 'offline',
-      notes: newContact.notes
-    }
+      notes: newContact.notes,
+    };
 
-    setContacts(prev => [contact, ...prev])
-    setNewContact({ name: '', phone: '', email: '', notes: '' })
-    setShowNewContactModal(false)
-    toast.success('Kişi eklendi')
-  }
+    setContacts(prev => [contact, ...prev]);
+    setNewContact({ name: '', phone: '', email: '', notes: '' });
+    setShowNewContactModal(false);
+    toast.success('Kişi eklendi');
+  };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = status => {
     switch (status) {
-      case 'online': return '#10b981'
-      case 'offline': return '#64748b'
-      default: return '#64748b'
+      case 'online':
+        return '#10b981';
+      case 'offline':
+        return '#64748b';
+      default:
+        return '#64748b';
     }
-  }
+  };
 
-  const getMessageStatusIcon = (status) => {
+  const getMessageStatusIcon = status => {
     switch (status) {
-      case 'sending': return <Clock size={12} color="#64748b" />
-      case 'sent': return <CheckCircle size={12} color="#64748b" />
-      case 'delivered': return <CheckCircle size={12} color="#3b82f6" />
-      case 'read': return <CheckCircle size={12} color="#10b981" />
-      case 'failed': return <AlertCircle size={12} color="#ef4444" />
-      default: return null
+      case 'sending':
+        return <Clock size={12} color='#64748b' />;
+      case 'sent':
+        return <CheckCircle size={12} color='#64748b' />;
+      case 'delivered':
+        return <CheckCircle size={12} color='#3b82f6' />;
+      case 'read':
+        return <CheckCircle size={12} color='#10b981' />;
+      case 'failed':
+        return <AlertCircle size={12} color='#ef4444' />;
+      default:
+        return null;
     }
-  }
+  };
 
   // Show WhatsApp login if not connected
   if (!isWhatsAppConnected) {
     return (
-      <WhatsAppLogin 
+      <WhatsAppLogin
         onLoginSuccess={handleWhatsAppLogin}
         onBack={() => window.history.back()}
       />
-    )
+    );
   }
 
   return (
-    <div style={{ height: '100vh', display: 'flex', backgroundColor: 'var(--background-secondary)' }}>
+    <div
+      style={{
+        height: '100vh',
+        display: 'flex',
+        backgroundColor: 'var(--background-secondary)',
+      }}
+    >
       {/* Contacts Sidebar */}
-      <div style={{ width: '350px', backgroundColor: 'var(--background-primary)', borderRight: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column' }}>
+      <div
+        style={{
+          width: '350px',
+          backgroundColor: 'var(--background-primary)',
+          borderRight: '1px solid var(--border-color)',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
         {/* Header */}
-        <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: '600', color: 'var(--text-primary)', margin: 0 }}>
+        <div
+          style={{
+            padding: '1rem',
+            borderBottom: '1px solid var(--border-color)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '1rem',
+            }}
+          >
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <h2
+                style={{
+                  fontSize: '1.25rem',
+                  fontWeight: '600',
+                  color: 'var(--text-primary)',
+                  margin: 0,
+                }}
+              >
                 WhatsApp
               </h2>
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '0.25rem',
-                padding: '0.25rem 0.5rem',
-                backgroundColor: '#25D366',
-                color: 'white',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: '0.75rem',
-                fontWeight: '500'
-              }}>
-                <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'white' }} />
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                  padding: '0.25rem 0.5rem',
+                  backgroundColor: '#25D366',
+                  color: 'white',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '0.75rem',
+                  fontWeight: '500',
+                }}
+              >
+                <div
+                  style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    backgroundColor: 'white',
+                  }}
+                />
                 Bağlı
               </div>
             </div>
@@ -326,7 +395,7 @@ const WhatsApp = () => {
                   border: 'none',
                   borderRadius: 'var(--radius-md)',
                   cursor: 'pointer',
-                  color: 'var(--text-secondary)'
+                  color: 'var(--text-secondary)',
                 }}
               >
                 <Settings size={20} />
@@ -341,22 +410,31 @@ const WhatsApp = () => {
                   border: 'none',
                   borderRadius: 'var(--radius-md)',
                   cursor: 'pointer',
-                  color: 'var(--text-secondary)'
+                  color: 'var(--text-secondary)',
                 }}
               >
                 <Plus size={20} />
               </motion.button>
             </div>
           </div>
-          
+
           {/* Search */}
           <div style={{ position: 'relative' }}>
-            <Search size={20} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            <Search
+              size={20}
+              style={{
+                position: 'absolute',
+                left: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'var(--text-muted)',
+              }}
+            />
             <input
-              type="text"
-              placeholder="Kişi ara..."
+              type='text'
+              placeholder='Kişi ara...'
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               style={{
                 width: '100%',
                 padding: '0.75rem 1rem 0.75rem 2.5rem',
@@ -364,7 +442,7 @@ const WhatsApp = () => {
                 borderRadius: 'var(--radius-lg)',
                 fontSize: '0.875rem',
                 backgroundColor: 'var(--background-secondary)',
-                color: 'var(--text-primary)'
+                color: 'var(--text-primary)',
               }}
             />
           </div>
@@ -372,7 +450,7 @@ const WhatsApp = () => {
 
         {/* Contacts List */}
         <div style={{ flex: 1, overflow: 'auto' }}>
-          {filteredContacts.map((contact) => (
+          {filteredContacts.map(contact => (
             <motion.div
               key={contact.id}
               whileHover={{ backgroundColor: 'var(--background-secondary)' }}
@@ -381,65 +459,111 @@ const WhatsApp = () => {
                 padding: '1rem',
                 borderBottom: '1px solid var(--border-color)',
                 cursor: 'pointer',
-                backgroundColor: selectedContact?.id === contact.id ? 'var(--background-secondary)' : 'rgba(0,0,0,0)'
+                backgroundColor:
+                  selectedContact?.id === contact.id
+                    ? 'var(--background-secondary)'
+                    : 'rgba(0,0,0,0)',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                }}
+              >
                 <div style={{ position: 'relative' }}>
-                  <div style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    backgroundColor: 'var(--primary-color)',
-                    color: 'white',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '1rem',
-                    fontWeight: '600'
-                  }}>
+                  <div
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      backgroundColor: 'var(--primary-color)',
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                    }}
+                  >
                     {contact.avatar}
                   </div>
-                  <div style={{
-                    position: 'absolute',
-                    bottom: '2px',
-                    right: '2px',
-                    width: '12px',
-                    height: '12px',
-                    borderRadius: '50%',
-                    backgroundColor: getStatusColor(contact.status),
-                    border: '2px solid var(--background-primary)'
-                  }} />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: '2px',
+                      right: '2px',
+                      width: '12px',
+                      height: '12px',
+                      borderRadius: '50%',
+                      backgroundColor: getStatusColor(contact.status),
+                      border: '2px solid var(--background-primary)',
+                    }}
+                  />
                 </div>
-                
+
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.25rem' }}>
-                    <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: 'var(--text-primary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      marginBottom: '0.25rem',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        fontSize: '0.875rem',
+                        fontWeight: '600',
+                        color: 'var(--text-primary)',
+                        margin: 0,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
                       {contact.name}
                     </h3>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    <span
+                      style={{
+                        fontSize: '0.75rem',
+                        color: 'var(--text-muted)',
+                      }}
+                    >
                       {contact.lastMessageTime}
                     </span>
                   </div>
-                  
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+
+                  <p
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'var(--text-secondary)',
+                      margin: 0,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
                     {contact.lastMessage || 'Henüz mesaj yok'}
                   </p>
                 </div>
-                
+
                 {contact.unreadCount > 0 && (
-                  <div style={{
-                    backgroundColor: 'var(--primary-color)',
-                    color: 'white',
-                    borderRadius: '50%',
-                    width: '20px',
-                    height: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.75rem',
-                    fontWeight: '600'
-                  }}>
+                  <div
+                    style={{
+                      backgroundColor: 'var(--primary-color)',
+                      color: 'white',
+                      borderRadius: '50%',
+                      width: '20px',
+                      height: '20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.75rem',
+                      fontWeight: '600',
+                    }}
+                  >
                     {contact.unreadCount}
                   </div>
                 )}
@@ -454,50 +578,71 @@ const WhatsApp = () => {
         {selectedContact ? (
           <>
             {/* Chat Header */}
-            <div style={{ 
-              padding: '1rem', 
-              borderBottom: '1px solid var(--border-color)', 
-              backgroundColor: 'var(--background-primary)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem'
-            }}>
+            <div
+              style={{
+                padding: '1rem',
+                borderBottom: '1px solid var(--border-color)',
+                backgroundColor: 'var(--background-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+              }}
+            >
               <div style={{ position: 'relative' }}>
-                <div style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  backgroundColor: 'var(--primary-color)',
-                  color: 'white',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.875rem',
-                  fontWeight: '600'
-                }}>
+                <div
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    backgroundColor: 'var(--primary-color)',
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.875rem',
+                    fontWeight: '600',
+                  }}
+                >
                   {selectedContact.avatar}
                 </div>
-                <div style={{
-                  position: 'absolute',
-                  bottom: '2px',
-                  right: '2px',
-                  width: '10px',
-                  height: '10px',
-                  borderRadius: '50%',
-                  backgroundColor: getStatusColor(selectedContact.status),
-                  border: '2px solid var(--background-primary)'
-                }} />
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: '2px',
+                    right: '2px',
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    backgroundColor: getStatusColor(selectedContact.status),
+                    border: '2px solid var(--background-primary)',
+                  }}
+                />
               </div>
-              
+
               <div style={{ flex: 1 }}>
-                <h3 style={{ fontSize: '1rem', fontWeight: '600', color: 'var(--text-primary)', margin: '0 0 0.25rem 0' }}>
+                <h3
+                  style={{
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    color: 'var(--text-primary)',
+                    margin: '0 0 0.25rem 0',
+                  }}
+                >
                   {selectedContact.name}
                 </h3>
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: 0 }}>
-                  {selectedContact.status === 'online' ? 'Çevrimiçi' : 'Çevrimdışı'}
+                <p
+                  style={{
+                    fontSize: '0.75rem',
+                    color: 'var(--text-secondary)',
+                    margin: 0,
+                  }}
+                >
+                  {selectedContact.status === 'online'
+                    ? 'Çevrimiçi'
+                    : 'Çevrimdışı'}
                 </p>
               </div>
-              
+
               <div style={{ display: 'flex', gap: '0.5rem' }}>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -508,7 +653,7 @@ const WhatsApp = () => {
                     border: 'none',
                     borderRadius: 'var(--radius-md)',
                     cursor: 'pointer',
-                    color: 'var(--text-secondary)'
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   <Video size={20} />
@@ -522,7 +667,7 @@ const WhatsApp = () => {
                     border: 'none',
                     borderRadius: 'var(--radius-md)',
                     cursor: 'pointer',
-                    color: 'var(--text-secondary)'
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   <Phone size={20} />
@@ -536,7 +681,7 @@ const WhatsApp = () => {
                     border: 'none',
                     borderRadius: 'var(--radius-md)',
                     cursor: 'pointer',
-                    color: 'var(--text-secondary)'
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   <MoreVertical size={20} />
@@ -545,35 +690,73 @@ const WhatsApp = () => {
             </div>
 
             {/* Messages */}
-            <div style={{ flex: 1, overflow: 'auto', padding: '1rem', backgroundColor: 'var(--background-secondary)' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {messages.map((message) => (
+            <div
+              style={{
+                flex: 1,
+                overflow: 'auto',
+                padding: '1rem',
+                backgroundColor: 'var(--background-secondary)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
+                }}
+              >
+                {messages.map(message => (
                   <motion.div
                     key={message.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     style={{
                       display: 'flex',
-                      justifyContent: message.sender === 'business' ? 'flex-end' : 'flex-start'
+                      justifyContent:
+                        message.sender === 'business'
+                          ? 'flex-end'
+                          : 'flex-start',
                     }}
                   >
-                    <div style={{
-                      maxWidth: '70%',
-                      padding: '0.75rem 1rem',
-                      borderRadius: 'var(--radius-lg)',
-                      backgroundColor: message.sender === 'business' ? 'var(--primary-color)' : 'var(--background-primary)',
-                      color: message.sender === 'business' ? 'white' : 'var(--text-primary)',
-                      position: 'relative'
-                    }}>
-                      <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.875rem', lineHeight: '1.4' }}>
+                    <div
+                      style={{
+                        maxWidth: '70%',
+                        padding: '0.75rem 1rem',
+                        borderRadius: 'var(--radius-lg)',
+                        backgroundColor:
+                          message.sender === 'business'
+                            ? 'var(--primary-color)'
+                            : 'var(--background-primary)',
+                        color:
+                          message.sender === 'business'
+                            ? 'white'
+                            : 'var(--text-primary)',
+                        position: 'relative',
+                      }}
+                    >
+                      <p
+                        style={{
+                          margin: '0 0 0.5rem 0',
+                          fontSize: '0.875rem',
+                          lineHeight: '1.4',
+                        }}
+                      >
                         {message.content}
                       </p>
-                      
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', justifyContent: 'flex-end' }}>
+
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.25rem',
+                          justifyContent: 'flex-end',
+                        }}
+                      >
                         <span style={{ fontSize: '0.75rem', opacity: 0.7 }}>
                           {message.timestamp}
                         </span>
-                        {message.sender === 'business' && getMessageStatusIcon(message.status)}
+                        {message.sender === 'business' &&
+                          getMessageStatusIcon(message.status)}
                       </div>
                     </div>
                   </motion.div>
@@ -583,12 +766,16 @@ const WhatsApp = () => {
             </div>
 
             {/* Message Input */}
-            <div style={{ 
-              padding: '1rem', 
-              borderTop: '1px solid var(--border-color)', 
-              backgroundColor: 'var(--background-primary)'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div
+              style={{
+                padding: '1rem',
+                borderTop: '1px solid var(--border-color)',
+                backgroundColor: 'var(--background-primary)',
+              }}
+            >
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              >
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -598,12 +785,12 @@ const WhatsApp = () => {
                     border: 'none',
                     borderRadius: 'var(--radius-md)',
                     cursor: 'pointer',
-                    color: 'var(--text-secondary)'
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   <Smile size={20} />
                 </motion.button>
-                
+
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -613,19 +800,19 @@ const WhatsApp = () => {
                     border: 'none',
                     borderRadius: 'var(--radius-md)',
                     cursor: 'pointer',
-                    color: 'var(--text-secondary)'
+                    color: 'var(--text-secondary)',
                   }}
                 >
                   <Paperclip size={20} />
                 </motion.button>
-                
+
                 <div style={{ flex: 1, position: 'relative' }}>
                   <input
-                    type="text"
-                    placeholder="Mesaj yazın..."
+                    type='text'
+                    placeholder='Mesaj yazın...'
                     value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                    onChange={e => setNewMessage(e.target.value)}
+                    onKeyPress={e => e.key === 'Enter' && handleSendMessage()}
                     style={{
                       width: '100%',
                       padding: '0.75rem 1rem',
@@ -633,11 +820,11 @@ const WhatsApp = () => {
                       borderRadius: 'var(--radius-lg)',
                       fontSize: '0.875rem',
                       backgroundColor: 'var(--background-secondary)',
-                      color: 'var(--text-primary)'
+                      color: 'var(--text-primary)',
                     }}
                   />
                 </div>
-                
+
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -645,14 +832,16 @@ const WhatsApp = () => {
                   disabled={!newMessage.trim()}
                   style={{
                     padding: '0.75rem',
-                    backgroundColor: newMessage.trim() ? 'var(--primary-color)' : 'var(--border-color)',
+                    backgroundColor: newMessage.trim()
+                      ? 'var(--primary-color)'
+                      : 'var(--border-color)',
                     color: 'white',
                     border: 'none',
                     borderRadius: 'var(--radius-lg)',
                     cursor: newMessage.trim() ? 'pointer' : 'not-allowed',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
                   }}
                 >
                   <Send size={18} />
@@ -662,40 +851,63 @@ const WhatsApp = () => {
           </>
         ) : (
           /* Welcome Screen */
-          <div style={{ 
-            flex: 1, 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            backgroundColor: 'var(--background-secondary)'
-          }}>
+          <div
+            style={{
+              flex: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'var(--background-secondary)',
+            }}
+          >
             <div style={{ textAlign: 'center', maxWidth: '400px' }}>
-              <div style={{
-                width: '80px',
-                height: '80px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--primary-color)',
-                color: 'white',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 1.5rem auto',
-                fontSize: '2rem'
-              }}>
+              <div
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  borderRadius: '50%',
+                  backgroundColor: 'var(--primary-color)',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 1.5rem auto',
+                  fontSize: '2rem',
+                }}
+              >
                 <MessageSquare size={40} />
               </div>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', color: 'var(--text-primary)', margin: '0 0 0.5rem 0' }}>
+              <h2
+                style={{
+                  fontSize: '1.5rem',
+                  fontWeight: '600',
+                  color: 'var(--text-primary)',
+                  margin: '0 0 0.5rem 0',
+                }}
+              >
                 WhatsApp Entegrasyonu
               </h2>
-              <p style={{ color: 'var(--text-secondary)', margin: '0 0 1.5rem 0', lineHeight: '1.5' }}>
-                Mesajlaşmaya başlamak için sol taraftan bir kişi seçin veya yeni kişi ekleyin.
+              <p
+                style={{
+                  color: 'var(--text-secondary)',
+                  margin: '0 0 1.5rem 0',
+                  lineHeight: '1.5',
+                }}
+              >
+                Mesajlaşmaya başlamak için sol taraftan bir kişi seçin veya yeni
+                kişi ekleyin.
               </p>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowNewContactModal(true)}
-                className="btn-primary"
-                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0 auto' }}
+                className='btn-primary'
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  margin: '0 auto',
+                }}
               >
                 <Plus size={18} />
                 Yeni Kişi Ekle
@@ -720,7 +932,7 @@ const WhatsApp = () => {
               alignItems: 'center',
               justifyContent: 'center',
               zIndex: 1000,
-              padding: '1rem'
+              padding: '1rem',
             }}
             onClick={() => setShowNewContactModal(false)}
           >
@@ -733,79 +945,110 @@ const WhatsApp = () => {
                 borderRadius: 'var(--radius-xl)',
                 padding: '2rem',
                 maxWidth: '400px',
-                width: '100%'
+                width: '100%',
               }}
-              onClick={(e) => e.stopPropagation()}
+              onClick={e => e.stopPropagation()}
             >
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', color: 'var(--text-primary)', margin: '0 0 1.5rem 0' }}>
+              <h2
+                style={{
+                  fontSize: '1.5rem',
+                  fontWeight: '600',
+                  color: 'var(--text-primary)',
+                  margin: '0 0 1.5rem 0',
+                }}
+              >
                 Yeni Kişi Ekle
               </h2>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1rem',
+                }}
+              >
                 <input
-                  type="text"
-                  placeholder="Ad Soyad"
+                  type='text'
+                  placeholder='Ad Soyad'
                   value={newContact.name}
-                  onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
+                  onChange={e =>
+                    setNewContact({ ...newContact, name: e.target.value })
+                  }
                   style={{
                     padding: '0.75rem',
                     border: '1px solid var(--border-color)',
                     borderRadius: 'var(--radius-md)',
-                    fontSize: '0.875rem'
+                    fontSize: '0.875rem',
                   }}
                 />
-                
+
                 <input
-                  type="tel"
-                  placeholder="Telefon Numarası"
+                  type='tel'
+                  placeholder='Telefon Numarası'
                   value={newContact.phone}
-                  onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })}
+                  onChange={e =>
+                    setNewContact({ ...newContact, phone: e.target.value })
+                  }
                   style={{
                     padding: '0.75rem',
                     border: '1px solid var(--border-color)',
                     borderRadius: 'var(--radius-md)',
-                    fontSize: '0.875rem'
+                    fontSize: '0.875rem',
                   }}
                 />
-                
+
                 <input
-                  type="email"
-                  placeholder="E-posta (Opsiyonel)"
+                  type='email'
+                  placeholder='E-posta (Opsiyonel)'
                   value={newContact.email}
-                  onChange={(e) => setNewContact({ ...newContact, email: e.target.value })}
+                  onChange={e =>
+                    setNewContact({ ...newContact, email: e.target.value })
+                  }
                   style={{
                     padding: '0.75rem',
                     border: '1px solid var(--border-color)',
                     borderRadius: 'var(--radius-md)',
-                    fontSize: '0.875rem'
+                    fontSize: '0.875rem',
                   }}
                 />
-                
+
                 <textarea
-                  placeholder="Notlar (Opsiyonel)"
+                  placeholder='Notlar (Opsiyonel)'
                   value={newContact.notes}
-                  onChange={(e) => setNewContact({ ...newContact, notes: e.target.value })}
+                  onChange={e =>
+                    setNewContact({ ...newContact, notes: e.target.value })
+                  }
                   rows={3}
                   style={{
                     padding: '0.75rem',
                     border: '1px solid var(--border-color)',
                     borderRadius: 'var(--radius-md)',
                     fontSize: '0.875rem',
-                    resize: 'vertical'
+                    resize: 'vertical',
                   }}
                 />
-                
-                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '0.5rem',
+                    justifyContent: 'flex-end',
+                  }}
+                >
                   <button
                     onClick={() => setShowNewContactModal(false)}
-                    className="btn-secondary"
+                    className='btn-secondary'
                   >
                     İptal
                   </button>
                   <button
                     onClick={handleAddContact}
-                    className="btn-primary"
-                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                    className='btn-primary'
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                    }}
                   >
                     <Plus size={16} />
                     Ekle
@@ -817,7 +1060,7 @@ const WhatsApp = () => {
         )}
       </AnimatePresence>
     </div>
-  )
-}
+  );
+};
 
-export default WhatsApp
+export default WhatsApp;

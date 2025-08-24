@@ -1,50 +1,51 @@
-import { apiClient } from './api.js'
-import { handleApiError } from '../utils/errorHandler.js'
+import { apiClient } from './api.js';
+import { handleApiError } from '../utils/errorHandler.js';
 
 // Check if API is available
-const API_AVAILABLE = import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== ''
+const API_AVAILABLE =
+  import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL.trim() !== '';
 
 // Mock data for different endpoints
 const MOCK_DATA = {
   '/donations': {
-    stats: { 
-      total: 150000, 
-      monthly: 25000, 
+    stats: {
+      total: 150000,
+      monthly: 25000,
       change: 12.5,
-      count: 45, 
+      count: 45,
       thisMonth: 25000,
-      monthlyTrend: [45000, 52000, 48000, 61000, 55000, 67000]
+      monthlyTrend: [45000, 52000, 48000, 61000, 55000, 67000],
     },
     data: [],
   },
   '/beneficiaries': {
-    stats: { 
-      total: 120, 
-      active: 98, 
+    stats: {
+      total: 120,
+      active: 98,
       change: 8.2,
       thisMonth: 8,
-      monthlyTrend: [42000, 47000, 51000, 49000, 62000, 58000]
+      monthlyTrend: [42000, 47000, 51000, 49000, 62000, 58000],
     },
     data: [],
   },
   '/hospital-referrals': {
-    stats: { 
-      total: 45, 
-      pending: 12, 
+    stats: {
+      total: 45,
+      pending: 12,
       change: -5.3,
       thisMonth: 3,
-      monthlyTrend: [38000, 42000, 45000, 41000, 48000, 52000]
+      monthlyTrend: [38000, 42000, 45000, 41000, 48000, 52000],
     },
     data: [],
   },
   '/tasks': {
-    stats: { 
-      total: 156, 
-      active: 42, 
-      completed: 98, 
+    stats: {
+      total: 156,
+      active: 42,
+      completed: 98,
       overdue: 16,
       thisMonth: 12,
-      monthlyTrend: [120, 135, 142, 156, 148, 156]
+      monthlyTrend: [120, 135, 142, 156, 148, 156],
     },
     data: [
       {
@@ -55,7 +56,7 @@ const MOCK_DATA = {
         priority: 'Yüksek',
         assignee: 'Ahmet Yılmaz',
         dueDate: '2024-01-25',
-        createdAt: '2024-01-15'
+        createdAt: '2024-01-15',
       },
       {
         id: 2,
@@ -65,7 +66,7 @@ const MOCK_DATA = {
         priority: 'Orta',
         assignee: 'Fatma Demir',
         dueDate: '2024-01-20',
-        createdAt: '2024-01-10'
+        createdAt: '2024-01-10',
       },
       {
         id: 3,
@@ -75,8 +76,8 @@ const MOCK_DATA = {
         priority: 'Düşük',
         assignee: 'Mehmet Kaya',
         dueDate: '2024-01-30',
-        createdAt: '2024-01-18'
-      }
+        createdAt: '2024-01-18',
+      },
     ],
   },
   '/aid': {
@@ -84,12 +85,12 @@ const MOCK_DATA = {
     data: [],
   },
   '/volunteers': {
-    stats: { 
-      total: 247, 
-      active: 189, 
+    stats: {
+      total: 247,
+      active: 189,
       thisMonth: 34,
       totalHours: 12450,
-      monthlyTrend: [180, 195, 210, 225, 240, 247]
+      monthlyTrend: [180, 195, 210, 225, 240, 247],
     },
     data: [
       {
@@ -103,7 +104,7 @@ const MOCK_DATA = {
         joinDate: '2023-03-15',
         totalHours: 156,
         lastActivity: '2024-01-20',
-        skills: ['Lojistik', 'Organizasyon', 'İletişim']
+        skills: ['Lojistik', 'Organizasyon', 'İletişim'],
       },
       {
         id: 2,
@@ -116,7 +117,7 @@ const MOCK_DATA = {
         joinDate: '2023-01-10',
         totalHours: 234,
         lastActivity: '2024-01-19',
-        skills: ['Eğitim', 'Mentorluk', 'Proje Yönetimi']
+        skills: ['Eğitim', 'Mentorluk', 'Proje Yönetimi'],
       },
       {
         id: 3,
@@ -129,7 +130,7 @@ const MOCK_DATA = {
         joinDate: '2023-06-20',
         totalHours: 189,
         lastActivity: '2024-01-18',
-        skills: ['İlk Yardım', 'Sağlık', 'Danışmanlık']
+        skills: ['İlk Yardım', 'Sağlık', 'Danışmanlık'],
       },
       {
         id: 4,
@@ -142,7 +143,7 @@ const MOCK_DATA = {
         joinDate: '2023-02-05',
         totalHours: 89,
         lastActivity: '2023-12-15',
-        skills: ['Sosyal Medya', 'İçerik Üretimi', 'Pazarlama']
+        skills: ['Sosyal Medya', 'İçerik Üretimi', 'Pazarlama'],
       },
       {
         id: 5,
@@ -155,17 +156,17 @@ const MOCK_DATA = {
         joinDate: '2023-04-12',
         totalHours: 167,
         lastActivity: '2024-01-17',
-        skills: ['Teknoloji', 'Sistem Yönetimi', 'Destek']
-      }
+        skills: ['Teknoloji', 'Sistem Yönetimi', 'Destek'],
+      },
     ],
   },
   '/messages': {
-    stats: { 
-      total: 156, 
-      unread: 23, 
+    stats: {
+      total: 156,
+      unread: 23,
       activeChats: 12,
       thisMonth: 45,
-      monthlyTrend: [120, 135, 142, 156, 148, 156]
+      monthlyTrend: [120, 135, 142, 156, 148, 156],
     },
     data: [
       {
@@ -173,71 +174,76 @@ const MOCK_DATA = {
         sender: 'Ahmet Yılmaz',
         recipient: 'Fatma Demir',
         subject: 'Yardım paketi dağıtımı hakkında',
-        content: 'Merhaba, yarın yapılacak yardım paketi dağıtımı için gönüllü sayısını artırmamız gerekiyor. Acil yardım edebilir misiniz?',
+        content:
+          'Merhaba, yarın yapılacak yardım paketi dağıtımı için gönüllü sayısını artırmamız gerekiyor. Acil yardım edebilir misiniz?',
         type: 'internal',
         priority: 'high',
         unread: true,
         time: '2 saat önce',
-        date: '2024-01-20T10:30:00Z'
+        date: '2024-01-20T10:30:00Z',
       },
       {
         id: 2,
         sender: 'Mehmet Kaya',
         recipient: 'Tüm Gönüllüler',
         subject: 'Haftalık toplantı hatırlatması',
-        content: 'Bu hafta Cuma günü saat 14:00\'te haftalık değerlendirme toplantımız var. Katılımınızı bekliyoruz.',
+        content:
+          "Bu hafta Cuma günü saat 14:00'te haftalık değerlendirme toplantımız var. Katılımınızı bekliyoruz.",
         type: 'announcement',
         priority: 'medium',
         unread: false,
         time: '1 gün önce',
-        date: '2024-01-19T15:45:00Z'
+        date: '2024-01-19T15:45:00Z',
       },
       {
         id: 3,
         sender: 'Ayşe Özkan',
         recipient: 'Yönetim Kurulu',
         subject: 'Finansal rapor - Ocak 2024',
-        content: 'Ocak ayı finansal raporu hazırlandı. Toplam bağış miktarı 125.000₺ olarak gerçekleşti. Detayları ekte bulabilirsiniz.',
+        content:
+          'Ocak ayı finansal raporu hazırlandı. Toplam bağış miktarı 125.000₺ olarak gerçekleşti. Detayları ekte bulabilirsiniz.',
         type: 'report',
         priority: 'low',
         unread: true,
         time: '3 gün önce',
-        date: '2024-01-17T09:15:00Z'
+        date: '2024-01-17T09:15:00Z',
       },
       {
         id: 4,
         sender: 'Hasan Yıldız',
         recipient: 'Envanter Sorumlusu',
         subject: 'Stok durumu kontrolü',
-        content: 'Yardım paketlerindeki malzeme stoklarını kontrol etmemiz gerekiyor. Acil ihtiyaç listesi hazırlayabilir misiniz?',
+        content:
+          'Yardım paketlerindeki malzeme stoklarını kontrol etmemiz gerekiyor. Acil ihtiyaç listesi hazırlayabilir misiniz?',
         type: 'internal',
         priority: 'low',
         unread: false,
         time: '4 gün önce',
-        date: '2024-01-16T11:20:00Z'
+        date: '2024-01-16T11:20:00Z',
       },
       {
         id: 5,
         sender: 'Zeynep Arslan',
         recipient: 'Tüm Personel',
         subject: 'Yeni gönüllü eğitim programı',
-        content: 'Yeni gönüllülerimiz için temel eğitim programı hazırlandı. Program detayları ve kayıt formu ekte yer almaktadır.',
+        content:
+          'Yeni gönüllülerimiz için temel eğitim programı hazırlandı. Program detayları ve kayıt formu ekte yer almaktadır.',
         type: 'announcement',
         priority: 'medium',
         unread: true,
         time: '5 gün önce',
-        date: '2024-01-15T14:30:00Z'
-      }
+        date: '2024-01-15T14:30:00Z',
+      },
     ],
   },
   '/finance': {
-    stats: { 
-      total: 125000, 
-      income: 85000, 
-      expense: 40000, 
+    stats: {
+      total: 125000,
+      income: 85000,
+      expense: 40000,
       balance: 45000,
       thisMonth: 15000,
-      monthlyTrend: [35000, 42000, 38000, 45000, 52000, 48000]
+      monthlyTrend: [35000, 42000, 38000, 45000, 52000, 48000],
     },
     data: [
       {
@@ -247,7 +253,7 @@ const MOCK_DATA = {
         type: 'Gelir',
         category: 'Bağış',
         date: '2024-01-20',
-        status: 'Tamamlandı'
+        status: 'Tamamlandı',
       },
       {
         id: 2,
@@ -256,7 +262,7 @@ const MOCK_DATA = {
         type: 'Gider',
         category: 'Yardım',
         date: '2024-01-18',
-        status: 'Tamamlandı'
+        status: 'Tamamlandı',
       },
       {
         id: 3,
@@ -265,11 +271,11 @@ const MOCK_DATA = {
         type: 'Gider',
         category: 'İşletme',
         date: '2024-01-15',
-        status: 'Tamamlandı'
-      }
+        status: 'Tamamlandı',
+      },
     ],
   },
-}
+};
 
 /**
  * Base service class that provides standardized error handling
@@ -277,7 +283,7 @@ const MOCK_DATA = {
  */
 export class BaseService {
   constructor(endpoint) {
-    this.endpoint = endpoint
+    this.endpoint = endpoint;
   }
 
   /**
@@ -288,11 +294,11 @@ export class BaseService {
    */
   async handleRequest(requestFn, operation = 'API request') {
     try {
-      const result = await requestFn()
-      return result
+      const result = await requestFn();
+      return result;
     } catch (error) {
       // Use the standardized error handler
-      handleApiError(error)
+      handleApiError(error);
 
       // Log additional context for debugging
       console.error(`Failed ${operation}:`, {
@@ -300,94 +306,109 @@ export class BaseService {
         error: error.message,
         status: error.status,
         details: error.data,
-      })
+      });
 
       // Re-throw the error so components can handle it appropriately
-      throw error
+      throw error;
     }
   }
 
   // Standard CRUD operations with consistent error handling
   async getAll() {
     if (!API_AVAILABLE) {
-      return Promise.resolve(MOCK_DATA[this.endpoint]?.data || [])
+      return Promise.resolve(MOCK_DATA[this.endpoint]?.data || []);
     }
 
-    return this.handleRequest(() => apiClient.get(this.endpoint), `to fetch all ${this.endpoint}`)
+    return this.handleRequest(
+      () => apiClient.get(this.endpoint),
+      `to fetch all ${this.endpoint}`
+    );
   }
 
   async getById(id) {
     if (!API_AVAILABLE) {
-      return Promise.resolve({ id, name: 'Mock Data', status: 'active' })
+      return Promise.resolve({ id, name: 'Mock Data', status: 'active' });
     }
 
     return this.handleRequest(
       () => apiClient.get(`${this.endpoint}/${id}`),
       `to fetch ${this.endpoint} with id ${id}`
-    )
+    );
   }
 
   async create(data) {
     if (!API_AVAILABLE) {
-      return Promise.resolve({ id: Date.now(), ...data, created_at: new Date().toISOString() })
+      return Promise.resolve({
+        id: Date.now(),
+        ...data,
+        created_at: new Date().toISOString(),
+      });
     }
 
     return this.handleRequest(
       () => apiClient.post(this.endpoint, data),
       `to create ${this.endpoint}`
-    )
+    );
   }
 
   async update(id, data) {
     if (!API_AVAILABLE) {
-      return Promise.resolve({ id, ...data, updated_at: new Date().toISOString() })
+      return Promise.resolve({
+        id,
+        ...data,
+        updated_at: new Date().toISOString(),
+      });
     }
 
     return this.handleRequest(
       () => apiClient.put(`${this.endpoint}/${id}`, data),
       `to update ${this.endpoint} with id ${id}`
-    )
+    );
   }
 
   async delete(id) {
     if (!API_AVAILABLE) {
-      return Promise.resolve({ success: true, id })
+      return Promise.resolve({ success: true, id });
     }
 
     return this.handleRequest(
       () => apiClient.delete(`${this.endpoint}/${id}`),
       `to delete ${this.endpoint} with id ${id}`
-    )
+    );
   }
 
   async search(query) {
     if (!API_AVAILABLE) {
-      return Promise.resolve([])
+      return Promise.resolve([]);
     }
 
     return this.handleRequest(
-      () => apiClient.get(`${this.endpoint}/search?q=${encodeURIComponent(query)}`),
+      () =>
+        apiClient.get(`${this.endpoint}/search?q=${encodeURIComponent(query)}`),
       `to search ${this.endpoint}`
-    )
+    );
   }
 
   async getStats() {
     if (!API_AVAILABLE) {
       // Return mock data when API is not available
-      const mockData = MOCK_DATA[this.endpoint]?.stats || { total: 0, count: 0 }
-      return Promise.resolve(mockData)
+      const mockData = MOCK_DATA[this.endpoint]?.stats || {
+        total: 0,
+        count: 0,
+      };
+      return Promise.resolve(mockData);
     }
 
     return this.handleRequest(
       () => apiClient.get(`${this.endpoint}/stats`),
       `to fetch ${this.endpoint} statistics`
-    )
+    );
   }
 
   // Utility method for custom requests with error handling
   async customRequest(requestFn, operation) {
-    return this.handleRequest(requestFn, operation)
+    return this.handleRequest(requestFn, operation);
   }
 }
 
-export default BaseService
+export default BaseService;

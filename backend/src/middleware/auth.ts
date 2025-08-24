@@ -3,61 +3,68 @@
  * Provides JWT token validation and user context
  */
 
-import { Request, Response, NextFunction } from 'express'
-import jwt from 'jsonwebtoken'
-import { supabase } from '../config/database'
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import { supabase } from '../config/database';
 
 // Extend Express Request interface to include user
 declare global {
-  namespace Express {
-    interface Request {
+  interface Express {
+    Request: {
       user?: {
-        id: string
-        email: string
-        role: string
-        name?: string
-      }
-    }
+        id: string;
+        email: string;
+        role: string;
+        name?: string;
+      };
+    };
   }
 }
 
 /**
  * Verify JWT token and set user context
  */
-export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1] // Bearer TOKEN
+export const authenticateToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
   if (!token) {
     return res.status(401).json({
       success: false,
-      message: 'Access token required'
-    })
+      message: 'Access token required',
+    });
   }
 
   try {
     // Verify JWT token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any
-    
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET || 'fallback-secret'
+    ) as any;
+
     // Get user from database to ensure user still exists and is active
     const { data: user, error } = await supabase
       .from('users')
       .select('id, email, role, name, active')
       .eq('id', decoded.userId)
-      .single()
+      .single();
 
     if (error || !user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid token - user not found'
-      })
+        message: 'Invalid token - user not found',
+      });
     }
 
     if (!user.active) {
       return res.status(401).json({
         success: false,
-        message: 'Account is deactivated'
-      })
+        message: 'Account is deactivated',
+      });
     }
 
     // Set user context for downstream middleware/routes
@@ -65,53 +72,60 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
       id: user.id,
       email: user.email,
       role: user.role,
-      name: user.name
-    }
+      name: user.name,
+    };
 
-    next()
+    next();
   } catch (error) {
     return res.status(403).json({
       success: false,
-      message: 'Invalid or expired token'
-    })
+      message: 'Invalid or expired token',
+    });
   }
-}
+};
 
 /**
  * Optional authentication - doesn't fail if no token provided
  * But validates token if present
  */
-export const optionalAuth = async (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1]
+export const optionalAuth = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    return next() // Continue without authentication
+    return next(); // Continue without authentication
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any
-    
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET || 'fallback-secret'
+    ) as any;
+
     const { data: user, error } = await supabase
       .from('users')
       .select('id, email, role, name, active')
       .eq('id', decoded.userId)
-      .single()
+      .single();
 
     if (!error && user && user.active) {
       req.user = {
         id: user.id,
         email: user.email,
         role: user.role,
-        name: user.name
-      }
+        name: user.name,
+      };
     }
   } catch (error) {
     // Silently fail for optional auth
   }
 
-  next()
-}
+  next();
+};
 
 /**
  * Role-based authorization middleware
@@ -121,22 +135,24 @@ export const requireRole = (requiredRoles: string | string[]) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: 'Authentication required'
-      })
+        message: 'Authentication required',
+      });
     }
 
-    const roles = Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles]
-    
+    const roles = Array.isArray(requiredRoles)
+      ? requiredRoles
+      : [requiredRoles];
+
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        message: 'Insufficient permissions'
-      })
+        message: 'Insufficient permissions',
+      });
     }
 
-    next()
-  }
-}
+    next();
+  };
+};
 
 /**
  * Permission-based authorization middleware
@@ -146,8 +162,8 @@ export const requirePermission = (permission: string) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: 'Authentication required'
-      })
+        message: 'Authentication required',
+      });
     }
 
     try {
@@ -157,91 +173,105 @@ export const requirePermission = (permission: string) => {
         .select('permission')
         .eq('user_id', req.user.id)
         .eq('permission', permission)
-        .single()
+        .single();
 
       if (error || !userPermissions) {
         return res.status(403).json({
           success: false,
-          message: 'Permission denied'
-        })
+          message: 'Permission denied',
+        });
       }
 
-      next()
+      next();
     } catch (error) {
       return res.status(500).json({
         success: false,
-        message: 'Error checking permissions'
-      })
+        message: 'Error checking permissions',
+      });
     }
-  }
-}
+  };
+};
 
 /**
  * Rate limiting per user
  */
-export const rateLimitPerUser = (maxRequests: number = 100, windowMs: number = 15 * 60 * 1000) => {
-  const userRequests = new Map<string, number[]>()
+export const rateLimitPerUser = (
+  maxRequests: number = 100,
+  windowMs: number = 15 * 60 * 1000
+) => {
+  const userRequests = new Map<string, number[]>();
 
   return (req: Request, res: Response, next: NextFunction) => {
-    const userId = req.user?.id || req.ip
-    const now = Date.now()
-    const windowStart = now - windowMs
+    const userId = req.user?.id || req.ip;
+    const now = Date.now();
+    const windowStart = now - windowMs;
 
     // Clean old requests
     if (userRequests.has(userId)) {
-      const requests = userRequests.get(userId)!
-      const validRequests = requests.filter(time => time > windowStart)
-      userRequests.set(userId, validRequests)
+      const requests = userRequests.get(userId)!;
+      const validRequests = requests.filter(time => time > windowStart);
+      userRequests.set(userId, validRequests);
     } else {
-      userRequests.set(userId, [])
+      userRequests.set(userId, []);
     }
 
-    const currentRequests = userRequests.get(userId)!
-    
+    const currentRequests = userRequests.get(userId)!;
+
     if (currentRequests.length >= maxRequests) {
       return res.status(429).json({
         success: false,
         message: 'Too many requests',
-        retryAfter: Math.ceil(windowMs / 1000)
-      })
+        retryAfter: Math.ceil(windowMs / 1000),
+      });
     }
 
     // Add current request
-    currentRequests.push(now)
-    userRequests.set(userId, currentRequests)
+    currentRequests.push(now);
+    userRequests.set(userId, currentRequests);
 
-    next()
-  }
-}
+    next();
+  };
+};
 
 /**
  * Generate JWT token for user
  */
-export const generateToken = (user: { id: string; email: string; role: string }) => {
+export const generateToken = (user: {
+  id: string;
+  email: string;
+  role: string;
+}) => {
   return jwt.sign(
-    { 
-      userId: user.id, 
-      email: user.email, 
-      role: user.role 
+    {
+      userId: user.id,
+      email: user.email,
+      role: user.role,
     },
     process.env.JWT_SECRET || 'fallback-secret',
-    { 
-      expiresIn: process.env.JWT_EXPIRES_IN || '7d' 
+    {
+      expiresIn: process.env.JWT_EXPIRES_IN || '7d',
     }
-  )
-}
+  );
+};
 
 /**
  * Security headers middleware
  */
-export const securityHeaders = (req: Request, res: Response, next: NextFunction) => {
+export const securityHeaders = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   // Security headers
-  res.setHeader('X-Content-Type-Options', 'nosniff')
-  res.setHeader('X-Frame-Options', 'DENY')
-  res.setHeader('X-XSS-Protection', '1; mode=block')
-  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
-  res.setHeader('Content-Security-Policy', "default-src 'self'")
-  
-  next()
-}
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader(
+    'Strict-Transport-Security',
+    'max-age=31536000; includeSubDomains'
+  );
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Content-Security-Policy', "default-src 'self'");
+
+  next();
+};

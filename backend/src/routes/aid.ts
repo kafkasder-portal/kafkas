@@ -5,15 +5,24 @@ import { v4 as uuidv4 } from 'uuid';
 const router = express.Router();
 
 // Supabase client
-const supabaseUrl = process.env.SUPABASE_URL || 'https://fagblbogumttcrsbletc.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ2JsYm9ndW10dGNyc2JsZXRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4NDg4OTksImV4cCI6MjA3MTQyNDg5OX0.PNQpiOsctCqIrH20BdylDtzVVKOJW4KmBo79w2izioo';
+const supabaseUrl =
+  process.env.SUPABASE_URL || 'https://fagblbogumttcrsbletc.supabase.co';
+const supabaseKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ2JsYm9ndW10dGNyc2JsZXRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4NDg4OTksImV4cCI6MjA3MTQyNDg5OX0.PNQpiOsctCqIrH20BdylDtzVVKOJW4KmBo79w2izioo';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Get all aid records
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = '', type = '', beneficiaryId = '' } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      search = '',
+      type = '',
+      beneficiaryId = '',
+    } = req.query;
     const offset = (Number(page) - 1) * Number(limit);
 
     let supabaseQuery = supabase
@@ -31,7 +40,11 @@ router.get('/', async (req, res) => {
       supabaseQuery = supabaseQuery.eq('beneficiary_id', beneficiaryId);
     }
 
-    const { data: aidRecords, error, count } = await supabaseQuery
+    const {
+      data: aidRecords,
+      error,
+      count,
+    } = await supabaseQuery
       .order('aid_date', { ascending: false })
       .range(offset, offset + Number(limit) - 1);
 
@@ -42,16 +55,17 @@ router.get('/', async (req, res) => {
 
     const totalRecords = count || 0;
 
-    const formattedRecords = aidRecords?.map((record: any) => ({
-      id: record.id,
-      beneficiaryId: record.beneficiary_id,
-      aidType: record.aid_type,
-      amount: record.amount ? parseFloat(record.amount) : null,
-      description: record.description,
-      aidDate: record.aid_date,
-      createdAt: record.created_at,
-      createdBy: record.created_by
-    })) || [];
+    const formattedRecords =
+      aidRecords?.map((record: any) => ({
+        id: record.id,
+        beneficiaryId: record.beneficiary_id,
+        aidType: record.aid_type,
+        amount: record.amount ? parseFloat(record.amount) : null,
+        description: record.description,
+        aidDate: record.aid_date,
+        createdAt: record.created_at,
+        createdBy: record.created_by,
+      })) || [];
 
     res.json({
       success: true,
@@ -61,15 +75,15 @@ router.get('/', async (req, res) => {
           page: Number(page),
           limit: Number(limit),
           total: totalRecords,
-          totalPages: Math.ceil(totalRecords / Number(limit))
-        }
-      }
+          totalPages: Math.ceil(totalRecords / Number(limit)),
+        },
+      },
     });
   } catch (error) {
     console.error('Get aid records error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -88,7 +102,7 @@ router.get('/:id', async (req, res) => {
     if (error || !record) {
       return res.status(404).json({
         success: false,
-        message: 'Aid record not found'
+        message: 'Aid record not found',
       });
     }
 
@@ -103,15 +117,15 @@ router.get('/:id', async (req, res) => {
           description: record.description,
           aidDate: record.aid_date,
           createdAt: record.created_at,
-          createdBy: record.created_by
-        }
-      }
+          createdBy: record.created_by,
+        },
+      },
     });
   } catch (error) {
     console.error('Get aid record error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -124,7 +138,7 @@ router.post('/', async (req, res) => {
     if (!beneficiaryId || !aidType) {
       return res.status(400).json({
         success: false,
-        message: 'Beneficiary ID and aid type are required'
+        message: 'Beneficiary ID and aid type are required',
       });
     }
 
@@ -136,18 +150,16 @@ router.post('/', async (req, res) => {
       description: description || '',
       aid_date: aidDate || new Date().toISOString(),
       created_at: new Date().toISOString(),
-      created_by: (req as any).user?.id || 'system'
+      created_by: (req as any).user?.id || 'system',
     };
 
-    const { error } = await supabase
-      .from('aid_records')
-      .insert([newRecord]);
+    const { error } = await supabase.from('aid_records').insert([newRecord]);
 
     if (error) {
       console.error('Database error:', error);
       return res.status(500).json({
         success: false,
-        message: 'Failed to create aid record'
+        message: 'Failed to create aid record',
       });
     }
 
@@ -162,16 +174,16 @@ router.post('/', async (req, res) => {
           description: newRecord.description,
           aidDate: newRecord.aid_date,
           createdAt: newRecord.created_at,
-          createdBy: newRecord.created_by
-        }
+          createdBy: newRecord.created_by,
+        },
       },
-      message: 'Aid record created successfully'
+      message: 'Aid record created successfully',
     });
   } catch (error) {
     console.error('Create aid record error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -191,7 +203,7 @@ router.put('/:id', async (req, res) => {
     if (checkError || !existingRecord) {
       return res.status(404).json({
         success: false,
-        message: 'Aid record not found'
+        message: 'Aid record not found',
       });
     }
 
@@ -199,8 +211,9 @@ router.put('/:id', async (req, res) => {
       beneficiary_id: beneficiaryId || existingRecord.beneficiary_id,
       aid_type: aidType || existingRecord.aid_type,
       amount: amount !== undefined ? parseFloat(amount) : existingRecord.amount,
-      description: description !== undefined ? description : existingRecord.description,
-      aid_date: aidDate || existingRecord.aid_date
+      description:
+        description !== undefined ? description : existingRecord.description,
+      aid_date: aidDate || existingRecord.aid_date,
     };
 
     const { error: updateError } = await supabase
@@ -212,7 +225,7 @@ router.put('/:id', async (req, res) => {
       console.error('Database error:', updateError);
       return res.status(500).json({
         success: false,
-        message: 'Failed to update aid record'
+        message: 'Failed to update aid record',
       });
     }
 
@@ -227,16 +240,16 @@ router.put('/:id', async (req, res) => {
           description: updateData.description,
           aidDate: updateData.aid_date,
           createdAt: existingRecord.created_at,
-          createdBy: existingRecord.created_by
-        }
+          createdBy: existingRecord.created_by,
+        },
       },
-      message: 'Aid record updated successfully'
+      message: 'Aid record updated successfully',
     });
   } catch (error) {
     console.error('Update aid record error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });
@@ -255,19 +268,19 @@ router.delete('/:id', async (req, res) => {
       console.error('Database error:', deleteError);
       return res.status(500).json({
         success: false,
-        message: 'Failed to delete aid record'
+        message: 'Failed to delete aid record',
       });
     }
 
     res.json({
       success: true,
-      message: 'Aid record deleted successfully'
+      message: 'Aid record deleted successfully',
     });
   } catch (error) {
     console.error('Delete aid record error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
     });
   }
 });

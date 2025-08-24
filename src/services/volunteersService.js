@@ -38,7 +38,8 @@ class VolunteersService extends BaseService {
 
   async assignVolunteerToTask(volunteerId, taskId) {
     return this.handleRequest(
-      () => apiClient.post(`${this.endpoint}/${volunteerId}/assign`, { taskId }),
+      () =>
+        apiClient.post(`${this.endpoint}/${volunteerId}/assign`, { taskId }),
       `to assign volunteer ${volunteerId} to task ${taskId}`
     );
   }

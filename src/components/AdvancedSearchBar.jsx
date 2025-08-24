@@ -1,96 +1,104 @@
-import { AnimatePresence, motion } from 'framer-motion'
-import {
-    ChevronDown,
-    Filter,
-    Search,
-    Tag,
-    X
-} from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronDown, Filter, Search, Tag, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
-const AdvancedSearchBar = ({ 
-  onSearch, 
-  placeholder = "Ara...", 
+const AdvancedSearchBar = ({
+  onSearch,
+  placeholder = 'Ara...',
   filters = [],
   suggestions = [],
-  className = ""
+  className = '',
 }) => {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [isFilterOpen, setIsFilterOpen] = useState(false)
-  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
-  const [activeFilters, setActiveFilters] = useState({})
-  const [filteredSuggestions, setFilteredSuggestions] = useState([])
-  const searchRef = useRef(null)
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
+  const [activeFilters, setActiveFilters] = useState({});
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const searchRef = useRef(null);
 
   useEffect(() => {
     if (searchTerm.length > 0) {
-      const filtered = suggestions.filter(item =>
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.description?.toLowerCase().includes(searchTerm.toLowerCase())
-      ).slice(0, 5)
-      setFilteredSuggestions(filtered)
-      setIsSuggestionsOpen(filtered.length > 0)
+      const filtered = suggestions
+        .filter(
+          item =>
+            item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.description?.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .slice(0, 5);
+      setFilteredSuggestions(filtered);
+      setIsSuggestionsOpen(filtered.length > 0);
     } else {
-      setFilteredSuggestions([])
-      setIsSuggestionsOpen(false)
+      setFilteredSuggestions([]);
+      setIsSuggestionsOpen(false);
     }
-  }, [searchTerm, suggestions])
+  }, [searchTerm, suggestions]);
 
   const handleSearch = (term = searchTerm) => {
     if (onSearch) {
       onSearch({
         term: term.trim(),
-        filters: activeFilters
-      })
+        filters: activeFilters,
+      });
     }
-    setIsSuggestionsOpen(false)
-  }
+    setIsSuggestionsOpen(false);
+  };
 
   const handleFilterChange = (filterId, value) => {
-    const newFilters = { ...activeFilters }
+    const newFilters = { ...activeFilters };
     if (value) {
-      newFilters[filterId] = value
+      newFilters[filterId] = value;
     } else {
-      delete newFilters[filterId]
+      delete newFilters[filterId];
     }
-    setActiveFilters(newFilters)
-  }
+    setActiveFilters(newFilters);
+  };
 
   const clearFilters = () => {
-    setActiveFilters({})
-  }
+    setActiveFilters({});
+  };
 
-  const activeFilterCount = Object.keys(activeFilters).length
+  const activeFilterCount = Object.keys(activeFilters).length;
 
   return (
-    <div className={`advanced-search-container ${className}`} style={{ position: 'relative', width: '100%' }}>
+    <div
+      className={`advanced-search-container ${className}`}
+      style={{ position: 'relative', width: '100%' }}
+    >
       {/* Ana Arama Barı */}
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'stretch', 
-        backgroundColor: 'white',
-        border: '2px solid #e2e8f0',
-        borderRadius: '12px',
-        overflow: 'hidden',
-        transition: 'all 0.2s ease'
-      }}>
-        <div style={{ 
-          position: 'relative', 
-          flex: 1,
+      <div
+        style={{
           display: 'flex',
-          alignItems: 'center'
-        }}>
-          <Search size={18} color="#64748b" style={{ 
-            position: 'absolute', 
-            left: '1rem', 
-            zIndex: 1 
-          }} />
+          alignItems: 'stretch',
+          backgroundColor: 'white',
+          border: '2px solid #e2e8f0',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          transition: 'all 0.2s ease',
+        }}
+      >
+        <div
+          style={{
+            position: 'relative',
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <Search
+            size={18}
+            color='#64748b'
+            style={{
+              position: 'absolute',
+              left: '1rem',
+              zIndex: 1,
+            }}
+          />
           <input
             ref={searchRef}
-            type="text"
+            type='text'
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            onChange={e => setSearchTerm(e.target.value)}
+            onKeyPress={e => e.key === 'Enter' && handleSearch()}
             onFocus={() => searchTerm.length > 0 && setIsSuggestionsOpen(true)}
             placeholder={placeholder}
             style={{
@@ -99,14 +107,14 @@ const AdvancedSearchBar = ({
               border: 'none',
               outline: 'none',
               fontSize: '0.875rem',
-                              backgroundColor: 'rgba(0,0,0,0)'
+              backgroundColor: 'rgba(0,0,0,0)',
             }}
           />
           {searchTerm && (
             <motion.button
               onClick={() => {
-                setSearchTerm('')
-                setIsSuggestionsOpen(false)
+                setSearchTerm('');
+                setIsSuggestionsOpen(false);
               }}
               style={{
                 position: 'absolute',
@@ -115,12 +123,12 @@ const AdvancedSearchBar = ({
                 border: 'none',
                 cursor: 'pointer',
                 padding: '0.25rem',
-                borderRadius: '4px'
+                borderRadius: '4px',
               }}
               whileHover={{ backgroundColor: '#f1f5f9' }}
               whileTap={{ scale: 0.9 }}
             >
-              <X size={16} color="#64748b" />
+              <X size={16} color='#64748b' />
             </motion.button>
           )}
         </div>
@@ -140,30 +148,32 @@ const AdvancedSearchBar = ({
               borderLeft: '1px solid #e2e8f0',
               cursor: 'pointer',
               fontSize: '0.875rem',
-              fontWeight: '500'
+              fontWeight: '500',
             }}
-            whileHover={{ 
-              backgroundColor: activeFilterCount > 0 ? '#5a67d8' : '#f1f5f9' 
+            whileHover={{
+              backgroundColor: activeFilterCount > 0 ? '#5a67d8' : '#f1f5f9',
             }}
             whileTap={{ scale: 0.98 }}
           >
             <Filter size={16} />
             {activeFilterCount > 0 && (
-              <span style={{ 
-                fontSize: '0.75rem',
-                backgroundColor: 'rgba(255,255,255,0.2)',
-                padding: '0.125rem 0.375rem',
-                borderRadius: '10px'
-              }}>
+              <span
+                style={{
+                  fontSize: '0.75rem',
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                  padding: '0.125rem 0.375rem',
+                  borderRadius: '10px',
+                }}
+              >
                 {activeFilterCount}
               </span>
             )}
-            <ChevronDown 
-              size={14} 
-              style={{ 
+            <ChevronDown
+              size={14}
+              style={{
                 transform: isFilterOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.2s ease'
-              }} 
+                transition: 'transform 0.2s ease',
+              }}
             />
           </motion.button>
         )}
@@ -184,7 +194,7 @@ const AdvancedSearchBar = ({
               boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
               zIndex: 1000,
               marginTop: '0.5rem',
-              overflow: 'hidden'
+              overflow: 'hidden',
             }}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -194,8 +204,8 @@ const AdvancedSearchBar = ({
               <motion.div
                 key={index}
                 onClick={() => {
-                  setSearchTerm(suggestion.title)
-                  handleSearch(suggestion.title)
+                  setSearchTerm(suggestion.title);
+                  handleSearch(suggestion.title);
                 }}
                 style={{
                   display: 'flex',
@@ -203,33 +213,53 @@ const AdvancedSearchBar = ({
                   gap: '0.75rem',
                   padding: '0.875rem 1rem',
                   cursor: 'pointer',
-                  borderBottom: index < filteredSuggestions.length - 1 ? '1px solid #f1f5f9' : 'none'
+                  borderBottom:
+                    index < filteredSuggestions.length - 1
+                      ? '1px solid #f1f5f9'
+                      : 'none',
                 }}
                 whileHover={{ backgroundColor: '#f8fafc' }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: index * 0.05 }}
               >
-                {suggestion.icon && <suggestion.icon size={16} color="#64748b" />}
+                {suggestion.icon && (
+                  <suggestion.icon size={16} color='#64748b' />
+                )}
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: '0.875rem', fontWeight: '500', color: '#1a202c', margin: 0 }}>
+                  <p
+                    style={{
+                      fontSize: '0.875rem',
+                      fontWeight: '500',
+                      color: '#1a202c',
+                      margin: 0,
+                    }}
+                  >
                     {suggestion.title}
                   </p>
                   {suggestion.description && (
-                    <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>
+                    <p
+                      style={{
+                        fontSize: '0.75rem',
+                        color: '#64748b',
+                        margin: 0,
+                      }}
+                    >
                       {suggestion.description}
                     </p>
                   )}
                 </div>
                 {suggestion.category && (
-                  <span style={{
-                    fontSize: '0.75rem',
-                    fontWeight: '500',
-                    color: '#667eea',
-                    backgroundColor: '#667eea15',
-                    padding: '0.25rem 0.5rem',
-                    borderRadius: '6px'
-                  }}>
+                  <span
+                    style={{
+                      fontSize: '0.75rem',
+                      fontWeight: '500',
+                      color: '#667eea',
+                      backgroundColor: '#667eea15',
+                      padding: '0.25rem 0.5rem',
+                      borderRadius: '6px',
+                    }}
+                  >
                     {suggestion.category}
                   </span>
                 )}
@@ -254,14 +284,28 @@ const AdvancedSearchBar = ({
               boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
               zIndex: 1000,
               marginTop: '0.5rem',
-              padding: '1.5rem'
+              padding: '1.5rem',
             }}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
           >
-            <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h4 style={{ fontSize: '1rem', fontWeight: '600', color: '#1a202c', margin: 0 }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'between',
+                alignItems: 'center',
+                marginBottom: '1rem',
+              }}
+            >
+              <h4
+                style={{
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  color: '#1a202c',
+                  margin: 0,
+                }}
+              >
                 Filtreler
               </h4>
               {activeFilterCount > 0 && (
@@ -273,7 +317,7 @@ const AdvancedSearchBar = ({
                     color: '#667eea',
                     cursor: 'pointer',
                     fontSize: '0.875rem',
-                    fontWeight: '500'
+                    fontWeight: '500',
                   }}
                   whileHover={{ color: '#5a67d8' }}
                 >
@@ -282,34 +326,44 @@ const AdvancedSearchBar = ({
               )}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-              {filters.map((filter) => (
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '1rem',
+              }}
+            >
+              {filters.map(filter => (
                 <div key={filter.id}>
-                  <label style={{ 
-                    fontSize: '0.875rem', 
-                    fontWeight: '500', 
-                    color: '#374151',
-                    marginBottom: '0.5rem',
-                    display: 'block'
-                  }}>
+                  <label
+                    style={{
+                      fontSize: '0.875rem',
+                      fontWeight: '500',
+                      color: '#374151',
+                      marginBottom: '0.5rem',
+                      display: 'block',
+                    }}
+                  >
                     {filter.label}
                   </label>
-                  
+
                   {filter.type === 'select' && (
                     <select
                       value={activeFilters[filter.id] || ''}
-                      onChange={(e) => handleFilterChange(filter.id, e.target.value)}
+                      onChange={e =>
+                        handleFilterChange(filter.id, e.target.value)
+                      }
                       style={{
                         width: '100%',
                         padding: '0.5rem',
                         border: '1px solid #d1d5db',
                         borderRadius: '6px',
                         fontSize: '0.875rem',
-                        outline: 'none'
+                        outline: 'none',
                       }}
                     >
-                      <option value="">Tümü</option>
-                      {filter.options?.map((option) => (
+                      <option value=''>Tümü</option>
+                      {filter.options?.map(option => (
                         <option key={option.value} value={option.value}>
                           {option.label}
                         </option>
@@ -319,33 +373,37 @@ const AdvancedSearchBar = ({
 
                   {filter.type === 'date' && (
                     <input
-                      type="date"
+                      type='date'
                       value={activeFilters[filter.id] || ''}
-                      onChange={(e) => handleFilterChange(filter.id, e.target.value)}
+                      onChange={e =>
+                        handleFilterChange(filter.id, e.target.value)
+                      }
                       style={{
                         width: '100%',
                         padding: '0.5rem',
                         border: '1px solid #d1d5db',
                         borderRadius: '6px',
                         fontSize: '0.875rem',
-                        outline: 'none'
+                        outline: 'none',
                       }}
                     />
                   )}
 
                   {filter.type === 'text' && (
                     <input
-                      type="text"
+                      type='text'
                       placeholder={filter.placeholder}
                       value={activeFilters[filter.id] || ''}
-                      onChange={(e) => handleFilterChange(filter.id, e.target.value)}
+                      onChange={e =>
+                        handleFilterChange(filter.id, e.target.value)
+                      }
                       style={{
                         width: '100%',
                         padding: '0.5rem',
                         border: '1px solid #d1d5db',
                         borderRadius: '6px',
                         fontSize: '0.875rem',
-                        outline: 'none'
+                        outline: 'none',
                       }}
                     />
                   )}
@@ -353,7 +411,14 @@ const AdvancedSearchBar = ({
               ))}
             </div>
 
-            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.5rem', justifyContent: 'flex-end' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '0.5rem',
+                marginTop: '1.5rem',
+                justifyContent: 'flex-end',
+              }}
+            >
               <motion.button
                 onClick={() => setIsFilterOpen(false)}
                 style={{
@@ -364,7 +429,7 @@ const AdvancedSearchBar = ({
                   borderRadius: '6px',
                   cursor: 'pointer',
                   fontSize: '0.875rem',
-                  fontWeight: '500'
+                  fontWeight: '500',
                 }}
                 whileHover={{ backgroundColor: '#e5e7eb' }}
                 whileTap={{ scale: 0.98 }}
@@ -373,8 +438,8 @@ const AdvancedSearchBar = ({
               </motion.button>
               <motion.button
                 onClick={() => {
-                  handleSearch()
-                  setIsFilterOpen(false)
+                  handleSearch();
+                  setIsFilterOpen(false);
                 }}
                 style={{
                   padding: '0.5rem 1rem',
@@ -384,7 +449,7 @@ const AdvancedSearchBar = ({
                   borderRadius: '6px',
                   cursor: 'pointer',
                   fontSize: '0.875rem',
-                  fontWeight: '500'
+                  fontWeight: '500',
                 }}
                 whileHover={{ backgroundColor: '#5a67d8' }}
                 whileTap={{ scale: 0.98 }}
@@ -403,17 +468,19 @@ const AdvancedSearchBar = ({
             display: 'flex',
             flexWrap: 'wrap',
             gap: '0.5rem',
-            marginTop: '1rem'
+            marginTop: '1rem',
           }}
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
         >
           {Object.entries(activeFilters).map(([filterId, value]) => {
-            const filter = filters.find(f => f.id === filterId)
-            const displayValue = filter?.type === 'select' 
-              ? filter.options?.find(opt => opt.value === value)?.label || value
-              : value
+            const filter = filters.find(f => f.id === filterId);
+            const displayValue =
+              filter?.type === 'select'
+                ? filter.options?.find(opt => opt.value === value)?.label ||
+                  value
+                : value;
 
             return (
               <motion.div
@@ -427,14 +494,16 @@ const AdvancedSearchBar = ({
                   color: '#667eea',
                   borderRadius: '20px',
                   fontSize: '0.75rem',
-                  fontWeight: '500'
+                  fontWeight: '500',
                 }}
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
               >
                 <Tag size={12} />
-                <span>{filter?.label}: {displayValue}</span>
+                <span>
+                  {filter?.label}: {displayValue}
+                </span>
                 <motion.button
                   onClick={() => handleFilterChange(filterId, null)}
                   style={{
@@ -442,7 +511,7 @@ const AdvancedSearchBar = ({
                     border: 'none',
                     cursor: 'pointer',
                     padding: '0.125rem',
-                    borderRadius: '50%'
+                    borderRadius: '50%',
                   }}
                   whileHover={{ backgroundColor: '#667eea25' }}
                   whileTap={{ scale: 0.9 }}
@@ -450,12 +519,12 @@ const AdvancedSearchBar = ({
                   <X size={12} />
                 </motion.button>
               </motion.div>
-            )
+            );
           })}
         </motion.div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default AdvancedSearchBar
+export default AdvancedSearchBar;

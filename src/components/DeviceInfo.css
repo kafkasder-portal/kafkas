@@ -163,18 +163,18 @@
     padding: 16px;
     margin: 16px 0;
   }
-  
+
   .device-info-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
-  
+
   .device-info-grid {
     grid-template-columns: 1fr;
     gap: 12px;
   }
-  
+
   .capabilities-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -185,12 +185,12 @@
     padding: 4px 8px;
     font-size: 11px;
   }
-  
+
   .device-indicator svg {
     width: 16px;
     height: 16px;
   }
-  
+
   .capabilities-grid {
     grid-template-columns: 1fr;
   }
@@ -203,7 +203,8 @@
 }
 
 @keyframes devicePulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
