@@ -261,18 +261,89 @@ const Sidebar = ({ collapsed, onToggle }) => {
               {hoveredItem.title}
             </div>
             <div className="popup-items">
-              <Link to={hoveredItem.path} className="popup-item">
-                Ana Sayfa
-              </Link>
-              <Link to={`${hoveredItem.path}/list`} className="popup-item">
-                Liste Görünümü
-              </Link>
-              <Link to={`${hoveredItem.path}/create`} className="popup-item">
-                Yeni Ekle
-              </Link>
-              <Link to={`${hoveredItem.path}/reports`} className="popup-item">
-                Raporlar
-              </Link>
+              {hoveredItem.id === 'dashboard' && (
+                <>
+                  <Link to="/" className="popup-item">Ana Dashboard</Link>
+                  <Link to="/analytics" className="popup-item">Analitik</Link>
+                  <Link to="/reports" className="popup-item">Raporlar</Link>
+                </>
+              )}
+              
+              {hoveredItem.id === 'donations' && (
+                <>
+                  <Link to="/donations" className="popup-item">Bağış Listesi</Link>
+                  <Link to="/donations/vault" className="popup-item">Kumbara Takibi</Link>
+                  <Link to="/donations/institutions" className="popup-item">Kurumlar</Link>
+                  <Link to="/donors" className="popup-item">Bağışçılar</Link>
+                </>
+              )}
+              
+              {hoveredItem.id === 'beneficiaries' && (
+                <>
+                  <Link to="/beneficiaries" className="popup-item">İhtiyaç Sahipleri</Link>
+                  <Link to="/aid" className="popup-item">Yardım Programları</Link>
+                  <Link to="/scholarship" className="popup-item">Burs Programları</Link>
+                  <Link to="/hospital-referrals" className="popup-item">Hastane Sevkleri</Link>
+                </>
+              )}
+              
+              {hoveredItem.id === 'volunteers' && (
+                <>
+                  <Link to="/volunteers" className="popup-item">Gönüllü Listesi</Link>
+                  <Link to="/volunteers/create" className="popup-item">Yeni Gönüllü</Link>
+                  <Link to="/volunteers/reports" className="popup-item">Gönüllü Raporları</Link>
+                </>
+              )}
+              
+              {hoveredItem.id === 'finance' && (
+                <>
+                  <Link to="/finance" className="popup-item">Finans Yönetimi</Link>
+                  <Link to="/finance/accounting" className="popup-item">Muhasebe</Link>
+                  <Link to="/finance/bank-orders" className="popup-item">Banka İşlemleri</Link>
+                  <Link to="/finance/reports" className="popup-item">Finansal Raporlar</Link>
+                </>
+              )}
+              
+              {hoveredItem.id === 'tasks' && (
+                <>
+                  <Link to="/tasks" className="popup-item">Görev Listesi</Link>
+                  <Link to="/tasks/create" className="popup-item">Yeni Görev</Link>
+                  <Link to="/tasks/calendar" className="popup-item">Görev Takvimi</Link>
+                </>
+              )}
+              
+              {hoveredItem.id === 'inventory' && (
+                <>
+                  <Link to="/inventory" className="popup-item">Envanter Listesi</Link>
+                  <Link to="/inventory/stock-in" className="popup-item">Stok Girişi</Link>
+                  <Link to="/inventory/stock-out" className="popup-item">Stok Çıkışı</Link>
+                  <Link to="/inventory/reports" className="popup-item">Envanter Raporları</Link>
+                </>
+              )}
+              
+              {hoveredItem.id === 'messages' && (
+                <>
+                  <Link to="/messages" className="popup-item">Mesaj Listesi</Link>
+                  <Link to="/messages/sms" className="popup-item">SMS Gönder</Link>
+                  <Link to="/messages/whatsapp" className="popup-item">WhatsApp</Link>
+                  <Link to="/messages/email" className="popup-item">E-posta</Link>
+                </>
+              )}
+              
+              {hoveredItem.id === 'system' && (
+                <>
+                  <Link to="/system" className="popup-item">Sistem Ayarları</Link>
+                  <Link to="/system/user-management" className="popup-item">Kullanıcı Yönetimi</Link>
+                  <Link to="/system/ip-blocking" className="popup-item">IP Engelleme</Link>
+                  <Link to="/system/settings" className="popup-item">Genel Ayarlar</Link>
+                </>
+              )}
+              
+              {hoveredItem.id === 'test' && (
+                <>
+                  <Link to="/test" className="popup-item">Test Sayfası</Link>
+                </>
+              )}
             </div>
           </motion.div>
         )}
