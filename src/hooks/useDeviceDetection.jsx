@@ -19,6 +19,34 @@ const useDeviceDetection = () => {
         : 'landscape',
   }));
 
+  const getBrowserInfo = useCallback(() => {
+    if (typeof navigator === 'undefined') return 'Unknown';
+    const userAgent = navigator.userAgent.toLowerCase();
+    if (userAgent.includes('chrome')) return 'Chrome';
+    if (userAgent.includes('firefox')) return 'Firefox';
+    if (userAgent.includes('safari') && !userAgent.includes('chrome'))
+      return 'Safari';
+    if (userAgent.includes('edge')) return 'Edge';
+    if (userAgent.includes('opera')) return 'Opera';
+    return 'Unknown';
+  }, []);
+
+  const getOSInfo = useCallback(() => {
+    if (typeof navigator === 'undefined') return 'Unknown';
+    const userAgent = navigator.userAgent.toLowerCase();
+    if (userAgent.includes('windows')) return 'Windows';
+    if (userAgent.includes('mac')) return 'macOS';
+    if (userAgent.includes('linux')) return 'Linux';
+    if (userAgent.includes('android')) return 'Android';
+    if (
+      userAgent.includes('ios') ||
+      userAgent.includes('iphone') ||
+      userAgent.includes('ipad')
+    )
+      return 'iOS';
+    return 'Unknown';
+  }, []);
+
   const detectDevice = useCallback(() => {
     if (typeof window === 'undefined' || typeof navigator === 'undefined') {
       return; // SSR ortamında çalışmayı engelle
@@ -84,34 +112,6 @@ const useDeviceDetection = () => {
           : false,
     };
   }, [getBrowserInfo, getOSInfo]);
-
-  const getBrowserInfo = useCallback(() => {
-    if (typeof navigator === 'undefined') return 'Unknown';
-    const userAgent = navigator.userAgent.toLowerCase();
-    if (userAgent.includes('chrome')) return 'Chrome';
-    if (userAgent.includes('firefox')) return 'Firefox';
-    if (userAgent.includes('safari') && !userAgent.includes('chrome'))
-      return 'Safari';
-    if (userAgent.includes('edge')) return 'Edge';
-    if (userAgent.includes('opera')) return 'Opera';
-    return 'Unknown';
-  }, []);
-
-  const getOSInfo = useCallback(() => {
-    if (typeof navigator === 'undefined') return 'Unknown';
-    const userAgent = navigator.userAgent.toLowerCase();
-    if (userAgent.includes('windows')) return 'Windows';
-    if (userAgent.includes('mac')) return 'macOS';
-    if (userAgent.includes('linux')) return 'Linux';
-    if (userAgent.includes('android')) return 'Android';
-    if (
-      userAgent.includes('ios') ||
-      userAgent.includes('iphone') ||
-      userAgent.includes('ipad')
-    )
-      return 'iOS';
-    return 'Unknown';
-  }, []);
 
   const handleResize = useCallback(() => {
     setDeviceInfo(detectDevice());
