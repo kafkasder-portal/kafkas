@@ -1,11 +1,19 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-  ],
+    // Bundle analyzer - only in production builds
+    process.env.NODE_ENV === 'production' && visualizer({
+      filename: 'dist/stats.html',
+      open: true,
+      gzipSize: true,
+      brotliSize: true
+    })
+  ].filter(Boolean),
   test: {
     globals: true,
     environment: 'jsdom',

@@ -7,7 +7,11 @@ import { createServer } from 'http'
 import { Server } from 'socket.io'
 import { initializeDatabase } from './config/database'
 
+// Import middleware
+import { securityHeaders, optionalAuth } from './middleware/auth'
+
 // Import routes
+import authRoutes from './routes/auth'
 import userRoutes from './routes/users'
 import inventoryRoutes from './routes/inventory'
 import taskRoutes from './routes/tasks'
@@ -32,6 +36,7 @@ const io = new Server(server, {
 
 // Middleware
 app.use(helmet())
+app.use(securityHeaders)
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:5173',
@@ -41,6 +46,9 @@ app.use(
 app.use(morgan('combined'))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
+
+// Optional authentication for all routes
+app.use(optionalAuth)
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -53,6 +61,7 @@ app.get('/health', (req, res) => {
 })
 
 // API Routes
+app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/inventory', inventoryRoutes)
 app.use('/api/tasks', taskRoutes)

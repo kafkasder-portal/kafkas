@@ -10,7 +10,8 @@
  * @returns {object} Validation result with isValid and message properties
  */
 export const validateRequired = (value, fieldName) => {
-  if (!value || !value.toString().trim()) {
+  if (value === null || value === undefined || value === '' || 
+      (typeof value === 'string' && !value.trim())) {
     return { isValid: false, message: `${fieldName} zorunludur` }
   }
   return { isValid: true, message: null }

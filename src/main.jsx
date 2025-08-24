@@ -9,6 +9,10 @@ import './index.css'
 
 // Initialize error tracking
 import './utils/errorTracker'
+import { setupGlobalErrorHandlers } from './utils/errorHandler'
+
+// Setup global error handlers
+setupGlobalErrorHandlers()
 
 // React DevTools for development
 if (import.meta.env.DEV) {

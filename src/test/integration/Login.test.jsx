@@ -12,6 +12,8 @@ vi.mock('../../services/api', () => ({
 // Mock the validation utilities
 vi.mock('../../utils/validation', () => ({
   validateForm: vi.fn(() => ({ isValid: true, errors: {} })),
+  validateEmail: vi.fn(() => ({ isValid: true, message: null })),
+  validatePassword: vi.fn(() => ({ isValid: true, message: null })),
   sanitizeInput: vi.fn((input) => input),
   generateCSRFToken: vi.fn(() => 'test-csrf-token'),
   validateCSRFToken: vi.fn(() => true),
@@ -46,10 +48,10 @@ describe('Login Integration Tests', () => {
   it('renders login form with all required fields', () => {
     renderWithProviders(<Login />)
 
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument()
-    expect(screen.getByText(/forgot password/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/e-posta/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/şifre/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /giriş yap/i })).toBeInTheDocument()
+    expect(screen.getByText(/şifremi unuttum/i)).toBeInTheDocument()
   })
 
   it('handles successful login flow', async () => {
@@ -68,9 +70,9 @@ describe('Login Integration Tests', () => {
 
     renderWithProviders(<Login />)
 
-    const emailInput = screen.getByLabelText(/email/i)
-    const passwordInput = screen.getByLabelText(/password/i)
-    const loginButton = screen.getByRole('button', { name: /login/i })
+    const emailInput = screen.getByLabelText(/e-posta/i)
+    const passwordInput = screen.getByLabelText(/şifre/i)
+    const loginButton = screen.getByRole('button', { name: /giriş yap/i })
 
     fireEvent.change(emailInput, { target: { value: 'john@example.com' } })
     fireEvent.change(passwordInput, { target: { value: 'password123' } })
@@ -97,7 +99,7 @@ describe('Login Integration Tests', () => {
 
     renderWithProviders(<Login />)
 
-    const loginButton = screen.getByRole('button', { name: /login/i })
+    const loginButton = screen.getByRole('button', { name: /giriş yap/i })
     fireEvent.click(loginButton)
 
     await waitFor(() => {
@@ -195,9 +197,9 @@ describe('Login Integration Tests', () => {
 
     renderWithProviders(<Login />)
 
-    const emailInput = screen.getByLabelText(/email/i)
-    const passwordInput = screen.getByLabelText(/password/i)
-    const loginButton = screen.getByRole('button', { name: /login/i })
+    const emailInput = screen.getByLabelText(/e-posta/i)
+    const passwordInput = screen.getByLabelText(/şifre/i)
+    const loginButton = screen.getByRole('button', { name: /giriş yap/i })
 
     fireEvent.change(emailInput, { target: { value: '<script>alert("xss")</script>john@example.com' } })
     fireEvent.change(passwordInput, { target: { value: 'password123' } })
@@ -214,9 +216,9 @@ describe('Login Integration Tests', () => {
 
     renderWithProviders(<Login />)
 
-    const emailInput = screen.getByLabelText(/email/i)
-    const passwordInput = screen.getByLabelText(/password/i)
-    const loginButton = screen.getByRole('button', { name: /login/i })
+    const emailInput = screen.getByLabelText(/e-posta/i)
+    const passwordInput = screen.getByLabelText(/şifre/i)
+    const loginButton = screen.getByRole('button', { name: /giriş yap/i })
 
     fireEvent.change(emailInput, { target: { value: 'john@example.com' } })
     fireEvent.change(passwordInput, { target: { value: 'password123' } })
@@ -245,9 +247,9 @@ describe('Login Integration Tests', () => {
 
     renderWithProviders(<Login />)
 
-    const emailInput = screen.getByLabelText(/email/i)
-    const passwordInput = screen.getByLabelText(/password/i)
-    const loginButton = screen.getByRole('button', { name: /login/i })
+    const emailInput = screen.getByLabelText(/e-posta/i)
+    const passwordInput = screen.getByLabelText(/şifre/i)
+    const loginButton = screen.getByRole('button', { name: /giriş yap/i })
 
     fireEvent.change(emailInput, { target: { value: 'john@example.com' } })
     fireEvent.change(passwordInput, { target: { value: 'password123' } })
@@ -269,9 +271,9 @@ describe('Login Integration Tests', () => {
 
     renderWithProviders(<Login />)
 
-    const emailInput = screen.getByLabelText(/email/i)
-    const passwordInput = screen.getByLabelText(/password/i)
-    const loginButton = screen.getByRole('button', { name: /login/i })
+    const emailInput = screen.getByLabelText(/e-posta/i)
+    const passwordInput = screen.getByLabelText(/şifre/i)
+    const loginButton = screen.getByRole('button', { name: /giriş yap/i })
 
     fireEvent.change(emailInput, { target: { value: 'john@example.com' } })
     fireEvent.change(passwordInput, { target: { value: 'password123' } })

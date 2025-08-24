@@ -1,148 +1,219 @@
-import React from 'react';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import React from 'react'
+import { AlertTriangle, RefreshCw, Home, Bug, Copy, Check } from 'lucide-react'
+import { reportError } from '../utils/errorHandler'
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
-    super(props);
-    this.state = { hasError: false, error: null, errorInfo: null };
+    super(props)
+    this.state = { 
+      hasError: false, 
+      error: null, 
+      errorInfo: null,
+      errorId: null,
+      copied: false
+    }
   }
 
   static getDerivedStateFromError(error) {
-    // Update state so the next render will show the fallback UI.
-    return { hasError: true };
+    return { hasError: true }
   }
 
   componentDidCatch(error, errorInfo) {
-    // You can also log the error to an error reporting service
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    const errorId = this.generateErrorId()
+    
     this.setState({
-      error: error,
-      errorInfo: errorInfo
-    });
+      error,
+      errorInfo,
+      errorId
+    })
+
+    // Report error to monitoring service
+    reportError(error, {
+      ...errorInfo,
+      errorId,
+      props: this.props,
+      userAgent: navigator.userAgent,
+      url: window.location.href,
+      timestamp: new Date().toISOString()
+    })
+
+    // Log error to console in development
+    if (import.meta.env.DEV) {
+      console.group('🚨 ErrorBoundary caught an error')
+      console.error('Error:', error)
+      console.error('Error Info:', errorInfo)
+      console.error('Error ID:', errorId)
+      console.groupEnd()
+    }
+  }
+
+  generateErrorId = () => {
+    return `ERR_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   }
 
   handleReload = () => {
-    window.location.reload();
+    // Clear error state before reload
+    this.setState({ hasError: false, error: null, errorInfo: null })
+    window.location.reload()
   }
 
-  handleReset = () => {
-    this.setState({ hasError: false, error: null, errorInfo: null });
+  handleGoHome = () => {
+    // Clear error state and navigate home
+    this.setState({ hasError: false, error: null, errorInfo: null })
+    window.location.href = '/'
+  }
+
+  handleRetry = () => {
+    // Try to recover by clearing error state
+    this.setState({ 
+      hasError: false, 
+      error: null, 
+      errorInfo: null,
+      errorId: null 
+    })
+  }
+
+  handleCopyError = async () => {
+    const errorText = `
+Error ID: ${this.state.errorId}
+Error: ${this.state.error?.toString()}
+Stack: ${this.state.error?.stack}
+Component Stack: ${this.state.errorInfo?.componentStack}
+URL: ${window.location.href}
+User Agent: ${navigator.userAgent}
+Timestamp: ${new Date().toISOString()}
+    `.trim()
+
+    try {
+      await navigator.clipboard.writeText(errorText)
+      this.setState({ copied: true })
+      setTimeout(() => this.setState({ copied: false }), 2000)
+    } catch (err) {
+      console.error('Failed to copy error details:', err)
+    }
   }
 
   render() {
     if (this.state.hasError) {
-      // You can render any custom fallback UI
+      const isProduction = import.meta.env.PROD
+      
       return (
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '400px',
-          padding: '2rem',
-          textAlign: 'center',
-          backgroundColor: '#fef2f2',
-          border: '1px solid #fecaca',
-          borderRadius: '8px',
-          margin: '1rem'
-        }}>
-          <AlertTriangle size={48} color="#ef4444" style={{ marginBottom: '1rem' }} />
-          <h2 style={{ 
-            color: '#dc2626', 
-            marginBottom: '1rem',
-            fontSize: '1.5rem',
-            fontWeight: '600'
-          }}>
-            Bir Hata Oluştu
-          </h2>
-          <p style={{ 
-            color: '#7f1d1d', 
-            marginBottom: '1.5rem',
-            maxWidth: '500px',
-            lineHeight: '1.5'
-          }}>
-            Üzgünüz, beklenmeyen bir hata oluştu. Lütfen sayfayı yenileyin veya daha sonra tekrar deneyin.
-          </p>
-          
-          {import.meta.env.DEV && this.state.error && (
-            <details style={{
-              marginBottom: '1.5rem',
-              padding: '1rem',
-              backgroundColor: '#fee2e2',
-              border: '1px solid #fca5a5',
-              borderRadius: '4px',
-              maxWidth: '600px',
-              textAlign: 'left'
-            }}>
-              <summary style={{ cursor: 'pointer', fontWeight: '600', color: '#dc2626' }}>
-                Hata Detayları (Geliştirici Modu)
-              </summary>
-              <pre style={{
-                marginTop: '0.5rem',
-                fontSize: '0.875rem',
-                color: '#7f1d1d',
-                whiteSpace: 'pre-wrap',
-                wordBreak: 'break-word'
-              }}>
-                {this.state.error && this.state.error.toString()}
-                <br />
-                {this.state.errorInfo.componentStack}
-              </pre>
-            </details>
-          )}
-          
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <button
-              onClick={this.handleReset}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.75rem 1.5rem',
-                backgroundColor: '#dc2626',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '0.875rem',
-                fontWeight: '500',
-                transition: 'background-color 0.2s'
-              }}
-              onMouseOver={(e) => e.target.style.backgroundColor = '#b91c1c'}
-              onMouseOut={(e) => e.target.style.backgroundColor = '#dc2626'}
-            >
-              Tekrar Dene
-            </button>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl w-full space-y-8">
+            <div className="text-center">
+              <div className="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-red-100">
+                <AlertTriangle className="h-8 w-8 text-red-600" />
+              </div>
+              <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                Oops! Bir şeyler yanlış gitti
+              </h2>
+              <p className="mt-2 text-center text-sm text-gray-600">
+                Beklenmeyen bir hata oluştu. Bu durumu geliştiricilere bildirdik.
+              </p>
+              {this.state.errorId && (
+                <p className="mt-2 text-center text-xs text-gray-500">
+                  Hata ID: <code className="bg-gray-100 px-1 rounded">{this.state.errorId}</code>
+                </p>
+              )}
+            </div>
             
-            <button
-              onClick={this.handleReload}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.75rem 1.5rem',
-                backgroundColor: '#6b7280',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '0.875rem',
-                fontWeight: '500',
-                transition: 'background-color 0.2s'
-              }}
-              onMouseOver={(e) => e.target.style.backgroundColor = '#4b5563'}
-              onMouseOut={(e) => e.target.style.backgroundColor = '#6b7280'}
-            >
-              <RefreshCw size={16} />
-              Sayfayı Yenile
-            </button>
+            {/* Error details for development */}
+            {!isProduction && this.state.error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-medium text-red-800 flex items-center">
+                    <Bug className="h-4 w-4 mr-2" />
+                    Hata Detayları (Development Mode)
+                  </h3>
+                  <button
+                    onClick={this.handleCopyError}
+                    className="text-xs text-red-600 hover:text-red-800 flex items-center"
+                    title="Hata detaylarını kopyala"
+                  >
+                    {this.state.copied ? (
+                      <>
+                        <Check className="h-3 w-3 mr-1" />
+                        Kopyalandı
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3 w-3 mr-1" />
+                        Kopyala
+                      </>
+                    )}
+                  </button>
+                </div>
+                
+                <div className="space-y-2">
+                  <div>
+                    <h4 className="text-xs font-medium text-red-700 mb-1">Error Message:</h4>
+                    <pre className="text-xs text-red-700 bg-red-100 p-2 rounded overflow-auto max-h-20">
+                      {this.state.error.toString()}
+                    </pre>
+                  </div>
+                  
+                  {this.state.error.stack && (
+                    <div>
+                      <h4 className="text-xs font-medium text-red-700 mb-1">Stack Trace:</h4>
+                      <pre className="text-xs text-red-700 bg-red-100 p-2 rounded overflow-auto max-h-32">
+                        {this.state.error.stack}
+                      </pre>
+                    </div>
+                  )}
+                  
+                  {this.state.errorInfo?.componentStack && (
+                    <div>
+                      <h4 className="text-xs font-medium text-red-700 mb-1">Component Stack:</h4>
+                      <pre className="text-xs text-red-700 bg-red-100 p-2 rounded overflow-auto max-h-32">
+                        {this.state.errorInfo.componentStack}
+                      </pre>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            
+            {/* Action buttons */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={this.handleRetry}
+                className="flex-1 flex justify-center items-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Tekrar Dene
+              </button>
+              
+              <button
+                onClick={this.handleReload}
+                className="flex-1 flex justify-center items-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Sayfayı Yenile
+              </button>
+              
+              <button
+                onClick={this.handleGoHome}
+                className="flex-1 flex justify-center items-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+              >
+                <Home className="h-4 w-4 mr-2" />
+                Ana Sayfa
+              </button>
+            </div>
+
+            {/* Additional info */}
+            <div className="text-center">
+              <p className="text-xs text-gray-500">
+                Sorun devam ederse, lütfen sistem yöneticisiyle iletişime geçin.
+                {this.state.errorId && ` Hata ID'sini belirtin: ${this.state.errorId}`}
+              </p>
+            </div>
           </div>
         </div>
-      );
+      )
     }
 
-    return this.props.children;
+    return this.props.children
   }
 }
 
-export default ErrorBoundary;
+export default ErrorBoundary

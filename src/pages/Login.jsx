@@ -55,9 +55,9 @@ const Login = () => {
     if (!formData.email) {
       newErrors.email = 'E-posta adresi gereklidir'
     } else {
-      const emailError = validateEmail(formData.email)
-      if (emailError) {
-        newErrors.email = emailError
+      const emailResult = validateEmail(formData.email)
+      if (!emailResult.isValid) {
+        newErrors.email = emailResult.message
       }
     }
 
@@ -65,9 +65,9 @@ const Login = () => {
     if (!formData.password) {
       newErrors.password = 'Şifre gereklidir'
     } else {
-      const passwordError = validatePassword(formData.password)
-      if (passwordError) {
-        newErrors.password = passwordError
+      const passwordResult = validatePassword(formData.password)
+      if (!passwordResult.isValid) {
+        newErrors.password = passwordResult.message
       }
     }
 
