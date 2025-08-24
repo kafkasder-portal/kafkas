@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
 import { supabase, testSupabaseConnection } from '../lib/supabase';
 
@@ -248,7 +248,7 @@ const AuthProvider = ({ children }) => {
     return user.role === role || user.role === 'admin';
   };
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     loading,
     isAuthenticated,
@@ -258,7 +258,17 @@ const AuthProvider = ({ children }) => {
     updateUser,
     hasPermission,
     hasRole,
-  };
+  }), [
+    user,
+    loading,
+    isAuthenticated,
+    supabaseConnected,
+    login,
+    logout,
+    updateUser,
+    hasPermission,
+    hasRole,
+  ]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

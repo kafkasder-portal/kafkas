@@ -1,6 +1,7 @@
 import React from 'react';
-import { AlertTriangle, RefreshCw, Home, Bug, Copy, Check } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Home, Bug, Copy, Check, ExternalLink } from 'lucide-react';
 import { reportError } from '../utils/errorHandler';
+import { usePerformanceMonitor } from '../hooks/usePerformanceMonitor';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {

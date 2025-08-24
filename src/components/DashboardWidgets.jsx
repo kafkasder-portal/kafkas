@@ -10,9 +10,9 @@ import {
   TrendingUp,
   Users
 } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo } from 'react'
 
-const QuickStatsWidget = ({ data, loading: externalLoading }) => {
+const QuickStatsWidget = memo(({ data, loading: externalLoading }) => {
   const [stats, setStats] = useState({
     totalDonations: 0,
     activeDonors: 0,
@@ -134,9 +134,9 @@ const QuickStatsWidget = ({ data, loading: externalLoading }) => {
       </div>
     </motion.div>
   )
-}
+})
 
-const QuickActionsWidget = () => {
+const QuickActionsWidget = memo(() => {
   const quickActions = [
     { id: 1, title: 'Yeni Bağışçı', icon: Users, color: '#10b981', path: '/donors?action=create' },
     { id: 2, title: 'Bağış Ekle', icon: Coins, color: '#3b82f6', path: '/donations?action=create' },
@@ -196,9 +196,9 @@ const QuickActionsWidget = () => {
       </div>
     </div>
   )
-}
+})
 
-const SystemHealthWidget = () => {
+const SystemHealthWidget = memo(() => {
   const [healthData, setHealthData] = useState({
     cpu: 45,
     memory: 62,
@@ -266,7 +266,7 @@ const SystemHealthWidget = () => {
       <HealthBar label="Ağ" value={healthData.network} />
     </div>
   )
-}
+})
 
 export {
   QuickActionsWidget,

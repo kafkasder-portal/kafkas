@@ -44,6 +44,17 @@ import { setupGlobalErrorHandlers } from './utils/errorHandler';
 // Setup global error handlers
 setupGlobalErrorHandlers();
 
+// Additional error tracking for development
+if (import.meta.env.DEV) {
+  window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled promise rejection:', event.reason);
+  });
+  
+  window.addEventListener('error', (event) => {
+    console.error('Global error:', event.error);
+  });
+}
+
 // React DevTools for development
 if (import.meta.env.DEV) {
   // This will show the React DevTools installation message in development

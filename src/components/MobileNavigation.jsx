@@ -195,9 +195,9 @@ const MobileHeader = ({ onMenuToggle }) => {
                   Hızlı Erişim
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  {quickSearchSuggestions.map((item, index) => (
+                  {quickSearchSuggestions.map((item) => (
                     <motion.a
-                      key={index}
+                      key={item.title || item.path}
                       href={item.path}
                       onClick={() => setIsSearchOpen(false)}
                       style={{
@@ -329,7 +329,7 @@ const MobileSidebar = ({ isOpen, onClose, menuItems }) => {
 
             {/* Menu Items */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
-              {menuItems.map((item, index) => (
+              {menuItems.map((item) => (
                 <motion.a
                   key={item.id}
                   href={item.path}
@@ -346,7 +346,7 @@ const MobileSidebar = ({ isOpen, onClose, menuItems }) => {
                   }}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
+                  transition={{ delay: menuItems.indexOf(item) * 0.05 }}
                   whileHover={{ backgroundColor: '#f8fafc' }}
                   whileTap={{ scale: 0.98 }}
                 >

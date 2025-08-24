@@ -1,26 +1,21 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl =
-  import.meta.env.VITE_PUBLIC_SUPABASE_URL ||
-  'https://fagblbogumttcrsbletc.supabase.co';
-const supabaseAnonKey =
-  import.meta.env.VITE_PUBLIC_SUPABASE_ANON_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ2JsYm9ndW10dGNyc2JsZXRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4NDg4OTksImV4cCI6MjA3MTQyNDg5OX0.PNQpiOsctCqIrH20BdylDtzVVKOJW4KmBo79w2izioo';
+const supabaseUrl = import.meta.env.VITE_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_PUBLIC_SUPABASE_ANON_KEY;
 
 const isDevelopment = import.meta.env.DEV;
 
-// Production check for missing credentials
-if (
-  !isDevelopment &&
-  (!supabaseUrl ||
-    !supabaseAnonKey ||
-    supabaseUrl === 'https://your-project.supabase.co' ||
-    supabaseAnonKey === 'your-anon-key')
-) {
-  console.error('❌ Supabase credentials are missing or invalid!');
-  console.error(
-    'Please set VITE_PUBLIC_SUPABASE_URL and VITE_PUBLIC_SUPABASE_ANON_KEY environment variables'
-  );
+// Check for missing credentials
+if (!supabaseUrl || !supabaseAnonKey) {
+  const errorMessage = 'Supabase credentials are missing!';
+  console.error('❌', errorMessage);
+  console.error('Please ensure the following environment variables are set:');
+  console.error('- VITE_PUBLIC_SUPABASE_URL');
+  console.error('- VITE_PUBLIC_SUPABASE_ANON_KEY');
+  
+  if (!isDevelopment) {
+    throw new Error(errorMessage);
+  }
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {

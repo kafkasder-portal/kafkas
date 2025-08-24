@@ -6,6 +6,7 @@ export default defineConfig({
   server: {
     port: 5174,
     host: true,
+    open: true, // Auto-open browser
   },
   build: {
     outDir: 'dist',
@@ -20,6 +21,7 @@ export default defineConfig({
           ui: ['lucide-react', 'sonner'],
           utils: ['uuid'],
           i18n: ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
+          supabase: ['@supabase/supabase-js'],
         },
         assetFileNames: 'assets/[name]-[hash][extname]',
         chunkFileNames: 'assets/js/[name]-[hash].js',
@@ -28,6 +30,9 @@ export default defineConfig({
     },
     target: 'es2020',
     chunkSizeWarningLimit: 1000,
+    // Optimize for production
+    cssCodeSplit: true,
+    reportCompressedSize: false,
   },
   optimizeDeps: {
     include: [

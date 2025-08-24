@@ -308,8 +308,8 @@ const Login = () => {
                     <p className='admin-email'>Kullanıcılar yükleniyor...</p>
                   </div>
                 ) : (
-                  availableUsers.map((user, index) => (
-                    <div key={index} className='admin-account-item'>
+                  availableUsers.map((user) => (
+                    <div key={user.email} className='admin-account-item'>
                       <p className='admin-email'>{user.email}</p>
                       <span className='admin-role'>
                         {user.role === 'admin'
