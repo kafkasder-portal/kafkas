@@ -1,8 +1,14 @@
 import express from 'express';
-import { supabase } from '../config/database';
+import { createClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();
+
+// Supabase client
+const supabaseUrl = process.env.SUPABASE_URL || 'https://fagblbogumttcrsbletc.supabase.co';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ2JsYm9ndW10dGNyc2JsZXRjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU4NDg4OTksImV4cCI6MjA3MTQyNDg5OX0.PNQpiOsctCqIrH20BdylDtzVVKOJW4KmBo79w2izioo';
+
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Get all financial transactions
 router.get('/', async (req, res) => {
@@ -10,55 +16,36 @@ router.get('/', async (req, res) => {
     const { page = 1, limit = 10, search = '', type = '', category = '', status = '' } = req.query;
     const offset = (Number(page) - 1) * Number(limit);
 
-    let whereClause = 'WHERE 1=1';
-    const queryParams: any[] = [];
-    let paramIndex = 1;
+    let supabaseQuery = supabase
+      .from('financial_transactions')
+      .select('*', { count: 'exact' });
 
-    // Search filter
+    // Apply filters
     if (search) {
-      whereClause += ` AND (description ILIKE $${paramIndex} OR reference ILIKE $${paramIndex})`;
-      queryParams.push(`%${search}%`);
-      paramIndex++;
+      supabaseQuery = supabaseQuery.or(`description.ilike.%${search}%,reference.ilike.%${search}%`);
     }
-
-    // Type filter
     if (type) {
-      whereClause += ` AND type = $${paramIndex}`;
-      queryParams.push(type);
-      paramIndex++;
+      supabaseQuery = supabaseQuery.eq('type', type);
     }
-
-    // Category filter
     if (category) {
-      whereClause += ` AND category = $${paramIndex}`;
-      queryParams.push(category);
-      paramIndex++;
+      supabaseQuery = supabaseQuery.eq('category', category);
     }
-
-    // Status filter
     if (status) {
-      whereClause += ` AND status = $${paramIndex}`;
-      queryParams.push(status);
-      paramIndex++;
+      supabaseQuery = supabaseQuery.eq('status', status);
     }
 
-    // Get total count
-    const countResult = await query(
-      `SELECT COUNT(*) FROM financial_transactions ${whereClause}`,
-      queryParams
-    );
-    const totalTransactions = parseInt((countResult.rows[0] as any).count);
+    const { data: transactions, error, count } = await supabaseQuery
+      .order('transaction_date', { ascending: false })
+      .range(offset, offset + Number(limit) - 1);
 
-    // Get transactions with pagination
-    const transactionsResult = await query(
-      `SELECT id, type, category, amount, description, reference, status, transaction_date, created_at, updated_at
-       FROM financial_transactions ${whereClause}
-       ORDER BY transaction_date DESC
-       LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
-      [...queryParams, Number(limit), offset]
-    );
+    if (error) {
+      console.error('Database error:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
 
-    const transactions = transactionsResult.rows.map((transaction: any) => ({
+    const totalTransactions = count || 0;
+
+    const formattedTransactions = transactions?.map((transaction: any) => ({
       id: transaction.id,
       type: transaction.type,
       category: transaction.category,
@@ -69,12 +56,12 @@ router.get('/', async (req, res) => {
       transactionDate: transaction.transaction_date,
       createdAt: transaction.created_at,
       updatedAt: transaction.updated_at
-    }));
+    })) || [];
 
     res.json({
       success: true,
       data: {
-        transactions,
+        transactions: formattedTransactions,
         pagination: {
           page: Number(page),
           limit: Number(limit),
@@ -97,36 +84,37 @@ router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
-    const transactionResult = await query(
-      `SELECT id, type, category, amount, description, reference, status, transaction_date, created_at, updated_at
-       FROM financial_transactions WHERE id = $1`,
-      [id]
-    );
+    const { data: transaction, error } = await supabase
+      .from('financial_transactions')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-    if (transactionResult.rows.length === 0) {
+    if (error) {
+      console.error('Database error:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    if (!transaction) {
       return res.status(404).json({
         success: false,
         message: 'Transaction not found'
       });
     }
 
-    const transaction: any = transactionResult.rows[0];
-
     res.json({
       success: true,
       data: {
-        transaction: {
-          id: transaction.id,
-          type: transaction.type,
-          category: transaction.category,
-          amount: parseFloat(transaction.amount),
-          description: transaction.description,
-          reference: transaction.reference,
-          status: transaction.status,
-          transactionDate: transaction.transaction_date,
-          createdAt: transaction.created_at,
-          updatedAt: transaction.updated_at
-        }
+        id: transaction.id,
+        type: transaction.type,
+        category: transaction.category,
+        amount: parseFloat(transaction.amount),
+        description: transaction.description,
+        reference: transaction.reference,
+        status: transaction.status,
+        transactionDate: transaction.transaction_date,
+        createdAt: transaction.created_at,
+        updatedAt: transaction.updated_at
       }
     });
   } catch (error) {
@@ -141,64 +129,61 @@ router.get('/:id', async (req, res) => {
 // Create new transaction
 router.post('/', async (req, res) => {
   try {
-    const { type, category, amount, description, reference, status, transactionDate } = req.body;
+    const {
+      type,
+      category,
+      amount,
+      description,
+      reference,
+      status = 'pending',
+      transactionDate
+    } = req.body;
 
-    // Validation
-    if (!type || !category || amount === undefined || !description) {
+    // Validate required fields
+    if (!type || !category || !amount || !description) {
       return res.status(400).json({
         success: false,
         message: 'Type, category, amount, and description are required'
       });
     }
 
-    // Validate type
-    const validTypes = ['income', 'expense'];
-    if (!validTypes.includes(type)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid transaction type'
-      });
-    }
+    const newTransaction = {
+      id: uuidv4(),
+      type,
+      category,
+      amount: amount.toString(),
+      description,
+      reference: reference || null,
+      status,
+      transaction_date: transactionDate || new Date().toISOString(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
 
-    // Validate status
-    const validStatuses = ['pending', 'completed', 'cancelled'];
-    if (status && !validStatuses.includes(status)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid status'
-      });
-    }
+    const { data, error } = await supabase
+      .from('financial_transactions')
+      .insert([newTransaction])
+      .select()
+      .single();
 
-    // Validate amount
-    if (isNaN(amount) || amount <= 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'Amount must be a positive number'
-      });
+    if (error) {
+      console.error('Database error:', error);
+      return res.status(500).json({ error: 'Internal server error' });
     }
-
-    // Create transaction
-    const transactionId = uuidv4();
-    await query(
-      `INSERT INTO financial_transactions (id, type, category, amount, description, reference, status, transaction_date, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW())`,
-      [transactionId, type, category, amount, description, reference || null, status || 'pending', transactionDate || new Date().toISOString()]
-    );
 
     res.status(201).json({
       success: true,
-      message: 'Transaction created successfully',
       data: {
-        transaction: {
-          id: transactionId,
-          type,
-          category,
-          amount,
-          description,
-          reference,
-          status: status || 'pending',
-          transactionDate: transactionDate || new Date().toISOString()
-        }
+        id: data.id,
+        type: data.type,
+        category: data.category,
+        amount: parseFloat(data.amount),
+        description: data.description,
+        reference: data.reference,
+        status: data.status,
+        transactionDate: data.transaction_date,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at
       }
     });
   } catch (error) {
@@ -214,66 +199,68 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { type, category, amount, description, reference, status, transactionDate } = req.body;
+    const {
+      type,
+      category,
+      amount,
+      description,
+      reference,
+      status,
+      transactionDate
+    } = req.body;
 
     // Check if transaction exists
-    const existingTransaction = await query(
-      'SELECT id FROM financial_transactions WHERE id = $1',
-      [id]
-    );
+    const { data: existingTransaction, error: checkError } = await supabase
+      .from('financial_transactions')
+      .select('id')
+      .eq('id', id)
+      .single();
 
-    if (existingTransaction.rows.length === 0) {
+    if (checkError || !existingTransaction) {
       return res.status(404).json({
         success: false,
         message: 'Transaction not found'
       });
     }
 
-    // Validation
-    if (!type || !category || amount === undefined || !description) {
-      return res.status(400).json({
-        success: false,
-        message: 'Type, category, amount, and description are required'
-      });
-    }
+    const updateData: any = {
+      updated_at: new Date().toISOString()
+    };
 
-    // Validate type
-    const validTypes = ['income', 'expense'];
-    if (!validTypes.includes(type)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid transaction type'
-      });
-    }
+    if (type) updateData.type = type;
+    if (category) updateData.category = category;
+    if (amount) updateData.amount = amount.toString();
+    if (description) updateData.description = description;
+    if (reference !== undefined) updateData.reference = reference;
+    if (status) updateData.status = status;
+    if (transactionDate) updateData.transaction_date = transactionDate;
 
-    // Validate status
-    const validStatuses = ['pending', 'completed', 'cancelled'];
-    if (status && !validStatuses.includes(status)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid status'
-      });
-    }
+    const { data, error } = await supabase
+      .from('financial_transactions')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
 
-    // Validate amount
-    if (isNaN(amount) || amount <= 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'Amount must be a positive number'
-      });
+    if (error) {
+      console.error('Database error:', error);
+      return res.status(500).json({ error: 'Internal server error' });
     }
-
-    // Update transaction
-    await query(
-      `UPDATE financial_transactions 
-       SET type = $1, category = $2, amount = $3, description = $4, reference = $5, status = $6, transaction_date = $7, updated_at = NOW()
-       WHERE id = $8`,
-      [type, category, amount, description, reference, status || 'pending', transactionDate, id]
-    );
 
     res.json({
       success: true,
-      message: 'Transaction updated successfully'
+      data: {
+        id: data.id,
+        type: data.type,
+        category: data.category,
+        amount: parseFloat(data.amount),
+        description: data.description,
+        reference: data.reference,
+        status: data.status,
+        transactionDate: data.transaction_date,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at
+      }
     });
   } catch (error) {
     console.error('Update transaction error:', error);
@@ -290,20 +277,28 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params;
 
     // Check if transaction exists
-    const existingTransaction = await query(
-      'SELECT id FROM financial_transactions WHERE id = $1',
-      [id]
-    );
+    const { data: existingTransaction, error: checkError } = await supabase
+      .from('financial_transactions')
+      .select('id')
+      .eq('id', id)
+      .single();
 
-    if (existingTransaction.rows.length === 0) {
+    if (checkError || !existingTransaction) {
       return res.status(404).json({
         success: false,
         message: 'Transaction not found'
       });
     }
 
-    // Delete transaction
-    await query('DELETE FROM financial_transactions WHERE id = $1', [id]);
+    const { error } = await supabase
+      .from('financial_transactions')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Database error:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
 
     res.json({
       success: true,
@@ -323,55 +318,59 @@ router.get('/summary/overview', async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
 
-    let whereClause = 'WHERE status = \'completed\'';
-    const queryParams: any[] = [];
-    let paramIndex = 1;
+    let supabaseQuery = supabase
+      .from('financial_transactions')
+      .select('type, amount, status');
 
     if (startDate) {
-      whereClause += ` AND transaction_date >= $${paramIndex}`;
-      queryParams.push(startDate);
-      paramIndex++;
+      supabaseQuery = supabaseQuery.gte('transaction_date', startDate as string);
     }
-
     if (endDate) {
-      whereClause += ` AND transaction_date <= $${paramIndex}`;
-      queryParams.push(endDate);
-      paramIndex++;
+      supabaseQuery = supabaseQuery.lte('transaction_date', endDate as string);
     }
 
-    // Get income and expense totals
-    const summaryResult = await query(
-      `SELECT 
-         type,
-         SUM(amount) as total_amount,
-         COUNT(*) as transaction_count
-       FROM financial_transactions ${whereClause}
-       GROUP BY type`,
-      queryParams
-    );
+    const { data: transactions, error } = await supabaseQuery;
+
+    if (error) {
+      console.error('Database error:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
 
     const summary = {
-      income: { total: 0, count: 0 },
-      expense: { total: 0, count: 0 },
-      balance: 0
+      totalIncome: 0,
+      totalExpense: 0,
+      pendingTransactions: 0,
+      completedTransactions: 0,
+      cancelledTransactions: 0
     };
 
-    summaryResult.rows.forEach((row: any) => {
-      const amount = parseFloat(row.total_amount);
-      const count = parseInt(row.transaction_count);
+    transactions?.forEach((transaction: any) => {
+      const amount = parseFloat(transaction.amount);
       
-      if (row.type === 'income') {
-        summary.income = { total: amount, count };
-      } else if (row.type === 'expense') {
-        summary.expense = { total: amount, count };
+      if (transaction.type === 'income') {
+        summary.totalIncome += amount;
+      } else if (transaction.type === 'expense') {
+        summary.totalExpense += amount;
+      }
+
+      if (transaction.status === 'pending') {
+        summary.pendingTransactions++;
+      } else if (transaction.status === 'completed') {
+        summary.completedTransactions++;
+      } else if (transaction.status === 'cancelled') {
+        summary.cancelledTransactions++;
       }
     });
 
-    summary.balance = summary.income.total - summary.expense.total;
+    const netBalance = summary.totalIncome - summary.totalExpense;
 
     res.json({
       success: true,
-      data: { summary }
+      data: {
+        ...summary,
+        netBalance,
+        totalTransactions: transactions?.length || 0
+      }
     });
   } catch (error) {
     console.error('Get financial summary error:', error);
