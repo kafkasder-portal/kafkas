@@ -17,11 +17,11 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import ProtectedRoute from '../components/ProtectedRoute';
-import ToastNotification from '../components/ToastNotification';
+
 import { useAuth } from '../contexts/AuthContext';
 import { useForm } from '../hooks/useForm';
 import { useModal } from '../hooks/useModal';
-import { useToast } from '../utils/toast';
+import { toast } from 'sonner';
 
 const UserManagement = () => {
   const { users, addUser, updateUser, deactivateUser, getRoleName, ROLES } =
@@ -31,7 +31,7 @@ const UserManagement = () => {
   const modal = useModal();
   const [editingUser, setEditingUser] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  const { toast, success, error } = useToast();
+
 
   // Form validation rules
   const validationRules = {
@@ -168,7 +168,7 @@ const UserManagement = () => {
     <ProtectedRoute requiredRole={ROLES.ADMIN}>
       <div style={{ padding: '2rem' }}>
         {/* Toast Bildirimi */}
-        <ToastNotification toast={toast} />
+
 
         {/* Header */}
         <motion.div

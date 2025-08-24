@@ -16,14 +16,14 @@ import {
   Users,
 } from 'lucide-react';
 import { useState } from 'react';
-import ToastNotification from '../components/ToastNotification';
+
 import { useMultipleModals } from '../hooks/useModal';
-import { useToast } from '../utils/toast';
+import { toast } from 'sonner';
 
 const PiggyBankTracking = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
-  const { toast, success, error } = useToast();
+
   const modals = useMultipleModals(['add', 'qr', 'scanner']);
   const [selectedPiggyBank, setSelectedPiggyBank] = useState(null);
   const [scannedCode, setScannedCode] = useState('');
@@ -346,7 +346,7 @@ const PiggyBankTracking = () => {
       }}
     >
       {/* Toast Bildirimi */}
-      <ToastNotification toast={toast} />
+      
 
       {/* Başlık */}
       <div style={{ marginBottom: '2rem' }}>
