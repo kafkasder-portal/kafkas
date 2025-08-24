@@ -1,199 +1,240 @@
-import { useState, useEffect, useRef, memo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Image, Loader, AlertCircle } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
-const OptimizedImage = memo(
-  ({
-    src,
-    alt,
-    width = 300,
-    height = 200,
-    className = '',
-    placeholder = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5YWFhYSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlPC90ZXh0Pjwvc3ZnPg==',
-    lazy = true,
-    priority = false,
-    sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
-    quality = 75,
-    format = 'webp',
-    onLoad,
-    onError,
-    ...props
-  }) => {
-    const [imageState, setImageState] = useState('loading'); // loading, loaded, error
-    const [isInView, setIsInView] = useState(!lazy);
-    const [currentSrc, setCurrentSrc] = useState(placeholder);
-    const imgRef = useRef(null);
-    const observerRef = useRef(null);
+/**
+ * OptimizedImage Component
+ * @description High-performance image component with WebP support, lazy loading, and responsive images
+ * @param {Object} props - Component props
+ * @param {string} props.src - Image source URL
+ * @param {string} props.alt - Alt text for accessibility
+ * @param {string} props.className - CSS class name
+ * @param {Object} props.style - Inline styles
+ * @param {string} props.sizes - Responsive image sizes
+ * @param {boolean} props.lazy - Enable lazy loading
+ * @param {string} props.placeholder - Placeholder image URL
+ * @param {number} props.quality - Image quality (1-100)
+ * @param {number} props.width - Image width
+ * @param {number} props.height - Image height
+ * @returns {JSX.Element} Optimized image component
+ */
+const OptimizedImage = ({
+  src,
+  alt,
+  className = '',
+  style = {},
+  sizes = '(max-width: 768px) 100vw, 50vw',
+  lazy = true,
+  placeholder = '',
+  quality = 85,
+  width,
+  height,
+  ...props
+}) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isInView, setIsInView] = useState(!lazy);
+  const [error, setError] = useState(false);
+  const imgRef = useRef(null);
 
-    // Generate optimized image URL
-    const generateOptimizedUrl = (
-      originalSrc,
-      targetWidth,
-      targetHeight,
-      targetQuality,
-      targetFormat
-    ) => {
-      if (!originalSrc || originalSrc.startsWith('data:')) {
-        return originalSrc;
-      }
+  // Generate WebP source
+  const generateWebPSrc = (imageSrc) => {
+    if (!imageSrc) return '';
+    
+    // If already WebP, return as is
+    if (imageSrc.includes('.webp')) return imageSrc;
+    
+    // Convert to WebP
+    const webpSrc = imageSrc.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+    return webpSrc;
+  };
 
-      // For external images, you might want to use an image optimization service
-      // This is a placeholder implementation
-      const url = new URL(originalSrc, window.location.origin);
-      url.searchParams.set('w', targetWidth);
-      url.searchParams.set('h', targetHeight);
-      url.searchParams.set('q', targetQuality);
-      url.searchParams.set('f', targetFormat);
+  // Generate responsive srcSet
+  const generateSrcSet = (imageSrc) => {
+    if (!imageSrc) return '';
+    
+    const widths = [300, 600, 900, 1200, 1920];
+    return widths
+      .map(width => `${imageSrc}?w=${width}&q=${quality} ${width}w`)
+      .join(', ');
+  };
 
-      return url.toString();
-    };
+  // Intersection Observer for lazy loading
+  useEffect(() => {
+    if (!lazy || !imgRef.current) return;
 
-    // Intersection Observer for lazy loading
-    useEffect(() => {
-      if (!lazy || priority) {
-        setIsInView(true);
-        return;
-      }
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setIsInView(true);
-            observer.disconnect();
-          }
-        },
-        {
-          rootMargin: '50px 0px',
-          threshold: 0.1,
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.disconnect();
         }
-      );
-
-      if (imgRef.current) {
-        observer.observe(imgRef.current);
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '50px',
       }
+    );
 
-      observerRef.current = observer;
+    observer.observe(imgRef.current);
 
-      return () => {
-        if (observerRef.current) {
-          observerRef.current.disconnect();
-        }
-      };
-    }, [lazy, priority]);
+    return () => observer.disconnect();
+  }, [lazy]);
 
-    // Load image when in view
-    useEffect(() => {
-      if (!isInView) return;
+  // Handle image load
+  const handleLoad = () => {
+    setIsLoaded(true);
+    setError(false);
+  };
 
-      const optimizedSrc = generateOptimizedUrl(
-        src,
-        width,
-        height,
-        quality,
-        format
-      );
-      setCurrentSrc(optimizedSrc);
-      setImageState('loading');
-    }, [isInView, src, width, height, quality, format]);
+  // Handle image error
+  const handleError = () => {
+    setError(true);
+    setIsLoaded(false);
+  };
 
-    // Handle image load
-    const handleLoad = () => {
-      setImageState('loaded');
-      onLoad?.();
-    };
+  // Generate optimized sources
+  const webpSrc = generateWebPSrc(src);
+  const srcSet = generateSrcSet(src);
+  const webpSrcSet = generateSrcSet(webpSrc);
 
-    // Handle image error
-    const handleError = () => {
-      setImageState('error');
-      onError?.();
-    };
+  // Fallback to original src if WebP fails
+  const finalSrc = error && webpSrc !== src ? src : (isInView ? src : '');
+  const finalWebpSrc = error ? '' : (isInView ? webpSrc : '');
 
-    // Preload image for priority images
-    useEffect(() => {
-      if (priority && src) {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'image';
-        link.href = src;
-        document.head.appendChild(link);
+  return (
+    <div
+      ref={imgRef}
+      className={`optimized-image-container ${className}`}
+      style={{
+        position: 'relative',
+        overflow: 'hidden',
+        ...style,
+      }}
+    >
+      {/* Placeholder */}
+      {placeholder && !isLoaded && (
+        <div
+          className="image-placeholder"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: `url(${placeholder}) center/cover`,
+            filter: 'blur(10px)',
+            opacity: 0.5,
+          }}
+        />
+      )}
 
-        return () => {
-          document.head.removeChild(link);
-        };
-      }
-    }, [priority, src]);
+      {/* Loading skeleton */}
+      {!isLoaded && !placeholder && (
+        <div
+          className="image-skeleton"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+            backgroundSize: '200% 100%',
+            animation: 'loading 1.5s infinite',
+          }}
+        />
+      )}
 
-    return (
-      <div
-        ref={imgRef}
-        className={`relative overflow-hidden ${className}`}
-        style={{ width, height }}
-      >
-        <AnimatePresence mode='wait'>
-          {/* Loading State */}
-          {imageState === 'loading' && (
-            <motion.div
-              key='loading'
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className='absolute inset-0 flex items-center justify-center bg-gray-100'
-            >
-              <div className='flex flex-col items-center space-y-2'>
-                <Loader className='h-6 w-6 animate-spin text-gray-400' />
-                <span className='text-xs text-gray-500'>Yükleniyor...</span>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Error State */}
-          {imageState === 'error' && (
-            <motion.div
-              key='error'
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className='absolute inset-0 flex items-center justify-center bg-gray-100'
-            >
-              <div className='flex flex-col items-center space-y-2'>
-                <AlertCircle className='h-6 w-6 text-red-400' />
-                <span className='text-xs text-gray-500'>Resim yüklenemedi</span>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Image */}
-          {isInView && (
-            <motion.img
-              key='image'
-              src={currentSrc}
-              alt={alt}
-              width={width}
-              height={height}
-              sizes={sizes}
-              loading={lazy ? 'lazy' : 'eager'}
-              onLoad={handleLoad}
-              onError={handleError}
-              className={`w-full h-full object-cover transition-opacity duration-300 ${
-                imageState === 'loaded' ? 'opacity-100' : 'opacity-0'
-              }`}
-              {...props}
-            />
-          )}
-        </AnimatePresence>
-
-        {/* Placeholder */}
-        {!isInView && (
-          <img
-            src={placeholder}
-            alt=''
-            className='w-full h-full object-cover'
-            aria-hidden='true'
+      {/* Optimized image */}
+      <picture>
+        {/* WebP source */}
+        {finalWebpSrc && (
+          <source
+            srcSet={webpSrcSet}
+            sizes={sizes}
+            type="image/webp"
           />
         )}
-      </div>
-    );
-  }
-);
+        
+        {/* Fallback image */}
+        <img
+          src={finalSrc}
+          alt={alt}
+          srcSet={srcSet}
+          sizes={sizes}
+          width={width}
+          height={height}
+          loading={lazy ? 'lazy' : 'eager'}
+          onLoad={handleLoad}
+          onError={handleError}
+          className={`optimized-image ${isLoaded ? 'loaded' : 'loading'}`}
+          style={{
+            width: '100%',
+            height: 'auto',
+            opacity: isLoaded ? 1 : 0,
+            transition: 'opacity 0.3s ease-in-out',
+            ...style,
+          }}
+          {...props}
+        />
+      </picture>
 
-OptimizedImage.displayName = 'OptimizedImage';
+      {/* Error fallback */}
+      {error && (
+        <div
+          className="image-error"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: '#f5f5f5',
+            color: '#666',
+            fontSize: '14px',
+          }}
+        >
+          <span>Image failed to load</span>
+        </div>
+      )}
+
+      <style jsx>{`
+        @keyframes loading {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+        
+        .optimized-image {
+          display: block;
+          max-width: 100%;
+          height: auto;
+        }
+        
+        .optimized-image.loaded {
+          opacity: 1;
+        }
+        
+        .optimized-image.loading {
+          opacity: 0;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+OptimizedImage.propTypes = {
+  src: PropTypes.string.isRequired,
+  alt: PropTypes.string.isRequired,
+  className: PropTypes.string,
+  style: PropTypes.object,
+  sizes: PropTypes.string,
+  lazy: PropTypes.bool,
+  placeholder: PropTypes.string,
+  quality: PropTypes.number,
+  width: PropTypes.number,
+  height: PropTypes.number,
+};
 
 export default OptimizedImage;

@@ -1,284 +1,221 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
-// Performance metrics
-const usePerformance = (componentName = 'Component') => {
+/**
+ * usePerformance Hook
+ * @description Performance monitoring hook for Core Web Vitals and other metrics
+ * @returns {Object} Performance metrics and monitoring functions
+ */
+const usePerformance = () => {
   const [metrics, setMetrics] = useState({
-    renderTime: 0,
-    memoryUsage: 0,
-    fps: 0,
-    loadTime: 0,
+    lcp: null,
+    fid: null,
+    cls: null,
+    fcp: null,
+    ttfb: null,
+    bundleSize: null,
+    loadTime: null,
   });
 
   const [isMonitoring, setIsMonitoring] = useState(false);
-  const renderStartTime = useRef(0);
-  const frameCount = useRef(0);
-  const lastTime = useRef(performance.now());
-  const monitoringInterval = useRef(null);
 
-  // Start render timing
-  const startRenderTimer = useCallback(() => {
-    renderStartTime.current = performance.now();
+  // Measure Core Web Vitals
+  const measureCoreWebVitals = useCallback(() => {
+    // LCP (Largest Contentful Paint)
+    const lcpObserver = new PerformanceObserver((list) => {
+      const entries = list.getEntries();
+      const lastEntry = entries[entries.length - 1];
+      setMetrics(prev => ({
+        ...prev,
+        lcp: lastEntry.startTime,
+      }));
+    });
+    lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+
+    // FID (First Input Delay)
+    const fidObserver = new PerformanceObserver((list) => {
+      const entries = list.getEntries();
+      entries.forEach(entry => {
+        const fid = entry.processingStart - entry.startTime;
+        setMetrics(prev => ({
+          ...prev,
+          fid,
+        }));
+      });
+    });
+    fidObserver.observe({ entryTypes: ['first-input'] });
+
+    // CLS (Cumulative Layout Shift)
+    let cls = 0;
+    const clsObserver = new PerformanceObserver((list) => {
+      list.getEntries().forEach(entry => {
+        if (!entry.hadRecentInput) {
+          cls += entry.value;
+        }
+      });
+      setMetrics(prev => ({
+        ...prev,
+        cls,
+      }));
+    });
+    clsObserver.observe({ entryTypes: ['layout-shift'] });
+
+    // FCP (First Contentful Paint)
+    const fcpObserver = new PerformanceObserver((list) => {
+      const entries = list.getEntries();
+      const fcp = entries[entries.length - 1].startTime;
+      setMetrics(prev => ({
+        ...prev,
+        fcp,
+      }));
+    });
+    fcpObserver.observe({ entryTypes: ['first-contentful-paint'] });
+
+    // TTFB (Time to First Byte)
+    const navigationEntry = performance.getEntriesByType('navigation')[0];
+    if (navigationEntry) {
+      setMetrics(prev => ({
+        ...prev,
+        ttfb: navigationEntry.responseStart - navigationEntry.requestStart,
+      }));
+    }
+
+    return () => {
+      lcpObserver.disconnect();
+      fidObserver.disconnect();
+      clsObserver.disconnect();
+      fcpObserver.disconnect();
+    };
   }, []);
 
-  // End render timing
-  const endRenderTimer = useCallback(() => {
-    const renderTime = performance.now() - renderStartTime.current;
-    setMetrics(prev => ({ ...prev, renderTime }));
-  }, []);
+  // Measure bundle size
+  const measureBundleSize = useCallback(() => {
+    if (process.env.NODE_ENV === 'production') {
+      const resources = performance.getEntriesByType('resource');
+      const jsResources = resources.filter(resource => 
+        resource.name.includes('.js') && !resource.name.includes('chunk')
+      );
+      
+      const totalSize = jsResources.reduce((total, resource) => {
+        return total + (resource.transferSize || 0);
+      }, 0);
 
-  // Measure memory usage
-  const measureMemory = useCallback(() => {
-    if ('memory' in performance) {
-      const memory = performance.memory;
-      const memoryUsage =
-        (memory.usedJSHeapSize / memory.totalJSHeapSize) * 100;
-      setMetrics(prev => ({ ...prev, memoryUsage }));
+      setMetrics(prev => ({
+        ...prev,
+        bundleSize: totalSize / 1024, // Convert to KB
+      }));
     }
   }, []);
 
-  // Measure FPS
-  const measureFPS = useCallback(() => {
-    frameCount.current++;
-    const currentTime = performance.now();
-
-    if (currentTime - lastTime.current >= 1000) {
-      const fps = Math.round(
-        (frameCount.current * 1000) / (currentTime - lastTime.current)
-      );
-      setMetrics(prev => ({ ...prev, fps }));
-      frameCount.current = 0;
-      lastTime.current = currentTime;
+  // Measure page load time
+  const measureLoadTime = useCallback(() => {
+    const navigationEntry = performance.getEntriesByType('navigation')[0];
+    if (navigationEntry) {
+      setMetrics(prev => ({
+        ...prev,
+        loadTime: navigationEntry.loadEventEnd - navigationEntry.loadEventStart,
+      }));
     }
   }, []);
 
   // Start monitoring
   const startMonitoring = useCallback(() => {
     setIsMonitoring(true);
+    const cleanup = measureCoreWebVitals();
+    
+    // Measure bundle size after a delay
+    setTimeout(measureBundleSize, 1000);
+    
+    // Measure load time when page is fully loaded
+    if (document.readyState === 'complete') {
+      measureLoadTime();
+    } else {
+      window.addEventListener('load', measureLoadTime);
+    }
 
-    // Start FPS monitoring
-    const fpsInterval = setInterval(measureFPS, 16); // ~60fps
-
-    // Start memory monitoring
-    const memoryInterval = setInterval(measureMemory, 1000);
-
-    monitoringInterval.current = { fpsInterval, memoryInterval };
-  }, [measureFPS, measureMemory]);
+    return cleanup;
+  }, [measureCoreWebVitals, measureBundleSize, measureLoadTime]);
 
   // Stop monitoring
   const stopMonitoring = useCallback(() => {
     setIsMonitoring(false);
-
-    if (monitoringInterval.current) {
-      clearInterval(monitoringInterval.current.fpsInterval);
-      clearInterval(monitoringInterval.current.memoryInterval);
-      monitoringInterval.current = null;
-    }
   }, []);
 
-  // Measure load time
-  const measureLoadTime = useCallback(() => {
-    const loadTime = performance.now() - performance.timing.navigationStart;
-    setMetrics(prev => ({ ...prev, loadTime }));
-  }, []);
+  // Get performance score
+  const getPerformanceScore = useCallback(() => {
+    let score = 100;
 
-  // Performance warning thresholds
-  const getPerformanceWarnings = useCallback(() => {
-    const warnings = [];
-
-    if (metrics.renderTime > 16) {
-      warnings.push(
-        `Render time (${metrics.renderTime.toFixed(2)}ms) is above 16ms threshold`
-      );
+    // LCP scoring (0-100)
+    if (metrics.lcp) {
+      if (metrics.lcp <= 2500) score -= 0;
+      else if (metrics.lcp <= 4000) score -= 10;
+      else score -= 25;
     }
 
-    if (metrics.memoryUsage > 80) {
-      warnings.push(
-        `Memory usage (${metrics.memoryUsage.toFixed(1)}%) is above 80% threshold`
-      );
+    // FID scoring (0-100)
+    if (metrics.fid) {
+      if (metrics.fid <= 100) score -= 0;
+      else if (metrics.fid <= 300) score -= 10;
+      else score -= 25;
     }
 
-    if (metrics.fps < 30) {
-      warnings.push(`FPS (${metrics.fps}) is below 30fps threshold`);
+    // CLS scoring (0-100)
+    if (metrics.cls) {
+      if (metrics.cls <= 0.1) score -= 0;
+      else if (metrics.cls <= 0.25) score -= 10;
+      else score -= 25;
     }
 
-    return warnings;
+    // Bundle size scoring
+    if (metrics.bundleSize) {
+      if (metrics.bundleSize <= 500) score -= 0;
+      else if (metrics.bundleSize <= 1000) score -= 10;
+      else score -= 25;
+    }
+
+    return Math.max(0, score);
   }, [metrics]);
 
-  // Log performance data
-  const logPerformance = useCallback(() => {
-    const warnings = getPerformanceWarnings();
+  // Get performance recommendations
+  const getRecommendations = useCallback(() => {
+    const recommendations = [];
 
-    console.group(`🚀 Performance Report - ${componentName}`);
-
-    if (warnings.length > 0) {
-      console.warn('⚠️ Performance Warnings:', warnings);
+    if (metrics.lcp && metrics.lcp > 2500) {
+      recommendations.push('LCP is too slow. Optimize images and critical resources.');
     }
 
-    console.groupEnd();
-  }, [componentName, metrics, getPerformanceWarnings]);
+    if (metrics.fid && metrics.fid > 100) {
+      recommendations.push('FID is too high. Reduce JavaScript execution time.');
+    }
+
+    if (metrics.cls && metrics.cls > 0.1) {
+      recommendations.push('CLS is too high. Avoid layout shifts.');
+    }
+
+    if (metrics.bundleSize && metrics.bundleSize > 500) {
+      recommendations.push('Bundle size is too large. Implement code splitting.');
+    }
+
+    if (metrics.loadTime && metrics.loadTime > 3000) {
+      recommendations.push('Page load time is slow. Optimize resources.');
+    }
+
+    return recommendations;
+  }, [metrics]);
 
   // Auto-start monitoring on mount
   useEffect(() => {
-    startMonitoring();
-    measureLoadTime();
-
-    return () => {
-      stopMonitoring();
-    };
-  }, [startMonitoring, stopMonitoring, measureLoadTime]);
-
-  // Performance optimization suggestions
-  const getOptimizationSuggestions = useCallback(() => {
-    const suggestions = [];
-
-    if (metrics.renderTime > 16) {
-      suggestions.push({
-        type: 'render',
-        priority: 'high',
-        message: 'Consider using React.memo or useMemo to optimize re-renders',
-        action: 'Optimize component rendering',
-      });
-    }
-
-    if (metrics.memoryUsage > 80) {
-      suggestions.push({
-        type: 'memory',
-        priority: 'high',
-        message:
-          'Memory usage is high. Check for memory leaks or large data structures',
-        action: 'Review memory usage',
-      });
-    }
-
-    if (metrics.fps < 30) {
-      suggestions.push({
-        type: 'fps',
-        priority: 'medium',
-        message:
-          'Low FPS detected. Consider optimizing animations or heavy computations',
-        action: 'Optimize animations',
-      });
-    }
-
-    return suggestions;
-  }, [metrics]);
+    const cleanup = startMonitoring();
+    return cleanup;
+  }, [startMonitoring]);
 
   return {
     metrics,
     isMonitoring,
     startMonitoring,
     stopMonitoring,
-    startRenderTimer,
-    endRenderTimer,
-    logPerformance,
-    getPerformanceWarnings,
-    getOptimizationSuggestions,
+    getPerformanceScore,
+    getRecommendations,
   };
-};
-
-// Bundle size analyzer
-export const useBundleAnalyzer = () => {
-  const [bundleInfo, setBundleInfo] = useState(null);
-
-  const analyzeBundle = useCallback(async () => {
-    try {
-      // This would typically call an API endpoint that analyzes the bundle
-      const response = await fetch('/api/bundle-analyzer');
-      const data = await response.json();
-      setBundleInfo(data);
-    } catch (error) {
-      console.error('Bundle analysis failed:', error);
-    }
-  }, []);
-
-  return { bundleInfo, analyzeBundle };
-};
-
-// Network performance monitoring
-export const useNetworkPerformance = () => {
-  const [networkMetrics, setNetworkMetrics] = useState({
-    latency: 0,
-    bandwidth: 0,
-    connectionType: 'unknown',
-  });
-
-  const measureNetworkPerformance = useCallback(async () => {
-    try {
-      const startTime = performance.now();
-
-      // Measure latency
-      const response = await fetch('/api/ping');
-      const endTime = performance.now();
-      const latency = endTime - startTime;
-
-      // Get connection info
-      const connection =
-        navigator.connection ||
-        navigator.mozConnection ||
-        navigator.webkitConnection;
-      const connectionType = connection ? connection.effectiveType : 'unknown';
-
-      setNetworkMetrics({
-        latency,
-        bandwidth: connection ? connection.downlink : 0,
-        connectionType,
-      });
-    } catch (error) {
-      console.error('Network performance measurement failed:', error);
-    }
-  }, []);
-
-  useEffect(() => {
-    measureNetworkPerformance();
-    const interval = setInterval(measureNetworkPerformance, 30000); // Every 30 seconds
-
-    return () => clearInterval(interval);
-  }, [measureNetworkPerformance]);
-
-  return { networkMetrics, measureNetworkPerformance };
-};
-
-// Resource loading performance
-export const useResourcePerformance = () => {
-  const [resourceMetrics, setResourceMetrics] = useState({
-    totalResources: 0,
-    loadedResources: 0,
-    failedResources: 0,
-    totalSize: 0,
-  });
-
-  const measureResourcePerformance = useCallback(() => {
-    const resources = performance.getEntriesByType('resource');
-    const totalResources = resources.length;
-    const loadedResources = resources.filter(
-      r => r.initiatorType !== 'xmlhttprequest'
-    ).length;
-    const failedResources = resources.filter(r => r.transferSize === 0).length;
-    const totalSize = resources.reduce(
-      (sum, r) => sum + (r.transferSize || 0),
-      0
-    );
-
-    setResourceMetrics({
-      totalResources,
-      loadedResources,
-      failedResources,
-      totalSize,
-    });
-  }, []);
-
-  useEffect(() => {
-    // Wait for page load to complete
-    if (document.readyState === 'complete') {
-      measureResourcePerformance();
-    } else {
-      window.addEventListener('load', measureResourcePerformance);
-      return () =>
-        window.removeEventListener('load', measureResourcePerformance);
-    }
-  }, [measureResourcePerformance]);
-
-  return { resourceMetrics, measureResourcePerformance };
 };
 
 export default usePerformance;

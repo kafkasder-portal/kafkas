@@ -53,6 +53,7 @@ const MonitoringDashboard = lazy(
   () => import('./components/MonitoringDashboard')
 );
 const TodosList = lazy(() => import('./components/TodosList'));
+const OptimizerDemo = lazy(() => import('./pages/OptimizerDemo'));
 
 // Loading component
 const LoadingSpinner = () => (
@@ -340,6 +341,14 @@ const AppContent = memo(() => {
                     element={
                       <ProtectedRoute>
                         <TodosList />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path='/optimizer-demo'
+                    element={
+                      <ProtectedRoute requiredRoles={['admin']}>
+                        <OptimizerDemo />
                       </ProtectedRoute>
                     }
                   />

@@ -96,6 +96,14 @@ const menuItems = [
     path: '/test',
     color: '#059669',
   },
+  {
+    id: 'optimizer-demo',
+    title: 'AI Optimizer',
+    icon: Shield,
+    path: '/optimizer-demo',
+    color: '#2563eb',
+    adminOnly: true,
+  },
 ];
 
 const Sidebar = ({ collapsed, onToggle }) => {
@@ -130,9 +138,15 @@ const Sidebar = ({ collapsed, onToggle }) => {
     [location.pathname]
   );
 
-  // Show all menu items since auth is removed
+  // Filter menu items based on user permissions
   const getFilteredMenuItems = (items = translatedMenuItems) => {
-    return items; // Return all items without filtering
+    return items.filter(item => {
+      // If item requires admin role, check if user is admin
+      if (item.adminOnly) {
+        return user?.role === 'admin';
+      }
+      return true;
+    });
   };
 
   // Alt menü öğeleri için çeviri anahtarını al
