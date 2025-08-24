@@ -211,12 +211,13 @@ const Sidebar = ({ collapsed, onToggle }) => {
                 whileHover={{ x: 5 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               >
-                <Link 
-                  to={item.path} 
+                <button 
                   className="nav-link"
                   onClick={() => {
-                    console.log('Link clicked:', item.path)
+                    console.log('Button clicked:', item.path)
                     console.log('Current location:', window.location.pathname)
+                    // Manual navigation
+                    window.location.href = item.path
                   }}
                 >
                   <motion.div
@@ -227,7 +228,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
                   >
                     <IconComponent size={20} color={active ? 'white' : item.color} />
                   </motion.div>
-                </Link>
+                </button>
 
                 {/* Removed submenu indicators for simplified navigation */}
               </motion.div>
