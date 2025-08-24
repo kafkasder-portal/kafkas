@@ -7,4 +7,7 @@ import './index.css'
 // Analytics disabled in development mode
 // import './utils/analytics'
 
+// Initialize error tracking
+import './utils/errorTracker'
+
 createRoot(document.getElementById('root')).render(<App />)

@@ -83,6 +83,11 @@ const menuItems = [
     icon: Shield,
     path: '/system',
     color: '#374151',
+    subItems: [
+      { title: 'Genel Ayarlar', path: '/system' },
+      { title: 'Hata Takibi', path: '/system/error-dashboard' },
+      { title: 'Kullanıcı Yönetimi', path: '/system/user-management' }
+    ]
   },
   {
     id: 'test',

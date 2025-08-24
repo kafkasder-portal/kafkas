@@ -28,6 +28,7 @@ const Volunteers = lazy(() => import('./pages/Volunteers'))
 const Tasks = lazy(() => import('./pages/Tasks'))
 const Messages = lazy(() => import('./pages/Messages'))
 const WhatsApp = lazy(() => import('./pages/WhatsApp'))
+const ErrorDashboard = lazy(() => import('./pages/ErrorDashboard'))
 const Inventory = lazy(() => import('./pages/Inventory'))
 const Donors = lazy(() => import('./pages/Donors'))
 const Scholarship = lazy(() => import('./pages/Scholarship'))
@@ -211,6 +212,14 @@ const AppContent = memo(() => {
                     element={
                       <ProtectedRoute>
                         <WhatsApp />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/system/error-dashboard"
+                    element={
+                      <ProtectedRoute requiredRoles={['admin']}>
+                        <ErrorDashboard />
                       </ProtectedRoute>
                     }
                   />
