@@ -49,13 +49,21 @@ const Messages = () => {
       setMessages(data)
       
       // İstatistikleri hesapla
-      const unreadCount = data.filter(msg => msg.unread).length
-      const activeChats = new Set(data.map(msg => msg.sender)).size
-      setStats({
-        total: data.length,
-        unread: unreadCount,
-        activeChats: activeChats
-      })
+      if (Array.isArray(data)) {
+        const unreadCount = data.filter(msg => msg.unread).length
+        const activeChats = new Set(data.map(msg => msg.sender)).size
+        setStats({
+          total: data.length,
+          unread: unreadCount,
+          activeChats: activeChats
+        })
+      } else {
+        setStats({
+          total: 0,
+          unread: 0,
+          activeChats: 0
+        })
+      }
     } catch (err) {
       setError('Mesajlar yüklenirken hata oluştu: ' + err.message)
       toast.error('Mesajlar yüklenemedi')
@@ -100,10 +108,10 @@ const Messages = () => {
   }
 
   // Filtrelenmiş mesajlar
-  const filteredMessages = messages.filter(message => {
-    const matchesSearch = message.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         message.sender.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         message.content.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredMessages = Array.isArray(messages) ? messages.filter(message => {
+    const matchesSearch = message.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         message.sender?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         message.content?.toLowerCase().includes(searchTerm.toLowerCase())
     
     const matchesFilter = filterType === 'all' || 
                          (filterType === 'unread' && message.unread) ||
@@ -112,7 +120,7 @@ const Messages = () => {
                          (filterType === 'report' && message.type === 'report')
 
     return matchesSearch && matchesFilter
-  })
+  }) : []
 
   // Component mount edildiğinde veri yükle
   useEffect(() => {
