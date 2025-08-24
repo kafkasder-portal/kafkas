@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-
+import { motion } from 'framer-motion'
 import { Shield, AlertTriangle, CheckCircle, Loader } from 'lucide-react'
 import { toast } from 'sonner'
 import { 

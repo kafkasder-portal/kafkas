@@ -1,4 +1,4 @@
-// import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Coins, Vault, Building, Plus, Search, Filter } from 'lucide-react';
 import { useState, useEffect } from 'react';

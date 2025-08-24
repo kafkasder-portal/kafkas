@@ -1,3 +1,0 @@
-PWA Icon Placeholder - 64x64
-Bu dosya gerçek bir PNG ikon ile değiştirilmelidir.
-Kaynak: public/icon.svg

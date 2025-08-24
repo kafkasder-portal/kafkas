@@ -1,5 +1,5 @@
 import { useState, useEffect, memo } from 'react'
-import {  AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Image, Loader, AlertCircle } from 'lucide-react'
 
 const OptimizedImage = memo(({

@@ -61,10 +61,43 @@ class SecureApiClient {
     }
   }
 
+  // Mock data for development
+  getMockData(endpoint) {
+    const mockData = {
+      '/donations/stats': {
+        total: 125000,
+        monthly: 15000,
+        change: 12.5
+      },
+      '/beneficiaries/stats': {
+        total: 342,
+        active: 298,
+        change: 8.2
+      },
+      '/referrals/stats': {
+        total: 156,
+        pending: 23,
+        change: -5.1
+      },
+      '/volunteers/stats': {
+        total: 1247,
+        active: 892,
+        change: 8.2
+      }
+    };
+
+    // Simulate API delay
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(mockData[endpoint] || {});
+      }, 300);
+    });
+  }
+
   async request(endpoint, options = {}) {
     // Use mock API directly in development mode
     if (this.useMock) {
-      throw new Error('API endpoint not available');
+      return this.getMockData(endpoint);
     }
 
     const url = `${this.baseURL}${endpoint}`;
@@ -97,7 +130,7 @@ class SecureApiClient {
           'API request failed, falling back to mock API:',
           error.message
         );
-        throw new Error('API endpoint not available');
+        return this.getMockData(endpoint);
       }
     });
   }

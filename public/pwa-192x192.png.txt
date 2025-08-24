@@ -1,3 +1,0 @@
-PWA Icon Placeholder - 192x192
-Bu dosya gerçek bir PNG ikon ile değiştirilmelidir.
-Kaynak: public/icon.svg

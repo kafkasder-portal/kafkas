@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import {  AnimatePresence } from 'framer-motion'
+import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   MessageSquare, 
   Send, 

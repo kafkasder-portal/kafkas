@@ -90,9 +90,10 @@ export const handleApiError = error => {
  * Report error to external monitoring service
  */
 export const reportError = (error, context = {}) => {
+  // Safely extract error information to avoid circular references
   const errorInfo = {
-    message: error.message,
-    stack: error.stack,
+    message: error?.message || 'Unknown error',
+    stack: error?.stack?.split('\n').slice(0, 3).join('\n') || '',
     timestamp: new Date().toISOString(),
     url: window.location.href,
     userAgent: navigator.userAgent,
@@ -100,7 +101,8 @@ export const reportError = (error, context = {}) => {
     sessionId: getSessionId(),
     buildId: import.meta.env.VITE_BUILD_ID,
     version: import.meta.env.VITE_APP_VERSION,
-    ...context,
+    type: context.type || 'unknown',
+    component: context.component || 'unknown',
   };
 
   // Log to console in development
@@ -161,7 +163,21 @@ const storeErrorLocally = errorInfo => {
 
     // Keep only last 10 errors
     const recentErrors = errors.slice(-10);
-    localStorage.setItem('app_errors', JSON.stringify(recentErrors));
+    
+    // Safely stringify to avoid circular reference errors
+    try {
+      localStorage.setItem('app_errors', JSON.stringify(recentErrors));
+    } catch (stringifyError) {
+      console.warn('Failed to stringify error data:', stringifyError);
+      // Store simplified error data
+      const simplifiedErrors = recentErrors.map(error => ({
+        message: error.message || 'Unknown error',
+        stack: error.stack?.split('\n')[0] || '',
+        timestamp: error.timestamp,
+        type: error.type || 'unknown'
+      }));
+      localStorage.setItem('app_errors', JSON.stringify(simplifiedErrors));
+    }
   } catch (error) {
     console.error('Failed to store error locally:', error);
   }
