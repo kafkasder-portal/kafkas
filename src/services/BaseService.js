@@ -87,6 +87,45 @@ const MOCK_DATA = {
     stats: { total: 25, active: 20, thisMonth: 3 },
     data: [],
   },
+  '/finance': {
+    stats: { 
+      total: 125000, 
+      income: 85000, 
+      expense: 40000, 
+      balance: 45000,
+      thisMonth: 15000,
+      monthlyTrend: [35000, 42000, 38000, 45000, 52000, 48000]
+    },
+    data: [
+      {
+        id: 1,
+        description: 'Bağış geliri',
+        amount: 25000,
+        type: 'Gelir',
+        category: 'Bağış',
+        date: '2024-01-20',
+        status: 'Tamamlandı'
+      },
+      {
+        id: 2,
+        description: 'Yardım paketi alımı',
+        amount: -15000,
+        type: 'Gider',
+        category: 'Yardım',
+        date: '2024-01-18',
+        status: 'Tamamlandı'
+      },
+      {
+        id: 3,
+        description: 'Ofis kirası',
+        amount: -8000,
+        type: 'Gider',
+        category: 'İşletme',
+        date: '2024-01-15',
+        status: 'Tamamlandı'
+      }
+    ],
+  },
 }
 
 /**

@@ -129,10 +129,15 @@ const Finance = () => {
 
   // Arama filtresi
   useEffect(() => {
+    if (!Array.isArray(transactions)) {
+      setFilteredTransactions([])
+      return
+    }
+    
     const filtered = transactions.filter(transaction =>
-      transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.type.toLowerCase().includes(searchTerm.toLowerCase())
+      transaction.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.type?.toLowerCase().includes(searchTerm.toLowerCase())
     )
     setFilteredTransactions(filtered)
   }, [transactions, searchTerm])
