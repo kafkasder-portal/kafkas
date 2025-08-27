@@ -30,7 +30,7 @@ export const hospitalReferralsService = {
       const response = await apiClient.post('/hospital-referrals', referralData)
       return response
     } catch (error) {
-      console.error('Failed to create hospital referral:', error)
+      console.er  ror('Failed to create hospital referral:', error)
       throw error
     }
   },

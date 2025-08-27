@@ -1,8 +1,8 @@
-# 🚀 CURSOR AI AGENT - KAF PORTAL ÖZEL OPTİMİZASYONU
-# Bu dosya Cursor AI Agent'ın KAF Portal projesi için özel optimizasyonunu sağlar
+# 🚀 CURSOR AI AGENT - KAFKASDER ÖZEL OPTİMİZASYONU
+# Bu dosya Cursor AI Agent'ın KAFKASDER projesi için özel optimizasyonunu sağlar
 
 ## 🎯 PROJE BAĞLAMI
-- **Proje Adı**: KAF Portal (Kardeşlik ve Yardımlaşma)
+- **Proje Adı**: KAFKASDER (Kafkas Derneği)
 - **Teknoloji Stack**: React + Vite + Supabase + TypeScript
 - **Mimari**: Component-based + Service Layer + Real-time
 - **Dil Desteği**: Türkçe, İngilizce, Rusça
@@ -133,7 +133,7 @@ src/
 - `currency` - Currency formatting
 - `debounce` - Debounce hook
 
-## 🎯 KAF PORTAL ÖZEL ÖZELLİKLERİ
+## 🎯 KAFKASDER ÖZEL ÖZELLİKLERİ
 
 ### Multi-language Support
 - **Languages**: tr, en, ru
@@ -294,11 +294,11 @@ src/
 
 ## 🎉 SONUÇ
 
-Bu .cursorrules dosyası KAF Portal projesi için özel olarak optimize edilmiştir. Cursor AI Agent artık:
+Bu .cursorrules dosyası KAFKASDER projesi için özel olarak optimize edilmiştir. Cursor AI Agent artık:
 
 - **%50 daha hızlı** kod üretebilir
 - **%75 daha akıllı** aramalar yapabilir
 - **%90 daha doğru** öneriler verebilir
 - **%60 daha iyi** performans sağlayabilir
 
-**🚀 KAF Portal projesi için Cursor AI Agent tamamen optimize edildi!**
+**🚀 KAFKASDER projesi için Cursor AI Agent tamamen optimize edildi!**

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import QRCode from 'react-qr-code'
 import { 
-  PiggyBank, 
   Plus, 
   TrendingUp, 
   Users, 
@@ -14,8 +13,15 @@ import {
   Edit,
   Trash2,
   QrCode,
-  Navigation
+  Navigation,
+  Printer,
+  X,
+  Activity,
+  DollarSign,
+  Settings,
+  Box
 } from 'lucide-react'
+import './PiggyBankTracking.css'
 
 
 
@@ -104,14 +110,7 @@ const PiggyBankTracking = () => {
     }, 1000)
   }, [])
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'active': return 'text-green-600 bg-green-100'
-      case 'full': return 'text-blue-600 bg-blue-100'
-      case 'inactive': return 'text-gray-600 bg-gray-100'
-      default: return 'text-gray-600 bg-gray-100'
-    }
-  }
+
 
   const getStatusText = (status) => {
     switch (status) {
@@ -173,11 +172,11 @@ const PiggyBankTracking = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="loading-container">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full"
+          className="loading-spinner"
         />
       </div>
     )
@@ -188,46 +187,46 @@ const PiggyBankTracking = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      style={{ padding: '24px', minHeight: '100vh', backgroundColor: '#f9fafb' }}
+      className="piggy-bank-tracking-page"
     >
       {/* Header */}
-      <div className="mb-8">
+      <div className="piggy-bank-header">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <PiggyBank className="w-6 h-6 text-blue-600" />
+            <div className="p-3 bg-blue-100 rounded-lg">
+              <Box className="w-8 h-8 text-blue-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Kumbara Takibi</h1>
-              <p className="text-gray-600">Kumbaraların durumu ve toplama takibi</p>
+              <h1 className="piggy-bank-title">Kumbara Takibi</h1>
+              <p className="piggy-bank-subtitle">Kumbaraların durumu ve toplama takibi</p>
             </div>
           </div>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="btn btn-primary"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-5 h-5 mr-2" />
             <span>Yeni Kumbara</span>
           </motion.button>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="stats-grid">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white p-6 rounded-xl shadow-sm border border-gray-200"
+            className="stats-card"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Toplam Tutar</p>
-                <p className="text-2xl font-bold text-gray-900">₺{totalAmount.toLocaleString()}</p>
+                <p className="stats-label">Toplam Tutar</p>
+                <p className="stats-value">₺{totalAmount.toLocaleString()}</p>
               </div>
-              <div className="p-2 bg-green-100 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-green-600" />
-              </div>
+                          <div className="p-2 bg-green-100 rounded-lg">
+              <TrendingUp className="w-7 h-7 text-green-600" />
+            </div>
             </div>
           </motion.div>
 
@@ -235,16 +234,16 @@ const PiggyBankTracking = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white p-6 rounded-xl shadow-sm border border-gray-200"
+            className="stats-card"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Hedef Tutar</p>
-                <p className="text-2xl font-bold text-gray-900">₺{totalTarget.toLocaleString()}</p>
+                <p className="stats-label">Hedef Tutar</p>
+                <p className="stats-value">₺{totalTarget.toLocaleString()}</p>
               </div>
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <PiggyBank className="w-6 h-6 text-blue-600" />
-              </div>
+                          <div className="p-2 bg-blue-100 rounded-lg">
+              <Box className="w-7 h-7 text-blue-600" />
+            </div>
             </div>
           </motion.div>
 
@@ -252,16 +251,16 @@ const PiggyBankTracking = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white p-6 rounded-xl shadow-sm border border-gray-200"
+            className="stats-card"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Aktif Kumbaralar</p>
-                <p className="text-2xl font-bold text-gray-900">{activeBanks}</p>
+                <p className="stats-label">Aktif Kumbaralar</p>
+                <p className="stats-value">{activeBanks}</p>
               </div>
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Users className="w-6 h-6 text-purple-600" />
-              </div>
+                          <div className="p-2 bg-purple-100 rounded-lg">
+              <Users className="w-7 h-7 text-purple-600" />
+            </div>
             </div>
           </motion.div>
 
@@ -269,36 +268,37 @@ const PiggyBankTracking = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-white p-6 rounded-xl shadow-sm border border-gray-200"
+            className="stats-card"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Toplam Kumbara</p>
-                <p className="text-2xl font-bold text-gray-900">{piggyBanks.length}</p>
+                <p className="stats-label">Toplam Kumbara</p>
+                <p className="stats-value">{piggyBanks.length}</p>
               </div>
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <MapPin className="w-6 h-6 text-orange-600" />
-              </div>
+                          <div className="p-2 bg-orange-100 rounded-lg">
+              <MapPin className="w-7 h-7 text-orange-600" />
+            </div>
             </div>
           </motion.div>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+        <div className="filter-container">
+          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="search-container">
+            <Search className="search-icon" />
             <input
               type="text"
               placeholder="Kumbara ara..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="search-input"
             />
           </div>
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="filter-select"
           >
             <option value="all">Tüm Durumlar</option>
             <option value="active">Aktif</option>
@@ -308,40 +308,62 @@ const PiggyBankTracking = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            className="btn btn-secondary"
           >
-            <Download className="w-4 h-4" />
+            <Download className="w-5 h-5 mr-2" />
             <span>Dışa Aktar</span>
           </motion.button>
+          </div>
         </div>
       </div>
 
       {/* Piggy Banks List */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="piggy-bank-table">
+        <div className="overflow-x-auto table-container">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="table-header">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Kumbara
+                  <div className="flex items-center">
+                    <Box className="w-4 h-4 mr-2" />
+                    Kumbara
+                  </div>
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Lokasyon
+                  <div className="flex items-center">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Lokasyon
+                  </div>
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tutar
+                  <div className="flex items-center">
+                    <DollarSign className="w-4 h-4 mr-2" />
+                    Tutar
+                  </div>
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Durum
+                  <div className="flex items-center">
+                    <Activity className="w-4 h-4 mr-2" />
+                    Durum
+                  </div>
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Sorumlu
+                  <div className="flex items-center">
+                    <Users className="w-4 h-4 mr-2" />
+                    Sorumlu
+                  </div>
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Son Toplama
+                  <div className="flex items-center">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Son Toplama
+                  </div>
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  İşlemler
+                  <div className="flex items-center">
+                    <Settings className="w-4 h-4 mr-2" />
+                    İşlemler
+                  </div>
                 </th>
               </tr>
             </thead>
@@ -352,31 +374,31 @@ const PiggyBankTracking = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="hover:bg-gray-50"
+                  className="table-row"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="table-cell whitespace-nowrap">
                     <div>
                       <div className="text-sm font-medium text-gray-900">{bank.name}</div>
                       <div className="text-sm text-gray-500">{bank.notes}</div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="table-cell whitespace-nowrap">
                     <div className="flex items-center">
-                      <MapPin className="w-4 h-4 text-gray-400 mr-2" />
+                      <MapPin className="w-5 h-5 text-gray-400 mr-3" />
                       <div>
                         <span className="text-sm text-gray-900">{bank.location}</span>
                         <div className="text-xs text-gray-500">{bank.address}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="table-cell whitespace-nowrap">
                     <div>
                       <div className="text-sm font-medium text-gray-900">
                         ₺{bank.currentAmount.toLocaleString()}
                       </div>
-                      <div className="w-24 bg-gray-200 rounded-full h-2 mt-1">
+                      <div className="progress-container">
                         <div
-                          className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-in-out"
+                          className="progress-fill"
                           style={{ width: `${getProgressPercentage(bank.currentAmount, bank.targetAmount)}%` }}
                         />
                       </div>
@@ -385,66 +407,66 @@ const PiggyBankTracking = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(bank.status)}`}>
+                  <td className="table-cell whitespace-nowrap">
+                    <span className={`status-badge status-${bank.status}`}>
                       {getStatusText(bank.status)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="table-cell whitespace-nowrap text-sm text-gray-900">
                     {bank.assignedTo}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="table-cell whitespace-nowrap">
                     <div className="flex items-center">
-                      <Calendar className="w-4 h-4 text-gray-400 mr-2" />
+                      <Calendar className="w-5 h-5 text-gray-400 mr-3" />
                       <div>
                         <div className="text-sm text-gray-900">{bank.lastCollection}</div>
                         <div className="text-xs text-gray-500">Sonraki: {bank.nextCollection}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex space-x-2">
+                  <td className="table-cell whitespace-nowrap text-sm font-medium">
+                    <div className="flex space-x-2 action-buttons">
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        className="text-blue-600 hover:text-blue-900"
+                        className="action-button action-view"
                         title="Görüntüle"
                       >
-                        <Eye className="w-4 h-4" />
+                        <Eye className="w-5 h-5" />
                       </motion.button>
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        className="text-purple-600 hover:text-purple-900"
+                        className="action-button action-qr"
                         title="QR Kod"
                         onClick={() => openQRModal(bank)}
                       >
-                        <QrCode className="w-4 h-4" />
+                        <QrCode className="w-5 h-5" />
                       </motion.button>
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        className="text-green-600 hover:text-green-900"
+                        className="action-button action-navigation"
                         title="Rota Oluştur"
                         onClick={() => openNavigation(bank)}
                       >
-                        <Navigation className="w-4 h-4" />
+                        <Navigation className="w-5 h-5" />
                       </motion.button>
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        className="text-orange-600 hover:text-orange-900"
+                        className="action-button action-edit"
                         title="Düzenle"
                       >
-                        <Edit className="w-4 h-4" />
+                        <Edit className="w-5 h-5" />
                       </motion.button>
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        className="text-red-600 hover:text-red-900"
+                        className="action-button action-delete"
                         title="Sil"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-5 h-5" />
                       </motion.button>
                     </div>
                   </td>
@@ -460,11 +482,11 @@ const PiggyBankTracking = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-center py-12"
+          className="empty-state"
         >
-          <PiggyBank className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Kumbara bulunamadı</h3>
-          <p className="text-gray-500">Arama kriterlerinize uygun kumbara bulunamadı.</p>
+          <Box className="empty-state-icon" />
+          <h3 className="empty-state-title">Kumbara bulunamadı</h3>
+          <p className="empty-state-description">Arama kriterlerinize uygun kumbara bulunamadı.</p>
         </motion.div>
       )}
 
@@ -473,22 +495,22 @@ const PiggyBankTracking = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          className="qr-modal"
           onClick={() => setShowQRModal(false)}
         >
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="bg-white rounded-xl p-8 max-w-lg w-full mx-4"
+            className="qr-modal-content"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="text-center">
-              <h3 className="text-xl font-bold text-gray-900 mb-4 no-print">
+              <h3 className="qr-modal-title no-print">
                 {selectedBank.name} - QR Kod
               </h3>
               
               {/* Yazdırılabilir QR Kod Alanı */}
-              <div className="bg-white p-6 rounded-lg border-2 border-gray-200 mb-4 print-area">
+              <div className="qr-code-container bg-white p-6 rounded-lg border-2 border-gray-200 mb-4 print-area">
                 <div className="flex flex-col items-center">
                   {/* QR Kod - 40x30mm boyutunda */}
                   <div className="mb-3 flex justify-center items-center">
@@ -511,7 +533,7 @@ const PiggyBankTracking = () => {
               </div>
               
               {/* Detay Bilgileri */}
-              <div className="text-sm text-gray-600 mb-4 no-print">
+              <div className="qr-info no-print">
                 <p><strong>Kod:</strong> {selectedBank.qrCode}</p>
                 <p><strong>Lokasyon:</strong> {selectedBank.location}</p>
                 <p><strong>Adres:</strong> {selectedBank.address}</p>
@@ -523,29 +545,28 @@ const PiggyBankTracking = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  className="btn btn-success flex-1"
                   onClick={() => window.print()}
                 >
-                  <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                  </svg>
+                  <Printer className="btn-icon" />
                   Yazdır
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="btn btn-primary flex-1"
                   onClick={() => openNavigation(selectedBank)}
                 >
-                  <Navigation className="w-4 h-4 inline mr-2" />
+                  <Navigation className="btn-icon" />
                   Rota Oluştur
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                  className="btn btn-secondary flex-1"
                   onClick={() => setShowQRModal(false)}
                 >
+                  <X className="btn-icon" />
                   Kapat
                 </motion.button>
               </div>

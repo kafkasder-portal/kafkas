@@ -1,6 +1,6 @@
 {
-  "name": "KAF Portal",
-  "short_name": "KAF Portal",
+  "name": "KAFKASDER",
+  "short_name": "KAFKASDER",
   "description": "Kafkas Derneği Yönetim Portalı",
   "start_url": "/",
   "display": "standalone",

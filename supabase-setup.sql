@@ -1,4 +1,4 @@
--- KAF Portal Supabase Database Setup
+-- KAFKASDER Supabase Database Setup
 -- Bu dosya Supabase SQL Editor'de çalıştırılmalıdır
 
 -- =====================================================

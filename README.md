@@ -1,4 +1,4 @@
-# KafPortal - NGO Management System
+# KAFKASDER - NGO Management System
 
 A comprehensive web application for managing humanitarian aid, donations, and related operations targeting NGOs and social service organizations.
 
@@ -36,7 +36,7 @@ A comprehensive web application for managing humanitarian aid, donations, and re
 
 ```bash
 git clone <repository-url>
-cd kafportal
+cd kafkasder
 ```
 
 ### 2. Install Dependencies

@@ -1,97 +1,88 @@
-import { motion } from 'framer-motion';
-import { useState } from 'react';
-import {
-  Bell,
-  Search,
-  Settings,
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { 
+  Menu, 
+  Search, 
+  Bell, 
+  ChevronDown, 
+  User, 
+  Settings, 
   LogOut,
-  Shield,
-  Clock,
-  ChevronDown,
-  Menu,
-} from 'lucide-react';
-import PropTypes from 'prop-types';
-import './Header.css';
+  Sun,
+  Moon
+} from 'lucide-react'
+import { useAuth } from '../contexts/AuthContext'
+import { useTheme } from '../contexts/ThemeContext'
+import './Header.css'
 
 const Header = ({ onMenuToggle }) => {
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
+  const { currentUser, logout } = useAuth()
+  const { theme, toggleTheme } = useTheme()
+  const [showNotifications, setShowNotifications] = useState(false)
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(3)
 
-  // Mock kullanıcı verisi
-  const currentUser = {
-    fullName: 'Admin Kullanıcı',
-    email: 'admin@kafportal.com',
-    role: 'admin',
-    lastLogin: new Date().toISOString(),
-  };
-
+  // Mock notifications data
   const notifications = [
     {
       id: 1,
-      title: 'Yeni bağış alındı',
-      message: '₺5,000 tutarında yeni bağış kaydedildi',
+      title: 'Yeni Bağış',
+      message: 'Ahmet Yılmaz 500₺ bağış yaptı',
       time: '2 dakika önce',
       type: 'donation',
-      read: false,
+      read: false
     },
     {
       id: 2,
-      title: 'Görev tamamlandı',
-      message: 'Yardım paketi dağıtımı tamamlandı',
-      time: '15 dakika önce',
+      title: 'Görev Tamamlandı',
+      message: 'Kumbara toplama görevi tamamlandı',
+      time: '1 saat önce',
       type: 'task',
-      read: false,
+      read: false
     },
     {
       id: 3,
-      title: 'Yeni gönüllü',
-      message: 'Mehmet Kaya sisteme katıldı',
-      time: '1 saat önce',
+      title: 'Yeni Gönüllü',
+      message: 'Fatma Demir gönüllü olarak kayıt oldu',
+      time: '3 saat önce',
       type: 'volunteer',
-      read: true,
-    },
-    {
-      id: 4,
-      title: 'Sistem güncellemesi',
-      message: 'Yeni özellikler eklendi',
-      time: '2 saat önce',
-      type: 'system',
-      read: true,
-    },
-  ];
-
-  const getRoleName = role => {
-    const roleNames = {
-      admin: 'Yönetici',
-      moderator: 'Moderatör',
-      user: 'Kullanıcı',
-      volunteer: 'Gönüllü',
-    };
-    return roleNames[role] || 'Kullanıcı';
-  };
-
-  const formatDate = dateString => {
-    if (!dateString) return 'Hiç giriş yapılmamış';
-    return new Date(dateString).toLocaleString('tr-TR');
-  };
-
-  const handleLogout = () => {
-    if (window.confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
-      // Logout işlemi
-      window.location.reload();
+      read: true
     }
-  };
+  ]
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const getRoleName = (role) => {
+    switch (role) {
+      case 'admin': return 'Yönetici'
+      case 'manager': return 'Müdür'
+      case 'volunteer': return 'Gönüllü'
+      default: return 'Kullanıcı'
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.relative-wrapper')) {
+        setShowNotifications(false)
+        setShowUserMenu(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   return (
-    <motion.header
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="header"
-    >
-      {/* Left Section */}
+    <header className="header">
+      {/* Left Section - Brand & Menu */}
       <div className="header-left">
         <motion.button
           onClick={onMenuToggle}
@@ -102,19 +93,20 @@ const Header = ({ onMenuToggle }) => {
           <Menu size={20} />
         </motion.button>
 
-        <div>
-          <h1 className="header-title">
-            KAF Portal
-          </h1>
-          <p className="header-subtitle">
-            NGO Yönetim Sistemi
-          </p>
+        <div className="brand-section">
+          <div className="brand-logo">
+            K
+          </div>
+          <div className="brand-text">
+            <h1 className="brand-title">KAFKASDER</h1>
+            <p className="brand-subtitle">Yönetim Sistemi</p>
+          </div>
         </div>
       </div>
 
       {/* Center Section - Search */}
       <div className="search-container">
-        <Search size={18} className="search-icon" />
+        <Search size={16} className="search-icon" />
         <input
           type="text"
           placeholder="Ara..."
@@ -124,15 +116,26 @@ const Header = ({ onMenuToggle }) => {
 
       {/* Right Section */}
       <div className="header-right">
+        {/* Theme Toggle */}
+        <motion.button
+          onClick={toggleTheme}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="action-btn"
+          title={theme === 'dark' ? 'Açık tema' : 'Koyu tema'}
+        >
+          {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+        </motion.button>
+
         {/* Notifications */}
         <div className="relative-wrapper">
           <motion.button
             onClick={() => setShowNotifications(!showNotifications)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="notification-btn"
+            className="action-btn"
           >
-            <Bell size={20} />
+            <Bell size={18} />
             {unreadCount > 0 && (
               <div className="notification-badge">
                 {unreadCount}
@@ -141,34 +144,37 @@ const Header = ({ onMenuToggle }) => {
           </motion.button>
 
           {/* Notifications Panel */}
-          {showNotifications && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="notification-panel"
-            >
-              <div className="notification-header">
-                <span className="notification-title">Bildirimler</span>
-                <span className="notification-count">{unreadCount}</span>
-              </div>
-              {notifications.map(notification => (
-                <div
-                  key={notification.id}
-                  className={`notification-item ${!notification.read ? 'unread' : ''}`}
-                >
-                  <div className="notification-content">
-                    <div className="notification-content-flex">
-                      <div className={`notification-type ${notification.type}`}></div>
-                      <span className="notification-title-text">{notification.title}</span>
-                    </div>
-                    <p className="notification-message">{notification.message}</p>
-                    <span className="notification-time">{notification.time}</span>
-                  </div>
+          <AnimatePresence>
+            {showNotifications && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="notification-panel"
+              >
+                <div className="notification-header">
+                  <span className="notification-title">Bildirimler</span>
+                  <span className="notification-count">{unreadCount}</span>
                 </div>
-              ))}
-            </motion.div>
-          )}
+                {notifications.map(notification => (
+                  <div
+                    key={notification.id}
+                    className={`notification-item ${!notification.read ? 'unread' : ''}`}
+                  >
+                    <div className="notification-content">
+                      <div className="notification-content-flex">
+                        <div className={`notification-type ${notification.type}`}></div>
+                        <span className="notification-title-text">{notification.title}</span>
+                      </div>
+                      <p className="notification-message">{notification.message}</p>
+                      <span className="notification-time">{notification.time}</span>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* User Menu */}
@@ -177,7 +183,7 @@ const Header = ({ onMenuToggle }) => {
             onClick={() => setShowUserMenu(!showUserMenu)}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="user-menu-btn"
+            className="user-menu"
           >
             <div className="user-avatar">
               {currentUser.fullName.charAt(0)}
@@ -186,43 +192,38 @@ const Header = ({ onMenuToggle }) => {
               <span className="user-name">{currentUser.fullName}</span>
               <span className="user-role">{getRoleName(currentUser.role)}</span>
             </div>
-            <ChevronDown size={16} />
+            <ChevronDown size={14} />
           </motion.button>
 
           {/* User Dropdown Menu */}
-          {showUserMenu && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="dropdown-menu"
-            >
-              <div className="dropdown-item">
-                <Shield size={16} />
-                <span>Profil Ayarları</span>
-              </div>
-              <div className="dropdown-item">
-                <Settings size={16} />
-                <span>Sistem Ayarları</span>
-              </div>
-              <div className="dropdown-item">
-                <Clock size={16} />
-                <span>Son Giriş: {formatDate(currentUser.lastLogin)}</span>
-              </div>
-              <div className="dropdown-item danger" onClick={handleLogout}>
-                <LogOut size={16} />
-                <span>Çıkış Yap</span>
-              </div>
-            </motion.div>
-          )}
+          <AnimatePresence>
+            {showUserMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="dropdown-menu"
+              >
+                <a href="/profile" className="dropdown-item">
+                  <User size={16} />
+                  <span>Profil</span>
+                </a>
+                <a href="/settings" className="dropdown-item">
+                  <Settings size={16} />
+                  <span>Ayarlar</span>
+                </a>
+                <button onClick={handleLogout} className="dropdown-item danger">
+                  <LogOut size={16} />
+                  <span>Çıkış Yap</span>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
-    </motion.header>
-  );
-};
+    </header>
+  )
+}
 
-Header.propTypes = {
-  onMenuToggle: PropTypes.func.isRequired,
-};
-
-export default Header;
+export default Header

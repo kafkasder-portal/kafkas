@@ -31,7 +31,7 @@ const Login = () => {
         transition={{ duration: 0.5 }}
       >
         <div className="login-header">
-          <h1>KAF Portal</h1>
+          <h1>KAFKASDER</h1>
           <p>Giriş yapın</p>
         </div>
 

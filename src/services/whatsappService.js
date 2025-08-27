@@ -425,7 +425,7 @@ export const whatsappService = {
       to,
       'Size nasıl yardımcı olabilirim? Lütfen aşağıdaki seçeneklerden birini seçin:',
       buttons,
-      'KAF Portal - Yardım Merkezi'
+      'KAFKASDER - Yardım Merkezi'
     )
   },
 

@@ -1,4 +1,4 @@
-// Service Worker for KAF Portal
+// Service Worker for KAFKASDER
 // Cache management and offline support
 
 const CACHE_NAME = 'kaf-portal-v1.0.0';
@@ -197,7 +197,7 @@ self.addEventListener('push', (event) => {
   console.log('Service Worker: Push notification received');
   
   const options = {
-    body: event.data ? event.data.text() : 'New notification from KAF Portal',
+    body: event.data ? event.data.text() : 'New notification from KAFKASDER',
     icon: '/logo192.png',
     badge: '/logo192.png',
     vibrate: [100, 50, 100],
@@ -220,7 +220,7 @@ self.addEventListener('push', (event) => {
   };
   
   event.waitUntil(
-    self.registration.showNotification('KAF Portal', options)
+    self.registration.showNotification('KAFKASDER', options)
   );
 });
 

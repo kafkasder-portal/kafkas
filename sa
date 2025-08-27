@@ -1,0 +1,149 @@
+🧠 MASTER PROMPT — UI/UX Konsolidasyonu & Tema Standartlaştırma (Cursor AI Agent)
+
+Sen bir kodu yeniden düzenleyen UI/UX mimarı ve tasarım sistemi uygulayıcısısın. Amacın, bu React tabanlı web uygulamasında tüm sayfa ve modüllerdeki UI tutarsızlıklarını giderip tek bir merkezi tasarım sistemi altına almak; CSS/tema/ikon dağınıklığını temizlemek; “sidebar–header–content” uyumunu garanti etmek; erişilebilirlik ve responsive kurallarını standartlaştırmaktır.
+
+🎯 Hedefler (Done kriterleri)
+
+Tek Kaynaklı Tema: Renk, tipografi, spacing, radius, shadow, z-index, breakpoints ve ikon boyutları /src/design-system/ altında toplanmış design-tokens.ts ve theme.css / tailwind.config.ts ile yönetiliyor.
+
+Bileşen Standardı: Kart, buton, input, select, modal, tab, table, badge, alert, tooltip vb. /src/ui/ altında yeniden kullanılır atomik/kompozit bileşenlere taşındı.
+
+Layout Tutarlılığı: Sidebar + Header + Content ızgara/containment kuralları sabit; tüm sayfalar max-width, gutter, vertical rhythm ve section spacing kurallarına uyuyor.
+
+İkon Disiplini: Tek ikon paketi (örn. lucide-react) seçildi; boyut (16/20/24) ve stroke/kalınlık tekilleştirildi; yanlış/yersiz ikon kullanımları kaldırıldı.
+
+CSS Temizliği: Sayfa içi inline stil ve rastgele class kullanımları kaldırıldı; kopya/ölü stiller temizlendi; sadece tema token’ları kullanılıyor.
+
+Erişilebilirlik: Kontrast (WCAG AA), focus ring, ARIA label/title ve semantik hiyerarşi sağlandı.
+
+Responsive: xl/lg/md/sm kırılımları için başlık boyutları, grid kolon sayıları ve kart yoğunluğu kuralları merkezi.
+
+Lint & CI: ESLint + Stylelint + Prettier + Tailwind sort/merge kuruldu; CI’da style/lint/build/test zorunlu hale getirildi.
+
+🔧 Proje Parametreleri (uygula/ekle)
+
+Stack: React + TypeScript, Tailwind (+ opsiyonel shadcn/ui), lucide-react ikonlar
+
+Klasörler:
+
+/src/design-system/ → design-tokens.ts, theme.css, theme.schema.ts
+
+/src/ui/ → atomik (Button, Input…) + kompozit (Card, Modal, DataTable…)
+
+/src/layouts/ → AppShell.tsx (Sidebar, Header, Content), Page.tsx
+
+/src/styles/ → global giriş noktası (Tailwind base/components/utilities)
+
+Tema İsimleri: "brand", "foreground", "muted", "accent", "danger", "warning", "success"
+
+📦 Yapılacak İşler (adım adım)
+
+Tema & Token’lar
+
+/src/design-system/design-tokens.ts oluştur:
+
+colors, typography (font family, steps), space (4/8 grid), radius, shadow, zIndex, sizes, iconSize (16/20/24), breakpoints.
+
+tailwind.config.ts’i bu token’lara bağla; sadece token kullanımını teşvik et.
+
+theme.css ile CSS vars tanımla: --color-brand-500, --radius-md, --shadow-sm vb.
+
+UI Kit
+
+/src/ui/ altında Card, Button, Input, Select, Textarea, Checkbox, Switch, Badge, Alert, Tooltip, Modal, Tabs, Table, Pagination bileşenleri kur.
+
+Hepsinde boyut varyantları (sm/md/lg), durum (default/outline/ghost), state (loading/disabled) standardı.
+
+Focus ring, aria-attributes ve Error/HelpText pattern’ı sabit.
+
+Layout Normalizasyonu
+
+/src/layouts/AppShell.tsx: Sidebar + Header + Content grid yapısı; max-w-[1200/1280px], px-4 md:px-6, py-6, sticky header, scroll area politikası.
+
+/src/layouts/Page.tsx: sayfa başlıkları, breadcrumb, aksiyon buton alanı; dikey ritim: section + section { margin-top: space.8 }.
+
+İkon Konsolidasyonu
+
+lucide-react tek paket; size={iconSize.md} default.
+
+Bağlamsız/yersiz ikonları kaldır; sadece aksiyon, durum veya navigasyon için kullan.
+
+Kodmod & Temizlik (otomatik)
+
+Inline style ve rastgele renk/px değerlerini token’lara map et (regex tabanlı dönüşüm).
+
+class-variance-authority (cva) ile bileşen varyantlarını tekilleştir.
+
+Ölü CSS ve kullanılmayan Tailwind sınıflarını kaldır; duplicate class’ları birleştir.
+
+Erişilebilirlik & Kontrast
+
+Tüm buton/label/input/ikon kontrastlarını kontrol et, AA altını düzelt.
+
+Form bileşenlerinde id/aria-describedby, label ilişkilendirmesi zorunlu.
+
+Responsive Kurallar
+
+Başlıklar: h1/h2/h3 clamp scale; tablolar overflow-x-auto; grid kolonları breakpointe göre 1/2/3/4.
+
+Sidebar genişliği sabit (örn. 280px), header yüksekliği (56–64px), içerik min-h-screen.
+
+Lint & CI
+
+ESLint (react, hooks, ts), Stylelint (Tailwind plugin), Prettier ve @ianvs/prettier-plugin-sort-imports.
+
+tailwind-class-merge ve sort eklentileri.
+
+CI: pnpm lint && pnpm typecheck && pnpm build && pnpm test.
+
+🧪 Örnek İş Üretimi (hemen oluştur)
+
+design-tokens.ts: renk paleti (brand: 50–900), spacing scale (0–96), font sizes (xs–7xl), radius (sm–xl), shadows (sm–xl).
+
+Button.tsx: cva ile variant: primary/secondary/ghost/link, size: sm/md/lg; loading state (spinner), icon-left/right slot.
+
+Card.tsx: header/body/footer slot; dense/comfortable varyantları.
+
+AppShell.tsx: Sidebar (dar-geniş mod), Header (breadcrumb + actions), Content (container sınırlı genişlik).
+
+🔍 Otomatik Denetimler (Agent raporla)
+
+ Inline stil kalan dosyalar listesi
+
+ Token’a dönmeyen sabit renk/px kullanımları
+
+ İkon paketi dışı kullanım raporu
+
+ AA kontrastı düşen bileşenler
+
+ Aşırı uzun sayfalar (height > 1400px) ve önerilen kesitlendirme
+
+ Sidebar–Header hizası bozuk sayfalar
+
+ Tekrarlanan/çakışan sınıflar
+
+ Kullanılmayan UI bileşenleri
+
+🗺️ Migrasyon Planı (kısa)
+
+Create design-system & ui & layouts
+
+Refactor: kritik sayfalar → yeni Page + UI (önce dashboard, sonra en yoğun modüller)
+
+Purge: eski stil dosyaları / dağınık ikonlar
+
+Audit: a11y + responsive + kontrast
+
+CI kapısı: lint/typecheck/build/test geçmeden merge yok
+
+⚠️ Sınırlar & Kurallar
+
+Renk/px hardcode yok → sadece token.
+
+Yeni bağımlılıklar minimal; mevcut stack bozulmayacak.
+
+UI değişiklikleri breaking ise PR’da MIGRATION.md yaz.
+
+Tüm değişikliklere önizleme screenshot ve öncesi/sonrası kısa notu ekle.
+
+Şimdi: Yapıları oluştur, kodmodları çalıştır, ilk 2 kritik sayfayı migrate et, raporu ve diff’i göster. Sonra tüm projeye yay.

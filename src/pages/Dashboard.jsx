@@ -348,7 +348,7 @@ const Dashboard = () => {
       >
         <div>
           <h1 className="dashboard-title">
-            KAF Portal Dashboard
+            KAFKASDER Dashboard
           </h1>
           <p className="dashboard-subtitle">NGO Yönetim Sistemi Genel Bakış</p>
           <p className="dashboard-update-time">

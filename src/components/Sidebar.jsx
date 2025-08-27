@@ -249,7 +249,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
             <ThemeToggle />
           </div>
 
-          {/* KAF Portal Info */}
+          {/* KAFKASDER Info */}
           <div style={{ 
             textAlign: 'center', 
             padding: '1rem',
@@ -258,7 +258,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
             border: '1px solid rgba(255, 255, 255, 0.2)'
           }}>
             <div style={{ fontSize: '0.875rem', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
-              KAF Portal
+              KAFKASDER
             </div>
             <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.8)' }}>
               v1.0.0
