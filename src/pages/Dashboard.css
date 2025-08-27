@@ -24,6 +24,18 @@
   margin: 8px 0 0 0;
 }
 
+.dashboard-update-time {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.dashboard-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .refresh-btn {
   display: flex;
   align-items: center;
@@ -357,4 +369,92 @@
   .activities-section {
     padding: 20px;
   }
+}
+
+/* Urgent Task Card Styles */
+.urgent-task-card {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #fecaca;
+  margin-bottom: 12px;
+}
+
+.urgent-task-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.urgent-task-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #dc2626;
+  margin: 0;
+}
+
+.urgent-task-priority {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  color: white;
+}
+
+.urgent-task-priority.high {
+  background: #dc2626;
+}
+
+.urgent-task-priority.medium {
+  background: #f59e0b;
+}
+
+.urgent-task-priority.low {
+  background: #10b981;
+}
+
+.urgent-task-assignee {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0 0 8px 0;
+}
+
+.urgent-task-deadline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.urgent-task-deadline-text {
+  font-size: 12px;
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.urgent-task-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.urgent-task-progress-bar {
+  flex: 1;
+  height: 6px;
+  background-color: #fecaca;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.urgent-task-progress-fill {
+  height: 100%;
+  background-color: #dc2626;
+  border-radius: 3px;
+}
+
+.urgent-task-progress-text {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 600;
 }

@@ -285,52 +285,35 @@ const Dashboard = () => {
   const UrgentTaskCard = ({ task }) => (
     <motion.div
       whileHover={{ scale: 1.02 }}
-      style={{
-        background: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
-        borderRadius: '12px',
-        padding: '16px',
-        border: '1px solid #fecaca',
-        marginBottom: '12px'
-      }}
+      className="urgent-task-card"
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-        <h4 style={{ fontSize: '14px', fontWeight: '600', color: '#dc2626', margin: 0 }}>
+      <div className="urgent-task-header">
+        <h4 className="urgent-task-title">
           {task.title}
         </h4>
-        <span style={{
-          padding: '4px 8px',
-          borderRadius: '12px',
-          fontSize: '10px',
-          fontWeight: '600',
-          background: task.priority === 'high' ? '#dc2626' : task.priority === 'medium' ? '#f59e0b' : '#10b981',
-          color: 'white'
-        }}>
+        <span className={`urgent-task-priority ${task.priority}`}>
           {task.priority === 'high' ? 'Yüksek' : task.priority === 'medium' ? 'Orta' : 'Düşük'}
         </span>
       </div>
-      <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 8px 0' }}>
+      <p className="urgent-task-assignee">
         Sorumlu: {task.assignee}
       </p>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+      <div className="urgent-task-deadline">
         <Clock size={12} color="#dc2626" />
-        <span style={{ fontSize: '12px', color: '#dc2626', fontWeight: '600' }}>
+        <span className="urgent-task-deadline-text">
           {task.deadline} kaldı
         </span>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <div style={{ flex: 1, height: '6px', backgroundColor: '#fecaca', borderRadius: '3px', overflow: 'hidden' }}>
+      <div className="urgent-task-progress">
+        <div className="urgent-task-progress-bar">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${task.progress}%` }}
             transition={{ duration: 1, delay: 0.5 }}
-            style={{
-              height: '100%',
-              backgroundColor: '#dc2626',
-              borderRadius: '3px'
-            }}
+            className="urgent-task-progress-fill"
           />
         </div>
-        <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600' }}>
+        <span className="urgent-task-progress-text">
           {task.progress}%
         </span>
       </div>
@@ -368,11 +351,11 @@ const Dashboard = () => {
             KAF Portal Dashboard
           </h1>
           <p className="dashboard-subtitle">NGO Yönetim Sistemi Genel Bakış</p>
-          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
+          <p className="dashboard-update-time">
             Son güncelleme: {lastUpdate.toLocaleTimeString('tr-TR')}
           </p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="dashboard-actions">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

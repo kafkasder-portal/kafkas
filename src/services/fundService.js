@@ -1,202 +1,117 @@
+import { BaseService } from './BaseService.js';
 import { apiClient } from './api.js';
 
-// Fund Service
-export const fundService = {
-  // Get all funds
+// Fund Service extending BaseService for standardized error handling and CRUD operations
+class FundService extends BaseService {
+  constructor() {
+    super('/funds');
+  }
+
+  // Basic CRUD operations using base class methods
   async getAllFunds() {
-    try {
-      const response = await apiClient.get('/funds');
-      return response;
-    } catch (error) {
-      console.error('Failed to fetch funds:', error);
-      throw error;
-    }
-  },
+    return this.getAll();
+  }
 
-  // Get fund by ID
   async getFundById(id) {
-    try {
-      const response = await apiClient.get(`/funds/${id}`);
-      return response;
-    } catch (error) {
-      console.error('Failed to fetch fund:', error);
-      throw error;
-    }
-  },
+    return this.getById(id);
+  }
 
-  // Create new fund
   async createFund(fundData) {
-    try {
-      const response = await apiClient.post('/funds', fundData);
-      return response;
-    } catch (error) {
-      console.error('Failed to create fund:', error);
-      throw error;
-    }
-  },
+    return this.create(fundData);
+  }
 
-  // Update fund
   async updateFund(id, fundData) {
-    try {
-      const response = await apiClient.put(`/funds/${id}`, fundData);
-      return response;
-    } catch (error) {
-      console.error('Failed to update fund:', error);
-      throw error;
-    }
-  },
+    return this.update(id, fundData);
+  }
 
-  // Delete fund
   async deleteFund(id) {
-    try {
-      const response = await apiClient.delete(`/funds/${id}`);
-      return response;
-    } catch (error) {
-      console.error('Failed to delete fund:', error);
-      throw error;
-    }
-  },
+    return this.delete(id);
+  }
 
-  // Get funds by status
+  // Specialized methods with standardized error handling
   async getFundsByStatus(status) {
-    try {
-      const response = await apiClient.get(`/funds?status=${status}`);
-      return response;
-    } catch (error) {
-      console.error('Failed to fetch funds by status:', error);
-      throw error;
-    }
-  },
+    return this.handleRequest(
+      () => apiClient.get(`${this.endpoint}?status=${status}`),
+      `to fetch funds by status: ${status}`
+    );
+  }
 
-  // Get funds by category
   async getFundsByCategory(category) {
-    try {
-      const response = await apiClient.get(`/funds?category=${category}`);
-      return response;
-    } catch (error) {
-      console.error('Failed to fetch funds by category:', error);
-      throw error;
-    }
-  },
+    return this.handleRequest(
+      () => apiClient.get(`${this.endpoint}?category=${category}`),
+      `to fetch funds by category: ${category}`
+    );
+  }
 
-  // Get active funds
   async getActiveFunds() {
-    try {
-      const response = await apiClient.get('/funds?status=active');
-      return response;
-    } catch (error) {
-      console.error('Failed to fetch active funds:', error);
-      throw error;
-    }
-  },
+    return this.handleRequest(
+      () => apiClient.get(`${this.endpoint}?status=active`),
+      'to fetch active funds'
+    );
+  }
 
-  // Search funds
   async searchFunds(query) {
-    try {
-      const response = await apiClient.get(
-        `/funds/search?q=${encodeURIComponent(query)}`
-      );
-      return response;
-    } catch (error) {
-      console.error('Failed to search funds:', error);
-      throw error;
-    }
-  },
+    return this.handleRequest(
+      () => apiClient.get(`${this.endpoint}/search?q=${encodeURIComponent(query)}`),
+      `to search funds with query: ${query}`
+    );
+  }
 
-  // Update fund status
   async updateFundStatus(id, status) {
-    try {
-      const response = await apiClient.patch(`/funds/${id}/status`, { status });
-      return response;
-    } catch (error) {
-      console.error('Failed to update fund status:', error);
-      throw error;
-    }
-  },
+    return this.handleRequest(
+      () => apiClient.patch(`${this.endpoint}/${id}/status`, { status }),
+      `to update fund status for id ${id}`
+    );
+  }
 
-  // Add fund contribution
   async addContribution(fundId, contributionData) {
-    try {
-      const response = await apiClient.post(
-        `/funds/${fundId}/contributions`,
-        contributionData
-      );
-      return response;
-    } catch (error) {
-      console.error('Failed to add contribution:', error);
-      throw error;
-    }
-  },
+    return this.handleRequest(
+      () => apiClient.post(`${this.endpoint}/${fundId}/contributions`, contributionData),
+      `to add contribution for fund id ${fundId}`
+    );
+  }
 
-  // Get fund contributions
   async getFundContributions(fundId) {
-    try {
-      const response = await apiClient.get(`/funds/${fundId}/contributions`);
-      return response;
-    } catch (error) {
-      console.error('Failed to fetch fund contributions:', error);
-      throw error;
-    }
-  },
+    return this.handleRequest(
+      () => apiClient.get(`${this.endpoint}/${fundId}/contributions`),
+      `to fetch fund contributions for id ${fundId}`
+    );
+  }
 
-  // Get fund progress
   async getFundProgress(id) {
-    try {
-      const response = await apiClient.get(`/funds/${id}/progress`);
-      return response;
-    } catch (error) {
-      console.error('Failed to fetch fund progress:', error);
-      throw error;
-    }
-  },
+    return this.handleRequest(
+      () => apiClient.get(`${this.endpoint}/${id}/progress`),
+      `to fetch fund progress for id ${id}`
+    );
+  }
 
-  // Get fund statistics
   async getFundStats() {
-    try {
-      const response = await apiClient.get('/funds/stats');
-      return response;
-    } catch (error) {
-      console.error('Failed to fetch fund statistics:', error);
-      throw error;
-    }
-  },
+    return this.getStats();
+  }
 
-  // Get fund reports
   async getFundReports(period) {
-    try {
-      const response = await apiClient.get(`/funds/reports?period=${period}`);
-      return response;
-    } catch (error) {
-      console.error('Failed to fetch fund reports:', error);
-      throw error;
-    }
-  },
+    return this.handleRequest(
+      () => apiClient.get(`${this.endpoint}/reports?period=${period}`),
+      `to fetch fund reports for period: ${period}`
+    );
+  }
 
-  // Get funds by date range
   async getFundsByDateRange(startDate, endDate) {
-    try {
-      const response = await apiClient.get(
-        `/funds?start=${startDate}&end=${endDate}`
-      );
-      return response;
-    } catch (error) {
-      console.error('Failed to fetch funds by date range:', error);
-      throw error;
-    }
-  },
+    return this.handleRequest(
+      () => apiClient.get(`${this.endpoint}?start=${startDate}&end=${endDate}`),
+      `to fetch funds by date range: ${startDate} to ${endDate}`
+    );
+  }
 
-  // Backward compatibility aliases
-  async getAll() {
-    return this.getAllFunds();
-  },
+  // Backward compatibility aliases - DEPRECATED: Use base class methods directly
+  // getAll() -> getAllFunds()
+  // getById(id) -> getFundById(id)
+  // create(data) -> createFund(data)
+  // update(id, data) -> updateFund(id, data)
+  // delete(id) -> deleteFund(id)
+  // Note: These methods are kept for backward compatibility but should be replaced with direct base class method calls
+}
 
-  async update(id, data) {
-    return this.updateFund(id, data);
-  },
-
-  async delete(id) {
-    return this.deleteFund(id);
-  },
-};
-
+// Create and export service instance
+export const fundService = new FundService();
 export default fundService;

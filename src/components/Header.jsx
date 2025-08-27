@@ -103,10 +103,10 @@ const Header = ({ onMenuToggle }) => {
         </motion.button>
 
         <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--text-primary)', margin: 0 }}>
+          <h1 className="header-title">
             KAF Portal
           </h1>
-          <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', margin: '4px 0 0 0' }}>
+          <p className="header-subtitle">
             NGO Yönetim Sistemi
           </p>
         </div>
@@ -125,7 +125,7 @@ const Header = ({ onMenuToggle }) => {
       {/* Right Section */}
       <div className="header-right">
         {/* Notifications */}
-        <div style={{ position: 'relative' }}>
+        <div className="relative-wrapper">
           <motion.button
             onClick={() => setShowNotifications(!showNotifications)}
             whileHover={{ scale: 1.05 }}
@@ -158,7 +158,7 @@ const Header = ({ onMenuToggle }) => {
                   className={`notification-item ${!notification.read ? 'unread' : ''}`}
                 >
                   <div className="notification-content">
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div className="notification-content-flex">
                       <div className={`notification-type ${notification.type}`}></div>
                       <span className="notification-title-text">{notification.title}</span>
                     </div>
@@ -172,7 +172,7 @@ const Header = ({ onMenuToggle }) => {
         </div>
 
         {/* User Menu */}
-        <div style={{ position: 'relative' }}>
+        <div className="relative-wrapper">
           <motion.button
             onClick={() => setShowUserMenu(!showUserMenu)}
             whileHover={{ scale: 1.02 }}

@@ -336,3 +336,28 @@
     right: -20px;
   }
 }
+
+/* Header Title Styles */
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.header-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 4px 0 0 0;
+}
+
+/* Notification Content Styles */
+.notification-content-flex {
+  display: flex;
+  align-items: center;
+}
+
+/* Relative Position Wrapper */
+.relative-wrapper {
+  position: relative;
+}

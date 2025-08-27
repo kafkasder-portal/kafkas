@@ -1,0 +1,51 @@
+/* Theme Toggle Button Styles */
+.theme-toggle-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle-button:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.theme-toggle-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Icon variant styles */
+.theme-toggle-icon {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background-color: #f3f4f6;
+  color: #6b7280;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle-icon:hover {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+/* Dark mode styles */
+.dark .theme-toggle-icon {
+  background-color: #374151;
+  color: #d1d5db;
+}
+
+.dark .theme-toggle-icon:hover {
+  background-color: #4b5563;
+  color: #f9fafb;
+}
