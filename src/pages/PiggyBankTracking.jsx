@@ -16,7 +16,6 @@ import {
   QrCode,
   Navigation
 } from 'lucide-react'
-import './PiggyBankTracking.css'
 
 
 
@@ -189,7 +188,7 @@ const PiggyBankTracking = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="piggy-bank-tracking-page"
+      className="p-6 min-h-screen bg-gray-50"
     >
       {/* Header */}
       <div className="mb-8">
@@ -377,7 +376,7 @@ const PiggyBankTracking = () => {
                       </div>
                       <div className="w-24 bg-gray-200 rounded-full h-2 mt-1">
                         <div
-                          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                          className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-in-out"
                           style={{ width: `${getProgressPercentage(bank.currentAmount, bank.targetAmount)}%` }}
                         />
                       </div>
@@ -492,13 +491,13 @@ const PiggyBankTracking = () => {
               <div className="bg-white p-6 rounded-lg border-2 border-gray-200 mb-4 print-area">
                 <div className="flex flex-col items-center">
                   {/* QR Kod - 40x30mm boyutunda */}
-                  <div className="mb-3 qr-code-container">
+                  <div className="mb-3 flex justify-center items-center">
                     <QRCode
                       value={generateQRCode(selectedBank)}
                       size={151}
                       level="H"
                       includeMargin={true}
-                      className="qr-code-printable"
+                      style={{ width: '40mm', height: '30mm' }}
                     />
                   </div>
                   
