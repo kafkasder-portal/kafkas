@@ -17,6 +17,7 @@ import { beneficiariesService } from '../services/beneficiariesService';
 import { donationsService } from '../services/donationsService';
 import { hospitalReferralsService } from '../services/hospitalReferralsService';
 import { handleError } from '../utils/errorHandler';
+import './Dashboard.css';
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -208,54 +209,31 @@ const Dashboard = () => {
     );
   }
 
-  const StatCard = ({ title, value, change, icon: Icon, color, bgColor }) => (
+  const StatCard = ({ title, value, change, icon: Icon, type }) => (
     <motion.div
       whileHover={{ scale: 1.02, y: -5 }}
       transition={{ type: "spring", stiffness: 300 }}
-      style={{
-        background: `linear-gradient(135deg, ${bgColor} 0%, ${color}20 100%)`,
-        borderRadius: '16px',
-        padding: '24px',
-        boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-        border: `1px solid ${color}30`,
-        position: 'relative',
-        overflow: 'hidden'
-      }}
+      className="stat-card"
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="stat-header">
         <div>
-          <p style={{ fontSize: '14px', fontWeight: '600', color, margin: '0 0 8px 0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            {title}
-          </p>
-          <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>
-            {value}
-          </p>
+          <p className="stat-label">{title}</p>
+          <p className="stat-value">{value}</p>
         </div>
-        <div style={{ 
-          padding: '12px', 
-          backgroundColor: `${color}20`, 
-          borderRadius: '12px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <Icon style={{ width: '28px', height: '28px', color }} />
+        <div className={`stat-icon ${type}`}>
+          <Icon size={24} />
         </div>
       </div>
-      <div style={{ marginTop: '16px', display: 'flex', alignItems: 'center' }}>
+      <div className={`stat-change ${change >= 0 ? 'positive' : 'negative'}`}>
         {change >= 0 ? (
-          <TrendingUp style={{ width: '16px', height: '16px', color: '#10b981', marginRight: '4px' }} />
+          <TrendingUp size={16} />
         ) : (
-          <TrendingDown style={{ width: '16px', height: '16px', color: '#ef4444', marginRight: '4px' }} />
+          <TrendingDown size={16} />
         )}
-        <span style={{
-          fontSize: '14px',
-          fontWeight: '600',
-          color: change >= 0 ? '#10b981' : '#ef4444'
-        }}>
+        <span>
           {change >= 0 ? '+' : ''}{change}%
         </span>
-        <span style={{ fontSize: '12px', color: '#6b7280', marginLeft: '8px' }}>geçen aya göre</span>
+        <span style={{ fontSize: '12px', color: 'var(--text-muted)', marginLeft: '8px' }}>geçen aya göre</span>
       </div>
     </motion.div>
   );
@@ -266,8 +244,7 @@ const Dashboard = () => {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     change: PropTypes.number.isRequired,
     icon: PropTypes.elementType.isRequired,
-    color: PropTypes.string.isRequired,
-    bgColor: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
   };
 
   const ChartCard = ({ title, children, onMouseEnter, onMouseLeave }) => (
@@ -377,34 +354,21 @@ const Dashboard = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      style={{ 
-        padding: '24px', 
-        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-        minHeight: '100vh'
-      }}
+      className="dashboard"
     >
       {/* Header */}
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between', 
-          marginBottom: '32px',
-          padding: '24px',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          borderRadius: '20px',
-          color: 'white'
-        }}
+        className="dashboard-header"
       >
         <div>
-          <h1 style={{ fontSize: '32px', fontWeight: 'bold', margin: 0, textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <h1 className="dashboard-title">
             KAF Portal Dashboard
           </h1>
-          <p style={{ margin: '8px 0 0 0', opacity: 0.9 }}>NGO Yönetim Sistemi Genel Bakış</p>
-          <p style={{ margin: '4px 0 0 0', fontSize: '12px', opacity: 0.7 }}>
+          <p className="dashboard-subtitle">NGO Yönetim Sistemi Genel Bakış</p>
+          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
             Son güncelleme: {lastUpdate.toLocaleTimeString('tr-TR')}
           </p>
         </div>
@@ -414,18 +378,7 @@ const Dashboard = () => {
             whileTap={{ scale: 0.95 }}
             onClick={fetchDashboardData}
             disabled={refreshing}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '12px 20px',
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              border: '1px solid rgba(255,255,255,0.3)',
-              borderRadius: '12px',
-              color: 'white',
-              cursor: refreshing ? 'not-allowed' : 'pointer',
-              opacity: refreshing ? 0.6 : 1
-            }}
+            className="refresh-btn"
           >
             <RefreshCw 
               size={16} 
@@ -445,9 +398,9 @@ const Dashboard = () => {
                 borderRadius: '20px',
                 fontSize: '14px',
                 fontWeight: '600',
-                backgroundColor: 'rgba(255,255,255,0.2)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255,255,255,0.3)'
+                backgroundColor: 'var(--primary-color)',
+                color: 'white',
+                border: '1px solid var(--primary-color)'
               }}
             >
               🚧 Geliştirme Modu
@@ -457,20 +410,14 @@ const Dashboard = () => {
       </motion.div>
 
       {/* Stats Grid */}
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-        gap: '24px', 
-        marginBottom: '32px' 
-      }}>
+      <div className="stats-grid">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <StatCard
             title="Toplam Bağış"
             value={`₺${dashboardData.donations.total.toLocaleString()}`}
             change={dashboardData.donations.change}
             icon={DollarSign}
-            color="#10b981"
-            bgColor="#dcfce7"
+            type="donations"
           />
         </motion.div>
         
@@ -480,8 +427,7 @@ const Dashboard = () => {
             value={dashboardData.beneficiaries.total.toLocaleString()}
             change={dashboardData.beneficiaries.change}
             icon={Heart}
-            color="#3b82f6"
-            bgColor="#dbeafe"
+            type="beneficiaries"
           />
         </motion.div>
         
@@ -491,8 +437,7 @@ const Dashboard = () => {
             value={dashboardData.volunteers.total.toLocaleString()}
             change={dashboardData.volunteers.change}
             icon={Users}
-            color="#8b5cf6"
-            bgColor="#ede9fe"
+            type="volunteers"
           />
         </motion.div>
         
@@ -502,8 +447,7 @@ const Dashboard = () => {
             value={dashboardData.referrals.total.toLocaleString()}
             change={dashboardData.referrals.change}
             icon={CheckCircle}
-            color="#f59e0b"
-            bgColor="#fef3c7"
+            type="referrals"
           />
         </motion.div>
       </div>

@@ -1,7 +1,8 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-
+import { motion } from 'framer-motion'
 import { Loader } from 'lucide-react'
+import PropTypes from 'prop-types'
 
 const ProtectedRoute = ({ children, requiredPermissions = [], requiredRoles = [] }) => {
   const { isAuthenticated, loading, user, hasPermission, hasRole } = useAuth()
@@ -79,5 +80,11 @@ const ProtectedRoute = ({ children, requiredPermissions = [], requiredRoles = []
   // User is authenticated and has required permissions/roles
   return children
 }
+
+ProtectedRoute.propTypes = {
+  children: PropTypes.node.isRequired,
+  requiredPermissions: PropTypes.arrayOf(PropTypes.string),
+  requiredRoles: PropTypes.arrayOf(PropTypes.string),
+};
 
 export default ProtectedRoute

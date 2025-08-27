@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import {
   AlertTriangle,
   Calendar,
@@ -6,11 +6,10 @@ import {
   Coins,
   RefreshCw,
   Target,
-  TrendingDown,
-  TrendingUp,
   Users
 } from 'lucide-react'
 import { useState, useEffect, memo } from 'react'
+import PropTypes from 'prop-types'
 
 const QuickStatsWidget = memo(({ data, loading: externalLoading }) => {
   const [stats, setStats] = useState({
@@ -55,6 +54,8 @@ const QuickStatsWidget = memo(({ data, loading: externalLoading }) => {
     return new Intl.NumberFormat('tr-TR').format(value)
   }
 
+  QuickStatsWidget.displayName = 'QuickStatsWidget'
+
   if (isLoading) {
     return (
       <div className="quick-stats-widget loading">
@@ -71,6 +72,24 @@ const QuickStatsWidget = memo(({ data, loading: externalLoading }) => {
         </div>
       </div>
     )
+  }
+
+  QuickStatsWidget.propTypes = {
+    data: PropTypes.shape({
+      donations: PropTypes.shape({
+        total: PropTypes.number,
+      }),
+      volunteers: PropTypes.shape({
+        active: PropTypes.number,
+      }),
+      referrals: PropTypes.shape({
+        pending: PropTypes.number,
+      }),
+      beneficiaries: PropTypes.shape({
+        total: PropTypes.number,
+      }),
+    }),
+    loading: PropTypes.bool,
   }
 
   return (
@@ -137,6 +156,7 @@ const QuickStatsWidget = memo(({ data, loading: externalLoading }) => {
 })
 
 const QuickActionsWidget = memo(() => {
+  QuickActionsWidget.displayName = 'QuickActionsWidget'
   const quickActions = [
     { id: 1, title: 'Yeni Bağışçı', icon: Users, color: '#10b981', path: '/donors?action=create' },
     { id: 2, title: 'Bağış Ekle', icon: Coins, color: '#3b82f6', path: '/donations?action=create' },
@@ -144,7 +164,7 @@ const QuickActionsWidget = memo(() => {
     { id: 4, title: 'Toplantı Planla', icon: Calendar, color: '#8b5cf6', path: '/meetings?action=create' }
   ]
 
-  const handleQuickAction = (action) => {
+  const handleQuickAction = (_action) => {
     // Navigate or trigger action
   }
 
@@ -198,8 +218,16 @@ const QuickActionsWidget = memo(() => {
   )
 })
 
+/**
+ * SystemHealthWidget
+ * Sistem sağlık durumunu gösteren widget.
+ * @component
+ * @returns {JSX.Element}
+ */
 const SystemHealthWidget = memo(() => {
-  const [healthData, setHealthData] = useState({
+  SystemHealthWidget.displayName = 'SystemHealthWidget'
+  // Sistem sağlık verileri state'i (şu an sabit, ileride API'den alınabilir)
+  const [healthData] = useState({
     cpu: 45,
     memory: 62,
     storage: 78,
@@ -240,6 +268,12 @@ const SystemHealthWidget = memo(() => {
       </div>
     </div>
   )
+
+  HealthBar.propTypes = {
+    label: PropTypes.string.isRequired,
+    value: PropTypes.number.isRequired,
+    unit: PropTypes.string
+  }
 
   return (
     <div className="card">
@@ -285,6 +319,24 @@ const DashboardWidgets = ({ data, loading }) => {
       </div>
     </div>
   )
+}
+
+DashboardWidgets.propTypes = {
+  data: PropTypes.shape({
+    donations: PropTypes.shape({
+      total: PropTypes.number,
+    }),
+    volunteers: PropTypes.shape({
+      active: PropTypes.number,
+    }),
+    referrals: PropTypes.shape({
+      pending: PropTypes.number,
+    }),
+    beneficiaries: PropTypes.shape({
+      total: PropTypes.number,
+    }),
+  }),
+  loading: PropTypes.bool,
 }
 
 export default DashboardWidgets

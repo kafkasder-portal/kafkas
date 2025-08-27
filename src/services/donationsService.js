@@ -29,30 +29,15 @@ class DonationsService extends BaseService {
     );
   }
 
-  // Legacy method names for backward compatibility
-  async getAllDonations() {
-    return this.getAll();
-  }
-
-  async getDonationById(id) {
-    return this.getById(id);
-  }
-
-  async createDonation(donationData) {
-    return this.create(donationData);
-  }
-
-  async updateDonation(id, donationData) {
-    return this.update(id, donationData);
-  }
-
-  async deleteDonation(id) {
-    return this.delete(id);
-  }
-
-  async getDonationStats() {
-    return this.getStats();
-  }
+  // Legacy method names for backward compatibility - DEPRECATED: Use base class methods directly
+  // getAll() -> getAllDonations()
+  // getById(id) -> getDonationById(id) 
+  // create(data) -> createDonation(data)
+  // update(id, data) -> updateDonation(id, data)
+  // delete(id) -> deleteDonation(id)
+  // search(query) -> searchDonations(query)
+  // getStats() -> getDonationStats()
+  // Note: These methods are kept for backward compatibility but should be replaced with direct base class method calls
 
   // Dashboard için özel metod
   async getTotalDonations() {

@@ -149,7 +149,7 @@ export const validateForm = (formData, validationRules) => {
 
     // Check phone validation
     if (rules.phone && value) {
-      const result = validatePhone(value);
+      const result = validateTurkishPhone(value);
       if (!result.isValid) {
         errors[fieldName] = result.message;
       }
@@ -157,7 +157,7 @@ export const validateForm = (formData, validationRules) => {
 
     // Check TC validation
     if (rules.tcNo && value) {
-      const result = validateTCKimlik(value);
+      const result = validateTCNo(value);
       if (!result.isValid) {
         errors[fieldName] = result.message;
       }
@@ -165,7 +165,7 @@ export const validateForm = (formData, validationRules) => {
 
     // Check IBAN validation
     if (rules.iban && value) {
-      const result = validateIBAN(value);
+      const result = validateIban(value);
       if (!result.isValid) {
         errors[fieldName] = result.message;
       }
@@ -297,10 +297,11 @@ export const sanitizeFormData = formData => {
   return sanitized;
 };
 
-// Export aliases for different naming conventions
-export const validatePhone = validateTurkishPhone;
-export const validateTCKimlik = validateTCNo;
-export const validateIBAN = validateIban;
+// DEPRECATED: Validation aliases - Use the primary function names instead:
+// - validatePhone -> validateTurkishPhone
+// - validateTCKimlik -> validateTCNo  
+// - validateIBAN -> validateIban
+// These aliases are kept for backward compatibility but should be replaced with primary function names
 
 /**
  * Validates date format (YYYY-MM-DD)

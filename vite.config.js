@@ -4,9 +4,10 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 5174,
+    port: 5173,
     host: true,
     open: true, // Auto-open browser
+    strictPort: true, // Don't try other ports if 5173 is busy
   },
   build: {
     outDir: 'dist',

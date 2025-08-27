@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { AlertTriangle, RefreshCw, Home, Bug, Copy, Check, ExternalLink } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Home, Bug, Copy, Check } from 'lucide-react';
+import PropTypes from 'prop-types';
 import { reportError } from '../utils/errorHandler';
 
 class ErrorBoundary extends React.Component {
@@ -227,5 +228,9 @@ Timestamp: ${new Date().toISOString()}
     return this.props.children;
   }
 }
+
+ErrorBoundary.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export default ErrorBoundary;

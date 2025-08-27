@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { toast } from 'sonner';
+import PropTypes from 'prop-types';
 import { supabase, testSupabaseConnection } from '../lib/supabase';
 
 const AuthContext = createContext();
@@ -182,7 +183,7 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       if (supabaseConnected) {
         await supabase.auth.signOut();
@@ -195,9 +196,9 @@ const AuthProvider = ({ children }) => {
       console.error('Logout error:', error);
       toast.error('Çıkış yapılırken hata oluştu');
     }
-  };
+  }, [supabaseConnected]);
 
-  const updateUser = async userData => {
+  const updateUser = useCallback(async userData => {
     try {
       if (user?.id) {
         const updatedUser = { ...user, ...userData };
@@ -209,20 +210,20 @@ const AuthProvider = ({ children }) => {
       console.error('Update user error:', error);
       toast.error('Kullanıcı bilgileri güncellenirken hata oluştu');
     }
-  };
+  }, [user]);
 
-  const hasPermission = permission => {
+  const hasPermission = useCallback(permission => {
     if (!user || !user.permissions) return false;
     return (
       user.permissions.includes(permission) ||
       user.permissions.includes('admin')
     );
-  };
+  }, [user]);
 
-  const hasRole = role => {
+  const hasRole = useCallback(role => {
     if (!user) return false;
     return user.role === role || user.role === 'admin';
-  };
+  }, [user]);
 
   const value = useMemo(() => ({
     user,
@@ -247,6 +248,10 @@ const AuthProvider = ({ children }) => {
   ]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export { useAuth, AuthProvider };

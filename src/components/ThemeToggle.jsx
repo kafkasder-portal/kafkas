@@ -1,10 +1,11 @@
 
 import { Moon, Sun } from 'lucide-react'
 import { motion } from 'framer-motion'
+import PropTypes from 'prop-types'
 import { useTheme } from '../contexts/ThemeContext'
 
 const ThemeToggle = ({ variant = 'button' }) => {
-  const { theme, toggleTheme, isDark } = useTheme()
+  const { toggleTheme, isDark } = useTheme()
 
   if (variant === 'icon') {
     return (
@@ -33,7 +34,10 @@ const ThemeToggle = ({ variant = 'button' }) => {
   // Sidebar için özel stil
   return (
     <motion.button
-      whileHover={{ scale: 1.02 }}
+      whileHover={{ 
+        scale: 1.02,
+        backgroundColor: 'rgba(255, 255, 255, 0.15)'
+      }}
       whileTap={{ scale: 0.98 }}
       onClick={toggleTheme}
       style={{
@@ -52,7 +56,6 @@ const ThemeToggle = ({ variant = 'button' }) => {
         fontWeight: '500',
         transition: 'all 0.2s ease',
       }}
-      whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
     >
       <motion.div
         initial={false}
@@ -71,5 +74,9 @@ const ThemeToggle = ({ variant = 'button' }) => {
     </motion.button>
   )
 }
+
+ThemeToggle.propTypes = {
+  variant: PropTypes.oneOf(['button', 'icon']),
+};
 
 export default ThemeToggle

@@ -5,6 +5,7 @@ import { NotificationProvider } from './contexts/NotificationContext'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import PropTypes from 'prop-types'
 
 // Components
 import Sidebar from './components/Sidebar'
@@ -73,6 +74,10 @@ const ProtectedRoute = ({ children }) => {
   return children
 }
 
+ProtectedRoute.propTypes = {
+  children: PropTypes.node.isRequired,
+}
+
 // Main Layout Component
 const MainLayout = ({ children }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -116,13 +121,19 @@ const MainLayout = ({ children }) => {
         <div className="page-content">
           <ErrorBoundary>
             <AnimatePresence mode="wait">
-              {children}
+              <div style={{ minHeight: 'calc(100vh - 80px)', background: 'var(--background-primary)' }}>
+                {children}
+              </div>
             </AnimatePresence>
           </ErrorBoundary>
         </div>
       </main>
     </div>
   )
+}
+
+MainLayout.propTypes = {
+  children: PropTypes.node.isRequired,
 }
 
 // App Content Component

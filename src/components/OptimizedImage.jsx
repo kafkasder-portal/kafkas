@@ -1,6 +1,7 @@
-import { useState, useEffect, memo } from 'react'
+import { useState, useEffect, memo, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Image, Loader, AlertCircle } from 'lucide-react'
+import { Loader, AlertCircle } from 'lucide-react'
+import PropTypes from 'prop-types'
 
 const OptimizedImage = memo(({
   src,
@@ -181,5 +182,21 @@ const OptimizedImage = memo(({
 })
 
 OptimizedImage.displayName = 'OptimizedImage'
+
+OptimizedImage.propTypes = {
+  src: PropTypes.string.isRequired,
+  alt: PropTypes.string.isRequired,
+  width: PropTypes.number,
+  height: PropTypes.number,
+  className: PropTypes.string,
+  placeholder: PropTypes.string,
+  lazy: PropTypes.bool,
+  priority: PropTypes.bool,
+  sizes: PropTypes.string,
+  quality: PropTypes.number,
+  format: PropTypes.string,
+  onLoad: PropTypes.func,
+  onError: PropTypes.func,
+};
 
 export default OptimizedImage

@@ -2,10 +2,11 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, Globe } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import PropTypes from 'prop-types'
 import i18n, { getCurrentLanguage, getLanguageInfo, getSupportedLanguages } from '../i18n'
 
 const LanguageSwitcher = ({ variant = 'dropdown' }) => {
-  const { t } = useTranslation()
+  const { t: _t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const [currentLang, setCurrentLang] = useState(getCurrentLanguage())
   const dropdownRef = useRef(null)
@@ -358,5 +359,9 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
     </div>
   )
 }
+
+LanguageSwitcher.propTypes = {
+  variant: PropTypes.oneOf(['dropdown', 'toggle']),
+};
 
 export default LanguageSwitcher

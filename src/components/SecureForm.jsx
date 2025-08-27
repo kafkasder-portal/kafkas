@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { Shield, AlertTriangle, CheckCircle, Loader } from 'lucide-react'
 import { toast } from 'sonner'
+import PropTypes from 'prop-types'
 import { 
   validateForm, 
   sanitizeFormData, 
@@ -425,5 +426,23 @@ const SecureForm = ({
     </motion.form>
   )
 }
+
+SecureForm.propTypes = {
+  fields: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    type: PropTypes.string,
+    required: PropTypes.bool,
+    defaultValue: PropTypes.any,
+    placeholder: PropTypes.string,
+    validation: PropTypes.object,
+  })).isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  validationRules: PropTypes.object,
+  rateLimitType: PropTypes.string,
+  showSecurityIndicator: PropTypes.bool,
+  className: PropTypes.string,
+  children: PropTypes.node,
+};
 
 export default SecureForm

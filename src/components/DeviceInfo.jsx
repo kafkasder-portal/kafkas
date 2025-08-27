@@ -4,10 +4,10 @@ import {
   Monitor,
   Smartphone,
   Tablet,
-  Info,
   Globe,
   Settings,
 } from 'lucide-react';
+import PropTypes from 'prop-types';
 import useDeviceDetection from '../hooks/useDeviceDetection.jsx';
 import './DeviceInfo.css';
 
@@ -103,7 +103,7 @@ const DeviceInfo = memo(({ showDetailed = false }) => {
         </div>
 
         <div className='info-item'>
-          <Info size={16} />
+          <Settings size={16} />
           <div>
             <span className='info-label'>İşletim Sistemi</span>
             <span className='info-value'>{deviceInfo.os}</span>
@@ -147,7 +147,7 @@ const DeviceInfo = memo(({ showDetailed = false }) => {
           <div
             className={`capability ${deviceInfo.touchSupport ? 'active' : ''}`}
           >
-            <Info size={14} />
+            <Settings size={14} />
             <span>Dokunmatik</span>
           </div>
         </div>
@@ -155,5 +155,11 @@ const DeviceInfo = memo(({ showDetailed = false }) => {
     </motion.div>
   );
 });
+
+DeviceInfo.displayName = 'DeviceInfo';
+
+DeviceInfo.propTypes = {
+  showDetailed: PropTypes.bool,
+};
 
 export default DeviceInfo;

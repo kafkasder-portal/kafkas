@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { LogOut, Menu, Search, Settings, X } from 'lucide-react'
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 import useDeviceDetection from '../hooks/useDeviceDetection.jsx'
 
 const MobileHeader = ({ onMenuToggle }) => {
@@ -439,6 +440,10 @@ const MobileSidebar = ({ isOpen, onClose, menuItems }) => {
     </AnimatePresence>
   )
 }
+
+MobileHeader.propTypes = {
+  onMenuToggle: PropTypes.func.isRequired,
+};
 
 export { MobileHeader, MobileSidebar }
 

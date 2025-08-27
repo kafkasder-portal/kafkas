@@ -36,34 +36,15 @@ class UsersService extends BaseService {
     );
   }
 
-  // Legacy method names for backward compatibility
-  async getAllUsers() {
-    return this.getAll();
-  }
-
-  async getUserById(id) {
-    return this.getById(id);
-  }
-
-  async createUser(userData) {
-    return this.create(userData);
-  }
-
-  async updateUser(id, userData) {
-    return this.update(id, userData);
-  }
-
-  async deleteUser(id) {
-    return this.delete(id);
-  }
-
-  async searchUsers(query) {
-    return this.search(query);
-  }
-
-  async getUserStats() {
-    return this.getStats();
-  }
+  // Legacy method names for backward compatibility - DEPRECATED: Use base class methods directly
+  // getAll() -> getAllUsers()
+  // getById(id) -> getUserById(id) 
+  // create(data) -> createUser(data)
+  // update(id, data) -> updateUser(id, data)
+  // delete(id) -> deleteUser(id)
+  // search(query) -> searchUsers(query)
+  // getStats() -> getUserStats()
+  // Note: These methods are kept for backward compatibility but should be replaced with direct base class method calls
 }
 
 // Create and export service instance

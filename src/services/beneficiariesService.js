@@ -29,34 +29,15 @@ class BeneficiariesService extends BaseService {
     );
   }
 
-  // Legacy method names for backward compatibility
-  async getAllBeneficiaries() {
-    return this.getAll();
-  }
-
-  async getBeneficiaryById(id) {
-    return this.getById(id);
-  }
-
-  async createBeneficiary(beneficiaryData) {
-    return this.create(beneficiaryData);
-  }
-
-  async updateBeneficiary(id, beneficiaryData) {
-    return this.update(id, beneficiaryData);
-  }
-
-  async deleteBeneficiary(id) {
-    return this.delete(id);
-  }
-
-  async searchBeneficiaries(query) {
-    return this.search(query);
-  }
-
-  async getBeneficiaryStats() {
-    return this.getStats();
-  }
+  // Legacy method names for backward compatibility - DEPRECATED: Use base class methods directly
+  // getAll() -> getAllBeneficiaries()
+  // getById(id) -> getBeneficiaryById(id) 
+  // create(data) -> createBeneficiary(data)
+  // update(id, data) -> updateBeneficiary(id, data)
+  // delete(id) -> deleteBeneficiary(id)
+  // search(query) -> searchBeneficiaries(query)
+  // getStats() -> getBeneficiaryStats()
+  // Note: These methods are kept for backward compatibility but should be replaced with direct base class method calls
 
   // Dashboard için özel metod
   async getTotalBeneficiaries() {

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+import PropTypes from 'prop-types'
 import './AnimatedRoutes.css'
 
 const AnimatedRoutes = ({ children }) => {
@@ -31,6 +32,10 @@ const AnimatedRoutes = ({ children }) => {
       {children}
     </div>
   )
+}
+
+AnimatedRoutes.propTypes = {
+  children: PropTypes.node.isRequired,
 }
 
 export default AnimatedRoutes

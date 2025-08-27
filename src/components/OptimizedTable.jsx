@@ -1,6 +1,8 @@
 
 import { ChevronDown, ChevronUp, Search } from 'lucide-react'
 import { memo, useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
+import PropTypes from 'prop-types'
 
 const OptimizedTable = memo(({
   data,
@@ -173,5 +175,19 @@ const OptimizedTable = memo(({
 })
 
 OptimizedTable.displayName = 'OptimizedTable'
+
+OptimizedTable.propTypes = {
+  data: PropTypes.array.isRequired,
+  columns: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    render: PropTypes.func,
+  })).isRequired,
+  onRowClick: PropTypes.func,
+  searchable: PropTypes.bool,
+  sortable: PropTypes.bool,
+  pagination: PropTypes.bool,
+  itemsPerPage: PropTypes.number,
+};
 
 export default OptimizedTable

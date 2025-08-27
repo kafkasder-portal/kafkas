@@ -11,7 +11,8 @@ import {
   Users,
 } from 'lucide-react'
 import { memo, useCallback, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
+import PropTypes from 'prop-types'
 import { useAuth } from '../contexts/AuthContext'
 import useDeviceDetection from '../hooks/useDeviceDetection.jsx'
 import './Sidebar.css'
@@ -137,7 +138,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
       '/donations': 'Bağış Listesi',
       '/donations/vault': 'Bağış Veznesi',
       '/donations/institutions': 'Kurumlar',
-      '/bagis/kumbara-takibi': 'Kumbara Takibi',
+      '/piggy-bank-tracking': 'Kumbara Takibi',
       '/meetings': 'Tüm Toplantılar',
       '/meetings/create': 'Toplantı Planla',
       '/meetings/calendar': 'Toplantı Takvimi',
@@ -300,7 +301,7 @@ const Sidebar = ({ collapsed, onToggle }) => {
               {hoveredItem.id === 'donations' && (
                 <>
                   <Link to="/donations" className="popup-item">Bağış Listesi</Link>
-                  <Link to="/donations/vault" className="popup-item">Kumbara Takibi</Link>
+                  <Link to="/piggy-bank-tracking" className="popup-item">Kumbara Takibi</Link>
                   <Link to="/donations/institutions" className="popup-item">Kurumlar</Link>
                   <Link to="/donors" className="popup-item">Bağışçılar</Link>
                 </>
@@ -379,6 +380,11 @@ const Sidebar = ({ collapsed, onToggle }) => {
     </>
   )
 }
+Sidebar.propTypes = {
+  collapsed: PropTypes.bool,
+  onToggle: PropTypes.func,
+};
+
 export default memo(Sidebar, (prevProps, nextProps) => {
   return prevProps.collapsed === nextProps.collapsed
 })
