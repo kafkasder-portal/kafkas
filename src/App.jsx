@@ -1,43 +1,64 @@
 import './App.css'
-import { AuthProvider, useAuth } from './contexts/AuthContext'
-import { ThemeProvider } from './contexts/ThemeContext'
-import { NotificationProvider } from './contexts/NotificationContext'
+import { AuthProvider, useAuth } from './contexts/AuthContext.jsx'
+import { ThemeProvider } from './contexts/ThemeContext.jsx'
+import { NotificationProvider } from './contexts/NotificationContext.jsx'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import PropTypes from 'prop-types'
 
 // Components
-import Sidebar from './components/Sidebar'
-import Header from './components/Header'
-import ConnectionStatus from './components/ConnectionStatus'
-import ErrorBoundary from './components/ErrorBoundary'
-import MobileNavigation from './components/MobileNavigation'
+import Sidebar from './components/Sidebar.jsx'
+import Header from './components/Header.jsx'
+import ConnectionStatus from './components/ConnectionStatus.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
+import MobileNavigation from './components/MobileNavigation.jsx'
 
 // Pages
-import Dashboard from './pages/Dashboard'
-import Login from './pages/Login'
-import Inventory from './pages/Inventory'
-import Tasks from './pages/Tasks'
-import Donations from './pages/Donations'
-import Beneficiaries from './pages/Beneficiaries'
-import Volunteers from './pages/Volunteers'
-import Finance from './pages/Finance'
-import Messages from './pages/Messages'
-import System from './pages/System'
-import UserManagement from './pages/UserManagement'
-import Aid from './pages/Aid'
-import Fund from './pages/Fund'
-import Scholarship from './pages/Scholarship'
-import HospitalReferral from './pages/HospitalReferral'
-import BudgetPlanning from './pages/BudgetPlanning'
-import ProjectManagement from './pages/ProjectManagement'
-import PiggyBankTracking from './pages/PiggyBankTracking'
-import Meetings from './pages/Meetings'
-import Donors from './pages/Donors'
-import WhatsApp from './pages/WhatsApp'
-import WhatsAppLogin from './pages/WhatsAppLogin'
-import ProfileSettings from './pages/ProfileSettings'
+import Dashboard from './pages/Dashboard.jsx'
+import Login from './pages/Login.jsx'
+import Inventory from './pages/Inventory.jsx'
+import Finance from './pages/Finance.jsx'
+import Messages from './pages/Messages.jsx'
+import System from './pages/System.jsx'
+import UserManagement from './pages/UserManagement.jsx'
+import Aid from './pages/Aid.jsx'
+import Fund from './pages/Fund.jsx'
+import Scholarship from './pages/Scholarship.jsx'
+import HospitalReferral from './pages/HospitalReferral.jsx'
+import BudgetPlanning from './pages/BudgetPlanning.jsx'
+import ProjectManagement from './pages/ProjectManagement.jsx'
+import PiggyBankTracking from './pages/PiggyBankTracking.jsx'
+import Meetings from './pages/Meetings.jsx'
+import Donors from './pages/Donors.jsx'
+import WhatsApp from './pages/WhatsApp.jsx'
+import WhatsAppLogin from './pages/WhatsAppLogin.jsx'
+import ProfileSettings from './pages/ProfileSettings.jsx'
+
+// New Design System Pages
+import DashboardNew from './pages/DashboardNew.jsx'
+import LoginNew from './pages/LoginNew.jsx'
+import BeneficiariesNew from './pages/BeneficiariesNew.jsx'
+import DonationsNew from './pages/DonationsNew.jsx'
+import TasksNew from './pages/TasksNew.jsx'
+import VolunteersNew from './pages/VolunteersNew.jsx'
+import FinanceNew from './pages/FinanceNew.jsx'
+import UserManagementNew from './pages/UserManagementNew.jsx'
+import InventoryNew from './pages/InventoryNew.jsx'
+import SystemNew from './pages/SystemNew.jsx'
+import MessagesNew from './pages/MessagesNew.jsx'
+import WhatsAppNew from './pages/WhatsAppNew.jsx'
+import WhatsAppLoginNew from './pages/WhatsAppLoginNew.jsx'
+import MeetingsNew from './pages/MeetingsNew.jsx'
+import AidNew from './pages/AidNew.jsx'
+import FundNew from './pages/FundNew.jsx'
+import ScholarshipNew from './pages/ScholarshipNew.jsx'
+import HospitalReferralNew from './pages/HospitalReferralNew.jsx'
+import BudgetPlanningNew from './pages/BudgetPlanningNew.jsx'
+import PiggyBankTrackingNew from './pages/PiggyBankTrackingNew.jsx'
+
+// Design System Layout
+import DesignSystemLayout from './layouts/DesignSystemLayout'
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -167,127 +188,127 @@ function AppContent() {
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={
-          user ? <Navigate to="/" replace /> : <Login />
+          user ? <Navigate to="/" replace /> : <LoginNew />
         } />
         
         {/* Protected Routes */}
         <Route path="/" element={
           <ProtectedRoute>
-            <MainLayout>
-              <Dashboard />
-            </MainLayout>
+            <DesignSystemLayout>
+              <DashboardNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
         <Route path="/inventory" element={
           <ProtectedRoute>
-            <MainLayout>
-              <Inventory />
-            </MainLayout>
+            <DesignSystemLayout>
+              <InventoryNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
         <Route path="/tasks" element={
           <ProtectedRoute>
-            <MainLayout>
-              <Tasks />
-            </MainLayout>
+            <DesignSystemLayout>
+              <TasksNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
         <Route path="/donations" element={
           <ProtectedRoute>
-            <MainLayout>
-              <Donations />
-            </MainLayout>
+            <DesignSystemLayout>
+              <DonationsNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
         <Route path="/beneficiaries" element={
           <ProtectedRoute>
-            <MainLayout>
-              <Beneficiaries />
-            </MainLayout>
+            <DesignSystemLayout>
+              <BeneficiariesNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
         <Route path="/volunteers" element={
           <ProtectedRoute>
-            <MainLayout>
-              <Volunteers />
-            </MainLayout>
+            <DesignSystemLayout>
+              <VolunteersNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
         <Route path="/finance" element={
           <ProtectedRoute>
-            <MainLayout>
-              <Finance />
-            </MainLayout>
+            <DesignSystemLayout>
+              <FinanceNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
         <Route path="/messages" element={
           <ProtectedRoute>
-            <MainLayout>
-              <Messages />
-            </MainLayout>
+            <DesignSystemLayout>
+              <MessagesNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
         <Route path="/system" element={
           <ProtectedRoute>
-            <MainLayout>
-              <System />
-            </MainLayout>
+            <DesignSystemLayout>
+              <SystemNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
         <Route path="/user-management" element={
           <ProtectedRoute>
-            <MainLayout>
-              <UserManagement />
-            </MainLayout>
+            <DesignSystemLayout>
+              <UserManagementNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
         <Route path="/aid" element={
           <ProtectedRoute>
-            <MainLayout>
-              <Aid />
-            </MainLayout>
+            <DesignSystemLayout>
+              <AidNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
         <Route path="/fund" element={
           <ProtectedRoute>
-            <MainLayout>
-              <Fund />
-            </MainLayout>
+            <DesignSystemLayout>
+              <FundNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
         <Route path="/scholarship" element={
           <ProtectedRoute>
-            <MainLayout>
-              <Scholarship />
-            </MainLayout>
+            <DesignSystemLayout>
+              <ScholarshipNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
         <Route path="/hospital-referral" element={
           <ProtectedRoute>
-            <MainLayout>
-              <HospitalReferral />
-            </MainLayout>
+            <DesignSystemLayout>
+              <HospitalReferralNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
         <Route path="/budget-planning" element={
           <ProtectedRoute>
-            <MainLayout>
-              <BudgetPlanning />
-            </MainLayout>
+            <DesignSystemLayout>
+              <BudgetPlanningNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
@@ -301,17 +322,17 @@ function AppContent() {
         
         <Route path="/piggy-bank-tracking" element={
           <ProtectedRoute>
-            <MainLayout>
-              <PiggyBankTracking />
-            </MainLayout>
+            <DesignSystemLayout>
+              <PiggyBankTrackingNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
         <Route path="/meetings" element={
           <ProtectedRoute>
-            <MainLayout>
-              <Meetings />
-            </MainLayout>
+            <DesignSystemLayout>
+              <MeetingsNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
@@ -325,17 +346,17 @@ function AppContent() {
         
         <Route path="/whatsapp" element={
           <ProtectedRoute>
-            <MainLayout>
-              <WhatsApp />
-            </MainLayout>
+            <DesignSystemLayout>
+              <WhatsAppNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         
         <Route path="/whatsapp-login" element={
           <ProtectedRoute>
-            <MainLayout>
-              <WhatsAppLogin />
-            </MainLayout>
+            <DesignSystemLayout>
+              <WhatsAppLoginNew />
+            </DesignSystemLayout>
           </ProtectedRoute>
         } />
         

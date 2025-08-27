@@ -1,4 +1,11 @@
 
+/* Design System Styles - Import design system first */
+@import './design-system/theme.css';
+
+/* Tailwind CSS - Base, Components, Utilities */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   font-family:
