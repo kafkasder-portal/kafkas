@@ -1,0 +1,181 @@
+/* Volunteers Page Styles */
+.volunteers-page {
+  padding: 24px;
+  background: var(--background-primary);
+  min-height: 100vh;
+}
+
+/* Volunteer Card Styles */
+.volunteer-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.volunteer-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Volunteer Header */
+.volunteer-header {
+  padding: 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.volunteer-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.volunteer-icons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volunteer-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.volunteer-icon.status-active {
+  color: #10b981;
+}
+
+.volunteer-icon.status-inactive {
+  color: #6b7280;
+}
+
+.volunteer-icon.status-pending {
+  color: #f59e0b;
+}
+
+.volunteer-icon.award {
+  color: #8b5cf6;
+}
+
+/* Volunteer Content */
+.volunteer-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.volunteer-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.volunteer-meta-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Volunteer Skills */
+.volunteer-skills {
+  padding: 0 16px 12px;
+}
+
+.volunteer-skills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.volunteer-skill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  background-color: #f3e8ff;
+  color: #7c3aed;
+  border-radius: 9999px;
+}
+
+.volunteer-skill-icon {
+  width: 12px;
+  height: 12px;
+}
+
+.volunteer-skill-more {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  font-size: 12px;
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border-radius: 9999px;
+}
+
+/* Volunteer Footer */
+.volunteer-footer {
+  padding: 12px 16px;
+  background-color: #f9fafb;
+  border-top: 1px solid #f3f4f6;
+}
+
+.volunteer-footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.volunteer-experience {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.volunteer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volunteer-action-btn {
+  padding: 4px;
+  color: #9ca3af;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.volunteer-action-btn:hover {
+  color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.volunteer-action-btn.delete:hover {
+  color: #dc2626;
+  background-color: #fef2f2;
+}
+
+/* Status Colors */
+.status-active {
+  color: #10b981;
+}
+
+.status-inactive {
+  color: #6b7280;
+}
+
+.status-pending {
+  color: #f59e0b;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .volunteers-page {
+    padding: 16px;
+  }
+}

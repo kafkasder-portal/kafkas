@@ -16,6 +16,7 @@ import {
   Tag,
   MapPin,
 } from 'lucide-react';
+import './Tasks.css';
 
 // Mock data for development - moved outside component to avoid dependency issues
 const mockTasks = [
@@ -238,7 +239,7 @@ const Tasks = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="p-6"
+      className="tasks-page"
     >
       {/* Header */}
       <div className="mb-8">
@@ -359,9 +360,9 @@ const Tasks = () => {
               <div className="p-4 border-b border-gray-100">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">{task.title}</h3>
-                  <div className="flex items-center gap-2">
-                    <PriorityIcon className="w-5 h-5" style={{ color: priorityInfo.color }} />
-                    <StatusIcon className="w-5 h-5" style={{ color: statusInfo.color }} />
+                  <div className="task-icons">
+                    <PriorityIcon className={`task-icon priority-${task.priority}`} />
+                    <StatusIcon className={`task-icon status-${task.status}`} />
                   </div>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -406,13 +407,9 @@ const Tasks = () => {
                   <span className="text-xs text-gray-600">İlerleme</span>
                   <span className="text-xs font-medium text-gray-900">{task.progress}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="task-progress-bar">
                   <motion.div
-                    className="h-2 rounded-full"
-                    style={{
-                      backgroundColor: statusInfo.color,
-                      width: `${task.progress}%`
-                    }}
+                    className={`task-progress-fill ${task.status}`}
                     initial={{ width: 0 }}
                     animate={{ width: `${task.progress}%` }}
                     transition={{ duration: 0.5 }}
@@ -568,8 +565,8 @@ const Tasks = () => {
                     const StatusIcon = statusInfo.icon;
                     return (
                       <>
-                        <StatusIcon className="w-4 h-4" style={{ color: statusInfo.color }} />
-                        <span style={{ color: statusInfo.color }}>{statusInfo.text}</span>
+                        <StatusIcon className={`task-icon status-${selectedTask.status}`} />
+                        <span className={`status-${selectedTask.status}`}>{statusInfo.text}</span>
                       </>
                     );
                   })()}
@@ -584,8 +581,8 @@ const Tasks = () => {
                     const PriorityIcon = priorityInfo.icon;
                     return (
                       <>
-                        <PriorityIcon className="w-4 h-4" style={{ color: priorityInfo.color }} />
-                        <span style={{ color: priorityInfo.color }}>{priorityInfo.text}</span>
+                        <PriorityIcon className={`task-icon priority-${selectedTask.priority}`} />
+                        <span className={`priority-${selectedTask.priority}`}>{priorityInfo.text}</span>
                       </>
                     );
                   })()}
@@ -613,13 +610,10 @@ const Tasks = () => {
               <div>
                 <label className="text-sm font-medium text-gray-700">İlerleme</label>
                 <div className="flex items-center gap-2">
-                  <div className="flex-1 bg-gray-200 rounded-full h-2">
+                  <div className="task-progress-bar">
                     <div
-                      className="h-2 rounded-full"
-                      style={{
-                        backgroundColor: getStatusInfo(selectedTask.status).color,
-                        width: `${selectedTask.progress}%`
-                      }}
+                      className={`task-progress-fill ${selectedTask.status}`}
+                      style={{ width: `${selectedTask.progress}%` }}
                     />
                   </div>
                   <span className="text-sm font-medium">{selectedTask.progress}%</span>

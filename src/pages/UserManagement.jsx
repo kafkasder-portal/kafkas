@@ -6,7 +6,7 @@ const UserManagement = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      style={{ padding: '24px' }}
+      className="page-container"
     >
       <h1>Kullanıcı Yönetimi</h1>
       <p>Kullanıcı yönetimi sayfası geliştirme aşamasında...</p>

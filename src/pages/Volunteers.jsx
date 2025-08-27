@@ -21,6 +21,7 @@ import {
   GraduationCap,
   Briefcase,
 } from 'lucide-react';
+import './Volunteers.css';
 
 const Volunteers = () => {
   const [volunteers, setVolunteers] = useState([]);
@@ -363,9 +364,9 @@ const Volunteers = () => {
               <div className="p-4 border-b border-gray-100">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-lg font-semibold text-gray-900">{volunteer.name}</h3>
-                  <div className="flex items-center gap-2">
-                    <Award className="w-5 h-5 text-purple-600" />
-                    <StatusIcon className="w-5 h-5" style={{ color: statusInfo.color }} />
+                  <div className="volunteer-icons">
+                    <Award className="volunteer-icon award" />
+                    <StatusIcon className={`volunteer-icon status-${volunteer.status}`} />
                   </div>
                 </div>
                 <div className="flex items-center gap-2 mb-2">

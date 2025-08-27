@@ -407,3 +407,17 @@ body {
     visibility: visible;
   }
 }
+
+/* Common Page Styles */
+.page-container {
+  padding: 24px;
+  background: var(--background-primary);
+  min-height: 100vh;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-container {
+    padding: 16px;
+  }
+}
