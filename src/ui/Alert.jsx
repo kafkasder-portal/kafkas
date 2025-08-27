@@ -2,7 +2,7 @@ import React from 'react';
 import { AlertCircle, CheckCircle, AlertTriangle, Info, X } from 'lucide-react';
 import { cva, cn } from '../design-system/utils';
 import { iconSize } from '../design-system/design-tokens';
-import { IconButton } from './Button';
+import { IconButton } from './Button.jsx';
 
 /**
  * Alert variant styles

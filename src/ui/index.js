@@ -2,7 +2,7 @@
 // Central export for all reusable UI components
 
 // Core Components
-export { default as Button, IconButton } from './Button';
+export { default as Button, IconButton } from './Button.jsx';
 export { 
   default as Card, 
   CardHeader, 
