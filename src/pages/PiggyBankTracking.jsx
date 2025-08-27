@@ -188,7 +188,7 @@ const PiggyBankTracking = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="p-6 min-h-screen bg-gray-50"
+      style={{ padding: '24px', minHeight: '100vh', backgroundColor: '#f9fafb' }}
     >
       {/* Header */}
       <div className="mb-8">
