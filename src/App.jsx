@@ -121,9 +121,7 @@ const MainLayout = ({ children }) => {
         <div className="page-content">
           <ErrorBoundary>
             <AnimatePresence mode="wait">
-              <div style={{ minHeight: 'calc(100vh - 80px)', background: 'var(--background-primary)' }}>
-                {children}
-              </div>
+              {children}
             </AnimatePresence>
           </ErrorBoundary>
         </div>
