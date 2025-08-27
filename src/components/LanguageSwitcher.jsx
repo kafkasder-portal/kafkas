@@ -86,7 +86,7 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
           color: '#374151',
           transition: 'all 0.2s ease'
         }}
-        title={`${t('language.selectLanguage')}: ${otherInfo.nativeName}`}
+        title={`Dil Seçin: ${otherInfo.nativeName}`}
       >
         <span>{currentInfo.flag}</span>
         <span>{currentInfo.nativeName}</span>
@@ -128,7 +128,7 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
           }}
-          title={`${t('language.selectLanguage')}: ${currentInfo.nativeName}`}
+          title={`Dil Seçin: ${currentInfo.nativeName}`}
         >
           <span style={{ fontSize: '16px' }}>{currentInfo.flag}</span>
         </motion.button>
@@ -349,7 +349,7 @@ const LanguageSwitcher = ({ variant = 'dropdown' }) => {
                 color: '#6b7280',
                 fontWeight: '500'
               }}>
-                {t('language.selectLanguage')}
+                Dil Seçin
               </div>
             </div>
           </motion.div>

@@ -1,25 +1,28 @@
 import { motion } from 'framer-motion';
 import {
-  AlertCircle,
-  Brain,
-  CheckCircle,
-  Clock,
-  MessageCircle,
   Users,
-  Zap,
+  DollarSign,
+  Heart,
+  CheckCircle,
+  TrendingUp,
+  TrendingDown,
+  RefreshCw,
+  Clock,
+  AlertTriangle,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-
-
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import PropTypes from 'prop-types';
 
 import { beneficiariesService } from '../services/beneficiariesService';
 import { donationsService } from '../services/donationsService';
 import { hospitalReferralsService } from '../services/hospitalReferralsService';
+import { handleError } from '../utils/errorHandler';
 
 const Dashboard = () => {
-  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [hoveredChart, setHoveredChart] = useState(null);
+  const [lastUpdate, setLastUpdate] = useState(new Date());
   const [dashboardData, setDashboardData] = useState({
     donations: { total: 0, monthly: 0, change: 0 },
     beneficiaries: { total: 0, active: 0, change: 0 },
@@ -28,396 +31,757 @@ const Dashboard = () => {
   });
 
   // Fallback data for development mode
-  const fallbackData = {
+  const fallbackData = useMemo(() => ({
     donations: { total: 125000, monthly: 15000, change: 12.5 },
     beneficiaries: { total: 342, active: 298, change: 8.2 },
     referrals: { total: 156, pending: 23, change: -5.1 },
     volunteers: { total: 1247, active: 892, change: 8.2 },
-  };
+  }), []);
 
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
-
-  const loadDashboardData = async () => {
-    try {
-      setLoading(true);
-
-      // Paralel olarak tüm verileri yükle
-      const [donationStats, beneficiaryStats, referralStats] =
-        await Promise.allSettled([
-          donationsService.getDonationStats(),
-          beneficiariesService.getBeneficiaryStats(),
-          hospitalReferralsService.getReferralStats(),
-        ]);
-
-      // Use fallback data if API calls fail
-      const safeDonationStats = donationStats.status === 'fulfilled' 
-        ? donationStats.value 
-        : fallbackData.donations;
-      
-      const safeBeneficiaryStats = beneficiaryStats.status === 'fulfilled' 
-        ? beneficiaryStats.value 
-        : fallbackData.beneficiaries;
-      
-      const safeReferralStats = referralStats.status === 'fulfilled' 
-        ? referralStats.value 
-        : fallbackData.referrals;
-
-      setDashboardData({
-        donations: safeDonationStats,
-        beneficiaries: safeBeneficiaryStats,
-        referrals: safeReferralStats,
-        volunteers: fallbackData.volunteers, // Mock data for now
-      });
-
-      // Log any failed requests for debugging
-      if (donationStats.status === 'rejected') {
-        console.warn('Donation stats failed to load:', donationStats.reason);
-      }
-      if (beneficiaryStats.status === 'rejected') {
-        console.warn('Beneficiary stats failed to load:', beneficiaryStats.reason);
-      }
-      if (referralStats.status === 'rejected') {
-        console.warn('Referral stats failed to load:', referralStats.reason);
-      }
-
-    } catch (error) {
-      console.error('Dashboard verisi yüklenirken hata:', error);
-      // Use fallback data on error
-      setDashboardData(fallbackData);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const upcomingTasks = [
+  const recentActivities = [
     {
       id: 1,
-      title: 'Bağış raporunu hazırla',
-      deadline: t('dashboard.upcomingTasks.today', { time: '17:00' }),
+      type: 'donation',
+      title: 'Yeni Bağış Alındı',
+      description: 'Ahmet Yılmaz tarafından ₺5,000 bağış',
+      time: '2 saat önce',
+      status: 'completed',
+      amount: '₺5,000',
       priority: 'high',
-      status: 'pending',
     },
     {
       id: 2,
-      title: 'Gönüllü eğitimi düzenle',
-      deadline: t('dashboard.upcomingTasks.tomorrow', { time: '10:00' }),
-      priority: 'medium',
-      status: 'in-progress',
+      type: 'beneficiary',
+      title: 'Yeni Yardım Alanı',
+      description: 'Fatma Demir kaydı oluşturuldu',
+      time: '4 saat önce',
+      status: 'pending',
+      category: 'Acil Yardım',
+      priority: 'high',
     },
     {
       id: 3,
-      title: 'Stok sayımı yap',
-      deadline: t('dashboard.upcomingTasks.inDays', { days: 3 }),
+      type: 'volunteer',
+      title: 'Yeni Gönüllü',
+      description: 'Mehmet Kaya sisteme katıldı',
+      time: '6 saat önce',
+      status: 'completed',
+      location: 'İstanbul',
+      priority: 'medium',
+    },
+    {
+      id: 4,
+      type: 'referral',
+      title: 'Hastane Referansı',
+      description: 'Acıbadem Hastanesi referansı onaylandı',
+      time: '8 saat önce',
+      status: 'completed',
+      hospital: 'Acıbadem',
       priority: 'low',
+    },
+    {
+      id: 5,
+      type: 'donation',
+      title: 'Büyük Bağış',
+      description: 'Anonim bağışçıdan ₺25,000 bağış',
+      time: '1 gün önce',
+      status: 'completed',
+      amount: '₺25,000',
+      priority: 'high',
+    },
+    {
+      id: 6,
+      type: 'beneficiary',
+      title: 'Acil Yardım Talebi',
+      description: 'Deprem bölgesinden acil yardım talebi',
+      time: '1 gün önce',
       status: 'pending',
+      category: 'Acil Yardım',
+      priority: 'high',
     },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-  };
+  const urgentTasks = [
+    {
+      id: 1,
+      title: 'Acil yardım paketi dağıtımı',
+      deadline: '2 saat',
+      priority: 'high',
+      assignee: 'Ahmet Yılmaz',
+      progress: 75,
+    },
+    {
+      id: 2,
+      title: 'Gönüllü eğitimi tamamlama',
+      deadline: '4 saat',
+      priority: 'medium',
+      assignee: 'Fatma Demir',
+      progress: 60,
+    },
+    {
+      id: 3,
+      title: 'Finansal rapor hazırlama',
+      deadline: '6 saat',
+      priority: 'low',
+      assignee: 'Mehmet Kaya',
+      progress: 30,
+    },
+  ];
 
-  const itemVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-  };
+  const fetchDashboardData = useCallback(async () => {
+    try {
+      setRefreshing(true);
+      setLoading(true);
+      
+      // Development mode için fallback data kullan
+      if (import.meta.env.DEV) {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setDashboardData(fallbackData);
+        setLastUpdate(new Date());
+        setRefreshing(false);
+        setLoading(false);
+        return;
+      }
 
-  const getPriorityColor = priority => {
-    switch (priority) {
-      case 'high':
-        return '#ef4444';
-      case 'medium':
-        return '#f59e0b';
-      case 'low':
-        return '#10b981';
-      default:
-        return '#64748b';
+      // Production'da gerçek API çağrıları
+      const [donationsData, beneficiariesData, referralsData] = await Promise.all([
+        donationsService.getTotalDonations(),
+        beneficiariesService.getTotalBeneficiaries(),
+        hospitalReferralsService.getTotalReferrals(),
+      ]);
+
+      setDashboardData({
+        donations: donationsData,
+        beneficiaries: beneficiariesData,
+        referrals: referralsData,
+        volunteers: { total: 1247, active: 892, change: 8.2 }, // Static data
+      });
+      setLastUpdate(new Date());
+    } catch (error) {
+      handleError(error, { 
+        component: 'Dashboard', 
+        action: 'fetchDashboardData' 
+      });
+      // Fallback data kullan
+      setDashboardData(fallbackData);
+    } finally {
+      setRefreshing(false);
+      setLoading(false);
     }
-  };
+  }, [fallbackData]);
 
-  const getPriorityLabel = priority => {
-    switch (priority) {
-      case 'high':
-        return t('dashboard.upcomingTasks.high');
-      case 'medium':
-        return t('dashboard.upcomingTasks.medium');
-      case 'low':
-        return t('dashboard.upcomingTasks.low');
-      default:
-        return priority;
-    }
-  };
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
-  const getStatusIcon = status => {
-    switch (status) {
-      case 'completed':
-        return CheckCircle;
-      case 'in-progress':
-        return Clock;
-      case 'pending':
-        return AlertCircle;
-      default:
-        return AlertCircle;
-    }
-  };
+  // Auto-refresh every 5 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchDashboardData();
+    }, 5 * 60 * 1000);
 
-  // Show loading state
+    return () => clearInterval(interval);
+  }, [fetchDashboardData]);
+
   if (loading) {
     return (
-      <motion.div
-        className='page-container'
-        variants={containerVariants}
-        initial='hidden'
-        animate='visible'
-      >
-        <div className='flex items-center justify-center min-h-screen'>
-          <div className='text-center'>
-            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4'></div>
-            <p className='text-gray-600'>Dashboard yükleniyor...</p>
-          </div>
-        </div>
-      </motion.div>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+      }}>
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          style={{ 
+            width: '128px', 
+            height: '128px', 
+            border: '3px solid rgba(255,255,255,0.3)', 
+            borderTop: '3px solid white', 
+            borderRadius: '50%'
+          }}
+        />
+      </div>
     );
   }
 
+  const StatCard = ({ title, value, change, icon: Icon, color, bgColor }) => (
+    <motion.div
+      whileHover={{ scale: 1.02, y: -5 }}
+      transition={{ type: "spring", stiffness: 300 }}
+      style={{
+        background: `linear-gradient(135deg, ${bgColor} 0%, ${color}20 100%)`,
+        borderRadius: '16px',
+        padding: '24px',
+        boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+        border: `1px solid ${color}30`,
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <p style={{ fontSize: '14px', fontWeight: '600', color, margin: '0 0 8px 0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            {title}
+          </p>
+          <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>
+            {value}
+          </p>
+        </div>
+        <div style={{ 
+          padding: '12px', 
+          backgroundColor: `${color}20`, 
+          borderRadius: '12px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <Icon style={{ width: '28px', height: '28px', color }} />
+        </div>
+      </div>
+      <div style={{ marginTop: '16px', display: 'flex', alignItems: 'center' }}>
+        {change >= 0 ? (
+          <TrendingUp style={{ width: '16px', height: '16px', color: '#10b981', marginRight: '4px' }} />
+        ) : (
+          <TrendingDown style={{ width: '16px', height: '16px', color: '#ef4444', marginRight: '4px' }} />
+        )}
+        <span style={{
+          fontSize: '14px',
+          fontWeight: '600',
+          color: change >= 0 ? '#10b981' : '#ef4444'
+        }}>
+          {change >= 0 ? '+' : ''}{change}%
+        </span>
+        <span style={{ fontSize: '12px', color: '#6b7280', marginLeft: '8px' }}>geçen aya göre</span>
+      </div>
+    </motion.div>
+  );
+
+  // PropTypes for StatCard
+  StatCard.propTypes = {
+    title: PropTypes.string.isRequired,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    change: PropTypes.number.isRequired,
+    icon: PropTypes.elementType.isRequired,
+    color: PropTypes.string.isRequired,
+    bgColor: PropTypes.string.isRequired,
+  };
+
+  const ChartCard = ({ title, children, onMouseEnter, onMouseLeave }) => (
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      style={{
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+        borderRadius: '16px',
+        padding: '20px',
+        boxShadow: hoveredChart === title ? '0 20px 40px rgba(0,0,0,0.15)' : '0 4px 15px rgba(0,0,0,0.1)',
+        border: '1px solid #e2e8f0',
+        transition: 'all 0.3s ease'
+      }}
+    >
+      <h3 style={{ 
+        fontSize: '18px', 
+        fontWeight: '600', 
+        color: '#1f2937', 
+        margin: '0 0 16px 0',
+        textAlign: 'center'
+      }}>
+        {title}
+      </h3>
+      {children}
+    </motion.div>
+  );
+
+  // PropTypes for ChartCard
+  ChartCard.propTypes = {
+    title: PropTypes.string.isRequired,
+    children: PropTypes.node.isRequired,
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
+  };
+
+  const UrgentTaskCard = ({ task }) => (
+    <motion.div
+      whileHover={{ scale: 1.02 }}
+      style={{
+        background: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
+        borderRadius: '12px',
+        padding: '16px',
+        border: '1px solid #fecaca',
+        marginBottom: '12px'
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+        <h4 style={{ fontSize: '14px', fontWeight: '600', color: '#dc2626', margin: 0 }}>
+          {task.title}
+        </h4>
+        <span style={{
+          padding: '4px 8px',
+          borderRadius: '12px',
+          fontSize: '10px',
+          fontWeight: '600',
+          background: task.priority === 'high' ? '#dc2626' : task.priority === 'medium' ? '#f59e0b' : '#10b981',
+          color: 'white'
+        }}>
+          {task.priority === 'high' ? 'Yüksek' : task.priority === 'medium' ? 'Orta' : 'Düşük'}
+        </span>
+      </div>
+      <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 8px 0' }}>
+        Sorumlu: {task.assignee}
+      </p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+        <Clock size={12} color="#dc2626" />
+        <span style={{ fontSize: '12px', color: '#dc2626', fontWeight: '600' }}>
+          {task.deadline} kaldı
+        </span>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ flex: 1, height: '6px', backgroundColor: '#fecaca', borderRadius: '3px', overflow: 'hidden' }}>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${task.progress}%` }}
+            transition={{ duration: 1, delay: 0.5 }}
+            style={{
+              height: '100%',
+              backgroundColor: '#dc2626',
+              borderRadius: '3px'
+            }}
+          />
+        </div>
+        <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600' }}>
+          {task.progress}%
+        </span>
+      </div>
+    </motion.div>
+  );
+
+  // PropTypes for UrgentTaskCard
+  UrgentTaskCard.propTypes = {
+    task: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      title: PropTypes.string.isRequired,
+      deadline: PropTypes.string.isRequired,
+      priority: PropTypes.oneOf(['high', 'medium', 'low']).isRequired,
+      assignee: PropTypes.string.isRequired,
+      progress: PropTypes.number.isRequired,
+    }).isRequired,
+  };
+
   return (
     <motion.div
-      className='page-container'
-      variants={containerVariants}
-      initial='hidden'
-      animate='visible'
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      style={{ 
+        padding: '24px', 
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+        minHeight: '100vh'
+      }}
     >
-      <motion.div className='page-header' variants={itemVariants}>
-        <div className='flex items-center justify-between'>
-          <div>
-            <h1 className='page-title'>{t('dashboard.title')}</h1>
-            <p className='page-subtitle'>{t('dashboard.subtitle')}</p>
-          </div>
+      {/* Header */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between', 
+          marginBottom: '32px',
+          padding: '24px',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          borderRadius: '20px',
+          color: 'white'
+        }}
+      >
+        <div>
+          <h1 style={{ fontSize: '32px', fontWeight: 'bold', margin: 0, textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+            KAF Portal Dashboard
+          </h1>
+          <p style={{ margin: '8px 0 0 0', opacity: 0.9 }}>NGO Yönetim Sistemi Genel Bakış</p>
+          <p style={{ margin: '4px 0 0 0', fontSize: '12px', opacity: 0.7 }}>
+            Son güncelleme: {lastUpdate.toLocaleTimeString('tr-TR')}
+          </p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={fetchDashboardData}
+            disabled={refreshing}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '12px 20px',
+              backgroundColor: 'rgba(255,255,255,0.2)',
+              border: '1px solid rgba(255,255,255,0.3)',
+              borderRadius: '12px',
+              color: 'white',
+              cursor: refreshing ? 'not-allowed' : 'pointer',
+              opacity: refreshing ? 0.6 : 1
+            }}
+          >
+            <RefreshCw 
+              size={16} 
+              style={{ 
+                animation: refreshing ? 'spin 1s linear infinite' : 'none' 
+              }} 
+            />
+            {refreshing ? 'Güncelleniyor...' : 'Yenile'}
+          </motion.button>
           {import.meta.env.DEV && (
-            <div className='bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium'>
+            <motion.span
+              whileHover={{ scale: 1.05 }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '8px 16px',
+                borderRadius: '20px',
+                fontSize: '14px',
+                fontWeight: '600',
+                backgroundColor: 'rgba(255,255,255,0.2)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255,255,255,0.3)'
+              }}
+            >
               🚧 Geliştirme Modu
-            </div>
+            </motion.span>
           )}
         </div>
       </motion.div>
 
-      {/* Stats Cards */}
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8'>
-        <motion.div variants={itemVariants}>
-          <div className='bg-white rounded-lg shadow-sm border p-6'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm font-medium text-gray-600'>Toplam Bağış</p>
-                <p className='text-2xl font-bold text-gray-900'>
-                  ₺{(dashboardData.donations?.total || 0).toLocaleString()}
-                </p>
-              </div>
-              <div className='p-2 bg-green-100 rounded-full'>
-                <CheckCircle className='h-6 w-6 text-green-600' />
-              </div>
-            </div>
-          </div>
+      {/* Stats Grid */}
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+        gap: '24px', 
+        marginBottom: '32px' 
+      }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <StatCard
+            title="Toplam Bağış"
+            value={`₺${dashboardData.donations.total.toLocaleString()}`}
+            change={dashboardData.donations.change}
+            icon={DollarSign}
+            color="#10b981"
+            bgColor="#dcfce7"
+          />
         </motion.div>
-
-        <motion.div variants={itemVariants}>
-          <div className='bg-white rounded-lg shadow-sm border p-6'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm font-medium text-gray-600'>Yardım Alanlar</p>
-                <p className='text-2xl font-bold text-gray-900'>
-                  {dashboardData.beneficiaries?.total || 0}
-                </p>
-              </div>
-              <div className='p-2 bg-blue-100 rounded-full'>
-                <Users className='h-6 w-6 text-blue-600' />
-              </div>
-            </div>
-          </div>
+        
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+          <StatCard
+            title="Yardım Alanlar"
+            value={dashboardData.beneficiaries.total.toLocaleString()}
+            change={dashboardData.beneficiaries.change}
+            icon={Heart}
+            color="#3b82f6"
+            bgColor="#dbeafe"
+          />
         </motion.div>
-
-        <motion.div variants={itemVariants}>
-          <div className='bg-white rounded-lg shadow-sm border p-6'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm font-medium text-gray-600'>Gönüllüler</p>
-                <p className='text-2xl font-bold text-gray-900'>
-                  {dashboardData.volunteers?.total || 0}
-                </p>
-              </div>
-              <div className='p-2 bg-purple-100 rounded-full'>
-                <Users className='h-6 w-6 text-purple-600' />
-              </div>
-            </div>
-          </div>
+        
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+          <StatCard
+            title="Gönüllüler"
+            value={dashboardData.volunteers.total.toLocaleString()}
+            change={dashboardData.volunteers.change}
+            icon={Users}
+            color="#8b5cf6"
+            bgColor="#ede9fe"
+          />
         </motion.div>
-
-        <motion.div variants={itemVariants}>
-          <div className='bg-white rounded-lg shadow-sm border p-6'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm font-medium text-gray-600'>Referanslar</p>
-                <p className='text-2xl font-bold text-gray-900'>
-                  {dashboardData.referrals?.total || 0}
-                </p>
-              </div>
-              <div className='p-2 bg-orange-100 rounded-full'>
-                <AlertCircle className='h-6 w-6 text-orange-600' />
-              </div>
-            </div>
-          </div>
+        
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+          <StatCard
+            title="Referanslar"
+            value={dashboardData.referrals.total.toLocaleString()}
+            change={dashboardData.referrals.change}
+            icon={CheckCircle}
+            color="#f59e0b"
+            bgColor="#fef3c7"
+          />
         </motion.div>
       </div>
 
-      {/* AI Suggestions & Collaboration Section */}
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8'>
-        <motion.div variants={itemVariants}>
+      {/* Main Content Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', marginBottom: '32px' }}>
+        {/* Charts Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          style={{
+            background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+            borderRadius: '20px',
+            padding: '32px',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+            border: '1px solid #e2e8f0'
+          }}
+        >
+          <h2 style={{ 
+            fontSize: '24px', 
+            fontWeight: '700', 
+            color: '#1f2937', 
+            margin: '0 0 24px 0',
+            textAlign: 'center',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>
+            📊 Analiz Grafikleri
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+            {/* Bağış Analizi */}
+            <ChartCard 
+              title="Bağış Analizi" 
+              onMouseEnter={() => setHoveredChart('Bağış Analizi')}
+              onMouseLeave={() => setHoveredChart(null)}
+            >
+              <div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg width="250" height="180" style={{ margin: '0 auto' }}>
+                  {/* Gradient definitions */}
+                  <defs>
+                    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" style={{ stopColor: '#3B82F6', stopOpacity: 1 }} />
+                      <stop offset="100%" style={{ stopColor: '#8B5CF6', stopOpacity: 1 }} />
+                    </linearGradient>
+                  </defs>
+                  {/* Bağış Trendi - Animasyonlu çizgi grafik */}
+                  <motion.polyline
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 2, ease: "easeInOut" }}
+                    points="20,120 50,80 80,100 110,60 140,70 170,40"
+                    fill="none"
+                    stroke="url(#lineGradient)"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                  />
+                  {/* Hedef çizgisi */}
+                  <line x1="20" y1="90" x2="170" y2="90" stroke="#6B7280" strokeWidth="2" strokeDasharray="5,5" />
+                  {/* Noktalar */}
+                  <circle cx="20" cy="120" r="6" fill="#3B82F6" />
+                  <circle cx="50" cy="80" r="6" fill="#3B82F6" />
+                  <circle cx="80" cy="100" r="6" fill="#3B82F6" />
+                  <circle cx="110" cy="60" r="6" fill="#3B82F6" />
+                  <circle cx="140" cy="70" r="6" fill="#3B82F6" />
+                  <circle cx="170" cy="40" r="6" fill="#3B82F6" />
+                  {/* Legend */}
+                  <text x="20" y="20" style={{ fontSize: '14px', fill: '#3B82F6', fontWeight: 'bold' }}>Bağışlar</text>
+                  <text x="20" y="35" style={{ fontSize: '12px', fill: '#9ca3af' }}>Hedef</text>
+                </svg>
+              </div>
+            </ChartCard>
 
+            {/* Yardım Dağılımı */}
+            <ChartCard 
+              title="Yardım Dağılımı"
+              onMouseEnter={() => setHoveredChart('Yardım Dağılımı')}
+              onMouseLeave={() => setHoveredChart(null)}
+            >
+              <div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg width="250" height="180" style={{ margin: '0 auto' }}>
+                  {/* Pie Chart - Animasyonlu dilimler */}
+                  <motion.circle
+                    initial={{ strokeDasharray: "0 314" }}
+                    animate={{ strokeDasharray: "157 314" }}
+                    transition={{ duration: 2, ease: "easeInOut" }}
+                    cx="125" cy="90" r="60" fill="#3B82F6" 
+                  />
+                  <motion.circle
+                    initial={{ strokeDasharray: "0 314" }}
+                    animate={{ strokeDasharray: "78.5 314" }}
+                    transition={{ duration: 2, delay: 0.5, ease: "easeInOut" }}
+                    cx="125" cy="90" r="60" fill="#10B981" stroke="#10B981" strokeWidth="30" strokeDashoffset="157" 
+                  />
+                  <motion.circle
+                    initial={{ strokeDasharray: "0 314" }}
+                    animate={{ strokeDasharray: "62.8 314" }}
+                    transition={{ duration: 2, delay: 1, ease: "easeInOut" }}
+                    cx="125" cy="90" r="60" fill="#F59E0B" stroke="#F59E0B" strokeWidth="30" strokeDashoffset="235.5" 
+                  />
+                  <motion.circle
+                    initial={{ strokeDasharray: "0 314" }}
+                    animate={{ strokeDasharray: "31.4 314" }}
+                    transition={{ duration: 2, delay: 1.5, ease: "easeInOut" }}
+                    cx="125" cy="90" r="60" fill="#EF4444" stroke="#EF4444" strokeWidth="30" strokeDashoffset="298.3" 
+                  />
+                  {/* Legend */}
+                  <rect x="20" y="20" width="12" height="12" fill="#3B82F6" rx="2" />
+                  <text x="40" y="30" style={{ fontSize: '12px', fill: '#6b7280', fontWeight: '500' }}>Acil Yardım</text>
+                  <rect x="20" y="40" width="12" height="12" fill="#10B981" rx="2" />
+                  <text x="40" y="50" style={{ fontSize: '12px', fill: '#6b7280', fontWeight: '500' }}>Eğitim</text>
+                  <rect x="20" y="60" width="12" height="12" fill="#F59E0B" rx="2" />
+                  <text x="40" y="70" style={{ fontSize: '12px', fill: '#6b7280', fontWeight: '500' }}>Sağlık</text>
+                  <rect x="20" y="80" width="12" height="12" fill="#EF4444" rx="2" />
+                  <text x="40" y="90" style={{ fontSize: '12px', fill: '#6b7280', fontWeight: '500' }}>Gıda</text>
+                </svg>
+              </div>
+            </ChartCard>
+          </div>
         </motion.div>
 
-        <motion.div variants={itemVariants}>
-          
+        {/* Urgent Tasks Sidebar */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.8 }}
+          style={{
+            background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+            borderRadius: '20px',
+            padding: '24px',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+            border: '1px solid #e2e8f0',
+            height: 'fit-content'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+            <AlertTriangle size={20} color="#dc2626" />
+            <h3 style={{ 
+              fontSize: '18px', 
+              fontWeight: '600', 
+              color: '#1f2937', 
+              margin: 0 
+            }}>
+              Acil Görevler
+            </h3>
+          </div>
+          {urgentTasks.map((task, index) => (
+            <motion.div
+              key={task.id}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.9 + index * 0.1 }}
+            >
+              <UrgentTaskCard task={task} />
+            </motion.div>
+          ))}
         </motion.div>
       </div>
 
-      {/* Quick Actions */}
-      <motion.div className='mt-8' variants={itemVariants}>
-        <div className='bg-white rounded-lg shadow-sm border p-6'>
-          <h3 className='text-lg font-semibold text-gray-900 mb-4'>
-            Hızlı İşlemler
-          </h3>
-          <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className='flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-colors'
+      {/* Recent Activities */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.0 }}
+        style={{
+          background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+          borderRadius: '20px',
+          padding: '32px',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+          border: '1px solid #e2e8f0'
+        }}
+      >
+        <h2 style={{ 
+          fontSize: '24px', 
+          fontWeight: '700', 
+          color: '#1f2937', 
+          margin: '0 0 24px 0',
+          textAlign: 'center',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}>
+          📋 Son Aktiviteler
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '16px' }}>
+          {recentActivities.map((activity, index) => (
+            <motion.div
+              key={activity.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1.1 + index * 0.1 }}
+              whileHover={{ scale: 1.02, x: 5 }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                padding: '20px',
+                background: 'linear-gradient(135deg, #f9fafb 0%, #f1f5f9 100%)',
+                borderRadius: '16px',
+                border: '1px solid #e2e8f0',
+                transition: 'all 0.3s ease',
+                position: 'relative'
+              }}
             >
-              <Brain className='h-8 w-8 text-blue-600 mb-2' />
-              <span className='text-sm font-medium text-gray-900'>
-                AI Analiz
-              </span>
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className='flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-300 transition-colors'
-            >
-              <Users className='h-8 w-8 text-green-600 mb-2' />
-              <span className='text-sm font-medium text-gray-900'>
-                Toplantı
-              </span>
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className='flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:bg-purple-50 hover:border-purple-300 transition-colors'
-            >
-              <MessageCircle className='h-8 w-8 text-purple-600 mb-2' />
-              <span className='text-sm font-medium text-gray-900'>Mesaj</span>
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className='flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:bg-orange-50 hover:border-orange-300 transition-colors'
-            >
-              <Zap className='h-8 w-8 text-orange-600 mb-2' />
-              <span className='text-sm font-medium text-gray-900'>Rapor</span>
-            </motion.button>
-          </div>
+              <div style={{
+                padding: '12px',
+                borderRadius: '50%',
+                background: activity.type === 'donation' ? 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)' :
+                           activity.type === 'beneficiary' ? 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)' :
+                           activity.type === 'volunteer' ? 'linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%)' :
+                           'linear-gradient(135deg, #fed7aa 0%, #fdba74 100%)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+              }}>
+                {activity.type === 'donation' && <DollarSign style={{ width: '20px', height: '20px', color: '#16a34a' }} />}
+                {activity.type === 'beneficiary' && <Heart style={{ width: '20px', height: '20px', color: '#2563eb' }} />}
+                {activity.type === 'volunteer' && <Users style={{ width: '20px', height: '20px', color: '#7c3aed' }} />}
+                {activity.type === 'referral' && <CheckCircle style={{ width: '20px', height: '20px', color: '#ea580c' }} />}
+              </div>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: '16px', fontWeight: '600', color: '#1f2937', margin: '0 0 4px 0' }}>
+                  {activity.title}
+                </p>
+                <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+                  {activity.description}
+                </p>
+                {activity.amount && (
+                  <p style={{ fontSize: '12px', color: '#10b981', fontWeight: '600', margin: '4px 0 0 0' }}>
+                    {activity.amount}
+                  </p>
+                )}
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  padding: '6px 12px',
+                  borderRadius: '20px',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  background: activity.status === 'completed' ? 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)' : 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                  color: activity.status === 'completed' ? '#166534' : '#92400e',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                }}>
+                  {activity.status === 'completed' ? '✅ Tamamlandı' : '⏳ Beklemede'}
+                </span>
+                <p style={{ fontSize: '12px', color: '#6b7280', margin: '8px 0 0 0', fontWeight: '500' }}>
+                  {activity.time}
+                </p>
+              </div>
+              {activity.priority === 'high' && (
+                <div style={{
+                  position: 'absolute',
+                  top: '8px',
+                  right: '8px',
+                  width: '8px',
+                  height: '8px',
+                  backgroundColor: '#dc2626',
+                  borderRadius: '50%',
+                  animation: 'pulse 2s infinite'
+                }} />
+              )}
+            </motion.div>
+          ))}
         </div>
       </motion.div>
 
-      <div style={{ marginTop: '2rem' }}>
-        {/* Yaklaşan Görevler */}
-        <motion.div className='card' variants={itemVariants}>
-          <h2
-            style={{
-              fontSize: '1.25rem',
-              fontWeight: '600',
-              color: '#1a202c',
-              marginBottom: '1.5rem',
-            }}
-          >
-            {t('dashboard.upcomingTasks.title')}
-          </h2>
-          <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-          >
-            {upcomingTasks.map((task, index) => {
-              const StatusIcon = getStatusIcon(task.status);
-              return (
-                <motion.div
-                  key={task.id}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '1rem',
-                    borderRadius: '12px',
-                    backgroundColor: 'rgba(248, 250, 252, 0.8)',
-                    border: '1px solid rgba(226, 232, 240, 0.5)',
-                    borderLeft: `4px solid ${getPriorityColor(task.priority)}`,
-                  }}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <div style={{ flex: 1 }}>
-                    <h4
-                      style={{
-                        fontSize: '0.95rem',
-                        fontWeight: '600',
-                        color: '#1a202c',
-                        margin: '0 0 0.25rem 0',
-                      }}
-                    >
-                      {task.title}
-                    </h4>
-                    <p
-                      style={{
-                        fontSize: '0.85rem',
-                        color: '#64748b',
-                        margin: 0,
-                      }}
-                    >
-                      {task.deadline}
-                    </p>
-                  </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: '0.75rem',
-                        fontWeight: '600',
-                        color: getPriorityColor(task.priority),
-                        backgroundColor: `${getPriorityColor(task.priority)}15`,
-                        padding: '0.25rem 0.5rem',
-                        borderRadius: '6px',
-                      }}
-                    >
-                      {getPriorityLabel(task.priority)}
-                    </span>
-                    <StatusIcon
-                      size={16}
-                      color={getPriorityColor(task.priority)}
-                    />
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </motion.div>
-      </div>
+      {/* CSS Animations */}
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
     </motion.div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
 import { supabase, testSupabaseConnection } from '../lib/supabase';
 
@@ -13,8 +13,12 @@ const useAuth = () => {
 };
 
 const AuthProvider = ({ children }) => {
+  // Props validation
+  if (!children) {
+    throw new Error('AuthProvider requires children prop');
+  }
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Start with true to show loading
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [supabaseConnected, setSupabaseConnected] = useState(false);
 
@@ -22,12 +26,13 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkSupabaseConnection = async () => {
       try {
-        // Skip connection test in development mode
+        // In development, skip connection test and use fallback
         if (import.meta.env.DEV) {
           setSupabaseConnected(false);
           return;
         }
 
+        // Test connection in production
         const connected = await testSupabaseConnection();
         setSupabaseConnected(connected);
 
@@ -109,43 +114,14 @@ const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         console.error('Auth check error:', error);
-        logout();
+        // Don't logout on error, just set loading to false
       } finally {
         setLoading(false);
       }
     };
 
+    // Check auth status immediately
     checkAuthStatus();
-
-    // Listen for auth changes only if Supabase is connected
-    if (supabaseConnected) {
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange(async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          const userData = {
-            id: session.user.id,
-            email: session.user.email,
-            name:
-              session.user.user_metadata?.full_name ||
-              session.user.user_metadata?.name ||
-              session.user.email.split('@')[0],
-            role: 'admin',
-            permissions: ['read', 'write', 'admin'],
-          };
-
-          setUser(userData);
-          setIsAuthenticated(true);
-          localStorage.setItem('fallbackUser', JSON.stringify(userData));
-        } else if (event === 'SIGNED_OUT') {
-          setUser(null);
-          setIsAuthenticated(false);
-          localStorage.removeItem('fallbackUser');
-        }
-      });
-
-      return () => subscription.unsubscribe();
-    }
   }, [supabaseConnected]);
 
   const login = async (email, password) => {

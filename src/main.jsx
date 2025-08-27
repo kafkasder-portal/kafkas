@@ -1,10 +1,9 @@
-import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/react';
 import App from './App.jsx';
 import './i18n';
 import './index.css';
+
+
 
 // Register Service Worker for caching and offline support
 if ('serviceWorker' in navigator) {
@@ -60,10 +59,4 @@ if (import.meta.env.DEV) {
   // This will show the React DevTools installation message in development
 }
 
-createRoot(document.getElementById('root')).render(
-  <>
-    <App />
-    <Analytics />
-    <SpeedInsights />
-  </>
-);
+createRoot(document.getElementById('root')).render(<App />);

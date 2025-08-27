@@ -4,7 +4,6 @@ import {
   CheckSquare,
   Coins,
   Home,
-  LogOut,
   Menu,
   MessageSquare,
   Package,
@@ -12,13 +11,11 @@ import {
   Users,
 } from 'lucide-react'
 import { memo, useCallback, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import useDeviceDetection from '../hooks/useDeviceDetection.jsx'
 import './Sidebar.css'
 import ThemeToggle from './ThemeToggle'
-import UserProfile from './UserProfile'
 
 const menuItems = [
   {
@@ -100,7 +97,6 @@ const menuItems = [
 
 const Sidebar = ({ collapsed, onToggle }) => {
   const { user, logout, hasPermission } = useAuth()
-  const { t } = useTranslation()
   const location = useLocation()
   const deviceInfo = useDeviceDetection()
   
@@ -131,64 +127,63 @@ const Sidebar = ({ collapsed, onToggle }) => {
   )
 
   // Show all menu items since auth is removed
-  const getFilteredMenuItems = (items = translatedMenuItems) => {
+  const getFilteredMenuItems = (items = menuItemsToUse) => {
     return items // Return all items without filtering
   }
 
-  // Alt menü öğeleri için çeviri anahtarını al
-  const getSubItemTranslation = (parentId, path) => {
-    const translationMap = {
-      '/donations': 'navigation.donationList',
-      '/donations/vault': 'navigation.donationVault',
-      '/donations/institutions': 'navigation.institutions',
-      '/bagis/kumbara-takibi': 'navigation.piggyBankTracking',
-      '/meetings': 'navigation.allMeetings',
-      '/meetings/create': 'navigation.scheduleMeeting',
-      '/meetings/calendar': 'navigation.meetingCalendar',
-      '/yardim/ihtiyac-sahipleri': 'navigation.beneficiaries',
-      '/aid/applications': 'navigation.aidApplications',
-      '/finance/accounting': 'navigation.accounting',
-      '/finance/bank-orders': 'navigation.bankOperations',
-      '/finance/reports': 'navigation.financialReports',
-      '/volunteers': 'navigation.volunteerList',
-      '/volunteers/create': 'navigation.addVolunteer',
-      '/volunteers/reports': 'navigation.volunteerReports',
-      '/tasks': 'navigation.taskList',
-      '/tasks/create': 'navigation.createTask',
-      '/tasks/calendar': 'navigation.taskCalendar',
-      '/messages': 'navigation.messageList',
-      '/messages/sms': 'navigation.sendSMS',
-      '/messages/whatsapp': 'navigation.whatsapp',
-      '/messages/email': 'navigation.email',
-      '/inventory': 'navigation.stockList',
-      '/inventory/stock-in': 'navigation.stockIn',
-      '/inventory/stock-out': 'navigation.stockOut',
-      '/inventory/reports': 'navigation.inventoryReports',
-      '/donors': 'navigation.donorList',
-      '/donors/crm': 'navigation.crmManagement',
-      '/donors/reports': 'navigation.donorReports',
-      '/scholarship/programs': 'navigation.scholarshipPrograms',
-      '/scholarship/applications': 'navigation.scholarshipApplications',
-      '/fund': 'navigation.fundList',
-      '/fund/work-areas': 'navigation.workAreas',
-      '/system/user-management': 'navigation.userManagement',
-      '/system/ip-blocking': 'navigation.ipBlocking',
-      '/system/settings': 'navigation.systemSettings',
+  // Alt menü öğeleri için Türkçe başlıkları al
+  const getSubItemTitle = (parentId, path) => {
+    const titleMap = {
+      '/donations': 'Bağış Listesi',
+      '/donations/vault': 'Bağış Veznesi',
+      '/donations/institutions': 'Kurumlar',
+      '/bagis/kumbara-takibi': 'Kumbara Takibi',
+      '/meetings': 'Tüm Toplantılar',
+      '/meetings/create': 'Toplantı Planla',
+      '/meetings/calendar': 'Toplantı Takvimi',
+      '/yardim/ihtiyac-sahipleri': 'İhtiyaç Sahipleri',
+      '/aid/applications': 'Yardım Başvuruları',
+      '/finance/accounting': 'Muhasebe',
+      '/finance/bank-orders': 'Banka İşlemleri',
+      '/finance/reports': 'Finansal Raporlar',
+      '/volunteers': 'Gönüllü Listesi',
+      '/volunteers/create': 'Gönüllü Ekle',
+      '/volunteers/reports': 'Gönüllü Raporları',
+      '/tasks': 'Görev Listesi',
+      '/tasks/create': 'Görev Oluştur',
+      '/tasks/calendar': 'Görev Takvimi',
+      '/messages': 'Mesaj Listesi',
+      '/messages/sms': 'SMS Gönder',
+      '/messages/whatsapp': 'WhatsApp',
+      '/messages/email': 'Email',
+      '/inventory': 'Stok Listesi',
+      '/inventory/stock-in': 'Stok Girişi',
+      '/inventory/stock-out': 'Stok Çıkışı',
+      '/inventory/reports': 'Envanter Raporları',
+      '/donors': 'Bağışçı Listesi',
+      '/donors/crm': 'CRM Yönetimi',
+      '/donors/reports': 'Bağışçı Raporları',
+      '/scholarship/programs': 'Burs Programları',
+      '/scholarship/applications': 'Burs Başvuruları',
+      '/fund': 'Fon Listesi',
+      '/fund/work-areas': 'Çalışma Alanları',
+      '/system/user-management': 'Kullanıcı Yönetimi',
+      '/system/ip-blocking': 'IP Engelleme',
+      '/system/settings': 'Sistem Ayarları',
     }
 
-    return t(translationMap[path] || path)
+    return titleMap[path] || path
   }
 
-  // Menü öğelerini çevir
-  const getTranslatedMenuItems = () => {
-    return menuItems.map(item => ({
-      ...item,
-      title: t(`navigation.${item.id}`),
-    }))
+  // Menü öğelerini kullan (zaten Türkçe)
+  const getMenuItems = () => {
+    return menuItems
   }
 
-  const translatedMenuItems = getTranslatedMenuItems()
-  const filteredMenuItems = getFilteredMenuItems(translatedMenuItems)
+  const menuItemsToUse = getMenuItems()
+  const filteredMenuItems = getFilteredMenuItems(menuItemsToUse)
+
+
 
   return (
     <>
@@ -241,6 +236,34 @@ const Sidebar = ({ collapsed, onToggle }) => {
             )
           })}
         </nav>
+
+        {/* Footer */}
+        <div className="sidebar-footer" style={{ 
+          padding: '1rem', 
+          borderTop: '1px solid rgba(255,255,255,0.1)',
+          marginTop: 'auto'
+        }}>
+          {/* Theme Toggle */}
+          <div style={{ marginBottom: '1rem' }}>
+            <ThemeToggle />
+          </div>
+
+          {/* KAF Portal Info */}
+          <div style={{ 
+            textAlign: 'center', 
+            padding: '1rem',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '12px',
+            border: '1px solid rgba(255, 255, 255, 0.2)'
+          }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+              KAF Portal
+            </div>
+            <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.8)' }}>
+              v1.0.0
+            </div>
+          </div>
+        </div>
       </motion.div>
 
       {/* Submenu popup */}
@@ -353,21 +376,6 @@ const Sidebar = ({ collapsed, onToggle }) => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Device Info */}
-      <div className="sidebar-footer">
-        <UserProfile />
-        <div className="mt-2 space-y-2">
-          <ThemeToggle />
-          <button
-            onClick={logout}
-            className="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            Çıkış Yap
-          </button>
-        </div>
-      </div>
     </>
   )
 }

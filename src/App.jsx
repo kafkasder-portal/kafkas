@@ -1,297 +1,359 @@
-import React, { Suspense, lazy, memo, useState } from 'react'
-import { Route, BrowserRouter as Router, Routes, RouterProvider } from 'react-router-dom'
 import './App.css'
-import './animations.css'
-import AnimatedRoutes from './components/AnimatedRoutes'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { ThemeProvider } from './contexts/ThemeContext'
+import { NotificationProvider } from './contexts/NotificationContext'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+
+// Components
+import Sidebar from './components/Sidebar'
+import Header from './components/Header'
 import ConnectionStatus from './components/ConnectionStatus'
 import ErrorBoundary from './components/ErrorBoundary'
-import LanguageSwitcher from './components/LanguageSwitcher'
 import MobileNavigation from './components/MobileNavigation'
-import NotificationPanel from './components/NotificationPanel'
-import ProtectedRoute from './components/ProtectedRoute'
-import Sidebar from './components/Sidebar'
-import { AuthProvider, useAuth } from './contexts/AuthContext'
-import { NotificationProvider } from './contexts/NotificationContext'
-import { ThemeProvider } from './contexts/ThemeContext'
-import useDeviceDetection from './hooks/useDeviceDetection.jsx'
 
-// Lazy loading ile sayfa componentlerini yükle
-const Login = lazy(() => import('./pages/Login'))
-const Dashboard = lazy(() => import('./pages/Dashboard'))
-const Donations = lazy(() => import('./pages/Donations'))
-const Meetings = lazy(() => import('./pages/Meetings'))
-const Aid = lazy(() => import('./pages/Aid'))
-const Beneficiaries = lazy(() => import('./pages/Beneficiaries'))
-const BeneficiaryDetail = lazy(() => import('./pages/BeneficiaryDetail'))
-const Finance = lazy(() => import('./pages/Finance'))
-const Volunteers = lazy(() => import('./pages/Volunteers'))
-const Tasks = lazy(() => import('./pages/Tasks'))
-const Messages = lazy(() => import('./pages/Messages'))
-const WhatsApp = lazy(() => import('./pages/WhatsApp'))
-const Inventory = lazy(() => import('./pages/Inventory'))
-const Donors = lazy(() => import('./pages/Donors'))
-const Scholarship = lazy(() => import('./pages/Scholarship'))
-const Fund = lazy(() => import('./pages/Fund'))
-const PiggyBankTracking = lazy(() => import('./pages/PiggyBankTracking'))
-const System = lazy(() => import('./pages/System'))
-const UserManagement = lazy(() => import('./pages/UserManagement'))
-const HospitalReferral = lazy(() => import('./pages/HospitalReferral'))
-const TodosList = lazy(() => import('./components/TodosList'))
+// Pages
+import Dashboard from './pages/Dashboard'
+import Login from './pages/Login'
+import Inventory from './pages/Inventory'
+import Tasks from './pages/Tasks'
+import Donations from './pages/Donations'
+import Beneficiaries from './pages/Beneficiaries'
+import Volunteers from './pages/Volunteers'
+import Finance from './pages/Finance'
+import Messages from './pages/Messages'
+import System from './pages/System'
+import UserManagement from './pages/UserManagement'
+import Aid from './pages/Aid'
+import Fund from './pages/Fund'
+import Scholarship from './pages/Scholarship'
+import HospitalReferral from './pages/HospitalReferral'
+import BudgetPlanning from './pages/BudgetPlanning'
+import ProjectManagement from './pages/ProjectManagement'
+import PiggyBankTracking from './pages/PiggyBankTracking'
+import Meetings from './pages/Meetings'
+import Donors from './pages/Donors'
+import WhatsApp from './pages/WhatsApp'
+import WhatsAppLogin from './pages/WhatsAppLogin'
+import ProfileSettings from './pages/ProfileSettings'
 
-// Loading component
-const LoadingSpinner = () => (
-  <div
-    style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '50vh',
-      fontSize: '1.2rem',
-      color: '#667eea',
-    }}
-  >
-    <div
-      style={{
-        width: '40px',
-        height: '40px',
-        border: '4px solid #f3f4f6',
-        borderTop: '4px solid #667eea',
-        borderRadius: '50%',
-        animation: 'spin 1s linear infinite',
-      }}
-    ></div>
-    <span style={{ marginLeft: '1rem' }}>Yükleniyor...</span>
-  </div>
-)
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth()
+  
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+      }}>
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          style={{ 
+            width: '64px', 
+            height: '64px', 
+            border: '3px solid rgba(255,255,255,0.3)', 
+            borderTop: '3px solid white', 
+            borderRadius: '50%'
+          }}
+        />
+      </div>
+    )
+  }
+  
+  if (!user) {
+    return <Navigate to="/login" replace />
+  }
+  
+  return children
+}
 
-const AppContent = memo(() => {
+// Main Layout Component
+const MainLayout = ({ children }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const deviceInfo = useDeviceDetection()
-  const { isAuthenticated } = useAuth()
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed)
+  }
 
   return (
-    <div className={`app device-${deviceInfo.type} ${deviceInfo.orientation}`}>
-      <ConnectionStatus />
-
-      {/* Show login page if not authenticated */}
-      {!isAuthenticated ? (
-        <Login />
-      ) : (
-        <>
-          {/* Mobile Navigation */}
-          {deviceInfo.isMobile && <MobileNavigation />}
-
-          {/* Desktop Navigation */}
-          {!deviceInfo.isMobile && (
-            <Sidebar
-              collapsed={sidebarCollapsed}
-              onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-            />
-          )}
-
-          <main
-            className={`main-content ${sidebarCollapsed ? 'expanded' : ''} ${deviceInfo.isMobile ? 'mobile' : ''}`}
-          >
-            {!deviceInfo.isMobile && (
-              <div className="main-header">
-                <div className="header-actions">
-                  <LanguageSwitcher variant="icon" />
-                  <NotificationPanel />
-                </div>
-              </div>
-            )}
-            <Suspense fallback={<LoadingSpinner />}>
-              <AnimatedRoutes>
-                <Routes>
-                  <Route
-                    path="/login"
-                    element={<Login />}
-                  />
-                  <Route
-                    path="/"
-                    element={
-                      <ProtectedRoute>
-                        <Dashboard />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/donations/*"
-                    element={
-                      <ProtectedRoute>
-                        <Donations />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/meetings/*"
-                    element={
-                      <ProtectedRoute>
-                        <Meetings />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/aid/*"
-                    element={
-                      <ProtectedRoute>
-                        <Aid />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/aid/hospital-referral"
-                    element={
-                      <ProtectedRoute>
-                        <HospitalReferral />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/beneficiaries"
-                    element={
-                      <ProtectedRoute>
-                        <Beneficiaries />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/beneficiaries/:id"
-                    element={
-                      <ProtectedRoute>
-                        <BeneficiaryDetail />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/finance/*"
-                    element={
-                      <ProtectedRoute requiredPermissions={['finance']}>
-                        <Finance />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/volunteers/*"
-                    element={
-                      <ProtectedRoute>
-                        <Volunteers />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/tasks/*"
-                    element={
-                      <ProtectedRoute>
-                        <Tasks />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/messages/*"
-                    element={
-                      <ProtectedRoute>
-                        <Messages />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/messages/whatsapp"
-                    element={
-                      <ProtectedRoute>
-                        <WhatsApp />
-                      </ProtectedRoute>
-                    }
-                  />
-
-                  <Route
-                    path="/inventory/*"
-                    element={
-                      <ProtectedRoute>
-                        <Inventory />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/donors/*"
-                    element={
-                      <ProtectedRoute>
-                        <Donors />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/scholarship/*"
-                    element={
-                      <ProtectedRoute>
-                        <Scholarship />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/fund/*"
-                    element={
-                      <ProtectedRoute>
-                        <Fund />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/bagis/kumbara-takibi"
-                    element={
-                      <ProtectedRoute>
-                        <PiggyBankTracking />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/system/*"
-                    element={
-                      <ProtectedRoute requiredRoles={['admin']}>
-                        <System />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/system/user-management"
-                    element={
-                      <ProtectedRoute requiredRoles={['admin']}>
-                        <UserManagement />
-                      </ProtectedRoute>
-                    }
-                  />
-
-                  <Route
-                    path="/todos"
-                    element={
-                      <ProtectedRoute>
-                        <TodosList />
-                      </ProtectedRoute>
-                    }
-                  />
-                </Routes>
-              </AnimatedRoutes>
-            </Suspense>
-          </main>
-        </>
-      )}
+    <div className="app-layout">
+      {/* Sidebar */}
+      <Sidebar 
+        collapsed={sidebarCollapsed} 
+        onToggle={toggleSidebar} 
+      />
+      
+      {/* Main Content */}
+      <main className={`main-content ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+        {/* Header */}
+        <Header onMenuToggle={toggleSidebar} />
+        
+        {/* Connection Status */}
+        <ConnectionStatus />
+        
+        {/* Mobile Navigation */}
+        {isMobile && <MobileNavigation />}
+        
+        {/* Page Content */}
+        <div className="page-content">
+          <ErrorBoundary>
+            <AnimatePresence mode="wait">
+              {children}
+            </AnimatePresence>
+          </ErrorBoundary>
+        </div>
+      </main>
     </div>
   )
-})
+}
 
-
+// App Content Component
+function AppContent() {
+  const { user, loading } = useAuth()
+  
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+      }}>
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          style={{ 
+            width: '64px', 
+            height: '64px', 
+            border: '3px solid rgba(255,255,255,0.3)', 
+            borderTop: '3px solid white', 
+            borderRadius: '50%'
+          }}
+        />
+      </div>
+    )
+  }
+  
+  return (
+    <Router>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/login" element={
+          user ? <Navigate to="/" replace /> : <Login />
+        } />
+        
+        {/* Protected Routes */}
+        <Route path="/" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Dashboard />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/inventory" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Inventory />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/tasks" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Tasks />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/donations" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Donations />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/beneficiaries" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Beneficiaries />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/volunteers" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Volunteers />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/finance" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Finance />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/messages" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Messages />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/system" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <System />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/user-management" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <UserManagement />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/aid" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Aid />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/fund" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Fund />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/scholarship" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Scholarship />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/hospital-referral" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <HospitalReferral />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/budget-planning" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <BudgetPlanning />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/project-management" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <ProjectManagement />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/piggy-bank-tracking" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <PiggyBankTracking />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/meetings" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Meetings />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/donors" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <Donors />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/whatsapp" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <WhatsApp />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/whatsapp-login" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <WhatsAppLogin />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/profile-settings" element={
+          <ProtectedRoute>
+            <MainLayout>
+              <ProfileSettings />
+            </MainLayout>
+          </ProtectedRoute>
+        } />
+        
+        {/* Catch all route */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  )
+}
 
 function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider>
-        <AuthProvider>
-          <NotificationProvider>
-            <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-              <AppContent />
-            </Router>
-          </NotificationProvider>
-        </AuthProvider>
+        <NotificationProvider>
+          <AuthProvider>
+            <AppContent />
+          </AuthProvider>
+        </NotificationProvider>
       </ThemeProvider>
     </ErrorBoundary>
   )

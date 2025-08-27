@@ -1,4 +1,4 @@
-import React from 'react';
+
 // Auth import removed
 import './ConnectionStatus.css';
 

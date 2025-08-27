@@ -30,12 +30,29 @@ const ThemeToggle = ({ variant = 'button' }) => {
     )
   }
 
+  // Sidebar için özel stil
   return (
     <motion.button
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={toggleTheme}
-      className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+      style={{
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.5rem',
+        padding: '0.75rem',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        borderRadius: '12px',
+        color: 'white',
+        cursor: 'pointer',
+        fontSize: '0.875rem',
+        fontWeight: '500',
+        transition: 'all 0.2s ease',
+      }}
+      whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
     >
       <motion.div
         initial={false}
@@ -43,12 +60,12 @@ const ThemeToggle = ({ variant = 'button' }) => {
         transition={{ duration: 0.3 }}
       >
         {isDark ? (
-          <Sun className="h-4 w-4 text-yellow-500" />
+          <Sun className="h-4 w-4 text-yellow-400" />
         ) : (
-          <Moon className="h-4 w-4 text-gray-600" />
+          <Moon className="h-4 w-4 text-white" />
         )}
       </motion.div>
-      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+      <span style={{ fontSize: '0.875rem', fontWeight: '500' }}>
         {isDark ? 'Light Mode' : 'Dark Mode'}
       </span>
     </motion.button>

@@ -80,8 +80,8 @@
     "systemSettings": "Sistem Ayarları"
   },
   "dashboard": {
-    "title": "Dashboard",
-    "subtitle": "NGO Yönetim Sistemi Genel Bakış",
+    "title": "",
+    "subtitle": "",
     "stats": {
       "totalDonations": "Toplam Bağış",
       "activeVolunteers": "Aktif Gönüllüler",
