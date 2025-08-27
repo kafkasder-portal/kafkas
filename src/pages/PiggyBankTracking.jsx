@@ -16,35 +16,9 @@ import {
   QrCode,
   Navigation
 } from 'lucide-react'
+import './PiggyBankTracking.css'
 
-// Yazdırma CSS stilleri
-const printStyles = `
-  @media print {
-    body * {
-      visibility: hidden;
-    }
-    .print-area, .print-area * {
-      visibility: visible;
-    }
-    .print-area {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 20px;
-      background: white;
-    }
-    .no-print {
-      display: none !important;
-    }
-    .print-area {
-      border: none !important;
-      box-shadow: none !important;
-    }
-  }
-`
+
 
 const PiggyBankTracking = () => {
   const [piggyBanks, setPiggyBanks] = useState([])
@@ -54,16 +28,7 @@ const PiggyBankTracking = () => {
   const [selectedBank, setSelectedBank] = useState(null)
   const [showQRModal, setShowQRModal] = useState(false)
 
-  // Yazdırma stillerini head'e ekle
-  useEffect(() => {
-    const style = document.createElement('style')
-    style.textContent = printStyles
-    document.head.appendChild(style)
-    
-    return () => {
-      document.head.removeChild(style)
-    }
-  }, [])
+
 
   // Mock data with coordinates
   useEffect(() => {
@@ -224,8 +189,7 @@ const PiggyBankTracking = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="p-6"
-      style={{ minHeight: '100vh', background: 'var(--background-primary)' }}
+      className="page-container"
     >
       {/* Header */}
       <div className="mb-8">
@@ -413,7 +377,7 @@ const PiggyBankTracking = () => {
                       </div>
                       <div className="w-24 bg-gray-200 rounded-full h-2 mt-1">
                         <div
-                          className="bg-blue-600 h-2 rounded-full"
+                          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                           style={{ width: `${getProgressPercentage(bank.currentAmount, bank.targetAmount)}%` }}
                         />
                       </div>
@@ -528,13 +492,13 @@ const PiggyBankTracking = () => {
               <div className="bg-white p-6 rounded-lg border-2 border-gray-200 mb-4 print-area">
                 <div className="flex flex-col items-center">
                   {/* QR Kod - 40x30mm boyutunda */}
-                  <div className="mb-3">
+                  <div className="mb-3 qr-code-container">
                     <QRCode
                       value={generateQRCode(selectedBank)}
                       size={151}
                       level="H"
                       includeMargin={true}
-                      style={{ width: '40mm', height: '30mm' }}
+                      className="qr-code-printable"
                     />
                   </div>
                   

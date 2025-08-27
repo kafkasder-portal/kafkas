@@ -1,0 +1,61 @@
+/* PiggyBankTracking Page Styles */
+.piggy-bank-page {
+  padding: 24px;
+  background: var(--background-primary);
+  min-height: 100vh;
+}
+
+/* QR Code Styles */
+.qr-code-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.qr-code-printable {
+  width: 40mm !important;
+  height: 30mm !important;
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 20px;
+    background: white;
+  }
+  
+  .print-area {
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  body * {
+    visibility: hidden;
+  }
+  
+  .print-area, .print-area * {
+    visibility: visible;
+  }
+}
+
+/* Progress Bar Animation */
+.progress-bar-fill {
+  transition: width 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .piggy-bank-page {
+    padding: 16px;
+  }
+}
